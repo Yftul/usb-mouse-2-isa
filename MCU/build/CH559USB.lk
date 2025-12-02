@@ -18,6 +18,5 @@
 build/main.rel
 build/util.rel
 build/USBHost.rel
-build/uart.rel
 
 -e

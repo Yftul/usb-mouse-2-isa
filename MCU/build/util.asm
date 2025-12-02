@@ -282,8 +282,6 @@
 	.globl _B
 	.globl _ACC
 	.globl _PSW
-	.globl _pinMode_PARM_3
-	.globl _pinMode_PARM_2
 	.globl _LED_DMA_XL
 	.globl _LED_DMA_XH
 	.globl _LED_DMA_CN
@@ -324,9 +322,7 @@
 	.globl _pLED_STAT
 	.globl _pUEP2_3_MOD
 	.globl _pUEP4_1_MOD
-	.globl _pinMode
-	.globl _putchar
-	.globl _getchar
+	.globl _runBootloader
 	.globl _delayUs
 	.globl _delay
 ;--------------------------------------------------------
@@ -622,6 +618,8 @@ _UIF_BUS_RST	=	0x00d8
 ; internal ram data
 ;--------------------------------------------------------
 	.area DSEG    (DATA)
+_runBootloader::
+	.ds 2
 ;--------------------------------------------------------
 ; overlayable items in internal ram
 ;--------------------------------------------------------
@@ -686,21 +684,9 @@ _LED_DMA_AL	=	0x2885
 _LED_DMA_CN	=	0x2886
 _LED_DMA_XH	=	0x2888
 _LED_DMA_XL	=	0x2889
-_pinMode_PARM_2:
-	.ds 1
-_pinMode_PARM_3:
-	.ds 1
-_pinMode_port_65536_17:
-	.ds 1
-_pinMode_dir_65536_18:
-	.ds 12
-_pinMode_pu_65536_18:
-	.ds 12
-_putchar_c_65536_20:
+_delayUs_n_65536_16:
 	.ds 2
-_delayUs_n_65536_23:
-	.ds 2
-_delay_n_65536_26:
+_delay_n_65536_41:
 	.ds 2
 ;--------------------------------------------------------
 ; absolute external ram data
@@ -727,6 +713,9 @@ _delay_n_65536_26:
 	.area GSINIT  (CODE)
 	.area GSFINAL (CODE)
 	.area GSINIT  (CODE)
+;	util.c:9: FunctionReference runBootloader = (FunctionReference)0xF400;
+	mov	_runBootloader,#0x00
+	mov	(_runBootloader + 1),#0xf4
 ;--------------------------------------------------------
 ; Home
 ;--------------------------------------------------------
@@ -737,19 +726,15 @@ _delay_n_65536_26:
 ;--------------------------------------------------------
 	.area CSEG    (CODE)
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'pinMode'
+;Allocation info for local variables in function 'delayUs'
 ;------------------------------------------------------------
-;pin                       Allocated with name '_pinMode_PARM_2'
-;mode                      Allocated with name '_pinMode_PARM_3'
-;port                      Allocated with name '_pinMode_port_65536_17'
-;dir                       Allocated with name '_pinMode_dir_65536_18'
-;pu                        Allocated with name '_pinMode_pu_65536_18'
+;n                         Allocated with name '_delayUs_n_65536_16'
 ;------------------------------------------------------------
-;	util.c:16: void pinMode(unsigned char port, unsigned char pin, unsigned char mode)
+;	util.c:18: void delayUs(uint16_t n)
 ;	-----------------------------------------
-;	 function pinMode
+;	 function delayUs
 ;	-----------------------------------------
-_pinMode:
+_delayUs:
 	ar7 = 0x07
 	ar6 = 0x06
 	ar5 = 0x05
@@ -758,877 +743,139 @@ _pinMode:
 	ar2 = 0x02
 	ar1 = 0x01
 	ar0 = 0x00
+	mov	r7,dph
 	mov	a,dpl
-	mov	dptr,#_pinMode_port_65536_17
+	mov	dptr,#_delayUs_n_65536_16
 	movx	@dptr,a
-;	util.c:18: volatile unsigned char *dir[] = {&P0_DIR, &P1_DIR, &P2_DIR, &P3_DIR};
-	mov	dptr,#_pinMode_dir_65536_18
-	mov	a,#_P0_DIR
-	movx	@dptr,a
-	mov	a,#(_P0_DIR >> 8)
-	inc	dptr
-	movx	@dptr,a
-	mov	a,#0x40
-	inc	dptr
-	movx	@dptr,a
-	mov	dptr,#(_pinMode_dir_65536_18 + 0x0003)
-	mov	a,#_P1_DIR
-	movx	@dptr,a
-	mov	a,#(_P1_DIR >> 8)
-	inc	dptr
-	movx	@dptr,a
-	mov	a,#0x40
-	inc	dptr
-	movx	@dptr,a
-	mov	dptr,#(_pinMode_dir_65536_18 + 0x0006)
-	mov	a,#_P2_DIR
-	movx	@dptr,a
-	mov	a,#(_P2_DIR >> 8)
-	inc	dptr
-	movx	@dptr,a
-	mov	a,#0x40
-	inc	dptr
-	movx	@dptr,a
-	mov	dptr,#(_pinMode_dir_65536_18 + 0x0009)
-	mov	a,#_P3_DIR
-	movx	@dptr,a
-	mov	a,#(_P3_DIR >> 8)
-	inc	dptr
-	movx	@dptr,a
-	mov	a,#0x40
-	inc	dptr
-	movx	@dptr,a
-;	util.c:19: volatile unsigned char *pu[] = {&P0_PU, &P1_PU, &P2_PU, &P3_PU};
-	mov	dptr,#_pinMode_pu_65536_18
-	mov	a,#_P0_PU
-	movx	@dptr,a
-	mov	a,#(_P0_PU >> 8)
-	inc	dptr
-	movx	@dptr,a
-	mov	a,#0x40
-	inc	dptr
-	movx	@dptr,a
-	mov	dptr,#(_pinMode_pu_65536_18 + 0x0003)
-	mov	a,#_P1_PU
-	movx	@dptr,a
-	mov	a,#(_P1_PU >> 8)
-	inc	dptr
-	movx	@dptr,a
-	mov	a,#0x40
-	inc	dptr
-	movx	@dptr,a
-	mov	dptr,#(_pinMode_pu_65536_18 + 0x0006)
-	mov	a,#_P2_PU
-	movx	@dptr,a
-	mov	a,#(_P2_PU >> 8)
-	inc	dptr
-	movx	@dptr,a
-	mov	a,#0x40
-	inc	dptr
-	movx	@dptr,a
-	mov	dptr,#(_pinMode_pu_65536_18 + 0x0009)
-	mov	a,#_P3_PU
-	movx	@dptr,a
-	mov	a,#(_P3_PU >> 8)
-	inc	dptr
-	movx	@dptr,a
-	mov	a,#0x40
-	inc	dptr
-	movx	@dptr,a
-;	util.c:20: switch (mode)
-	mov	dptr,#_pinMode_PARM_3
-	movx	a,@dptr
-	mov  r7,a
-	add	a,#0xff - 0x06
-	jnc	00116$
-	ret
-00116$:
 	mov	a,r7
-	add	a,r7
-	add	a,r7
-	mov	dptr,#00117$
-	jmp	@a+dptr
-00117$:
-	ljmp	00101$
-	ljmp	00102$
-	ljmp	00103$
-	ljmp	00104$
-	ljmp	00105$
-	ljmp	00106$
-	ljmp	00107$
-;	util.c:22: case PIN_MODE_INPUT: //Input only, no pull up
-00101$:
-;	util.c:23: PORT_CFG &= ~(bP0_OC << port);
-	mov	dptr,#_pinMode_port_65536_17
-	movx	a,@dptr
-	mov	r7,a
-	mov	r6,a
-	mov	b,r6
-	inc	b
-	mov	a,#0x01
-	sjmp	00120$
-00118$:
-	add	a,acc
-00120$:
-	djnz	b,00118$
-	cpl	a
-	anl	_PORT_CFG,a
-;	util.c:24: *dir[port] &= ~(1 << pin);
-	mov	a,r7
-	mov	b,#0x03
-	mul	ab
-	mov	r7,a
-	mov	r6,b
-	add	a,#_pinMode_dir_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_dir_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r3,a
 	inc	dptr
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	lcall	__gptrget
-	mov	r2,a
-	mov	dptr,#_pinMode_PARM_2
-	movx	a,@dptr
-	mov	r1,a
-	mov	b,r1
-	inc	b
-	mov	a,#0x01
-	sjmp	00123$
-00121$:
-	add	a,acc
-00123$:
-	djnz	b,00121$
-	cpl	a
-	mov	r1,a
-	anl	ar2,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r2
-	lcall	__gptrput
-;	util.c:25: *pu[port] &= ~(1 << pin);
-	mov	a,r7
-	add	a,#_pinMode_pu_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_pu_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r5,a
-	inc	dptr
+	movx	@dptr,a
+;	util.c:20: while (n) {       // total = 12~13 Fsys cycles, 1uS @Fsys=12MHz
+	mov	dptr,#_delayUs_n_65536_16
 	movx	a,@dptr
 	mov	r6,a
 	inc	dptr
 	movx	a,@dptr
 	mov	r7,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	lcall	__gptrget
-	anl	ar1,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	mov	a,r1
-;	util.c:26: break;
-	ljmp	__gptrput
-;	util.c:27: case PIN_MODE_INPUT_PULLUP: //Input only, pull up
-00102$:
-;	util.c:28: PORT_CFG &= ~(bP0_OC << port);
-	mov	dptr,#_pinMode_port_65536_17
-	movx	a,@dptr
-	mov	r7,a
-	mov	r6,a
-	mov	b,r6
-	inc	b
-	mov	a,#0x01
-	sjmp	00126$
-00124$:
-	add	a,acc
-00126$:
-	djnz	b,00124$
-	cpl	a
-	anl	_PORT_CFG,a
-;	util.c:29: *dir[port] &= ~(1 << pin);
-	mov	a,r7
-	mov	b,#0x03
-	mul	ab
-	mov	r7,a
-	mov	r6,b
-	add	a,#_pinMode_dir_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_dir_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r3,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	lcall	__gptrget
-	mov	r2,a
-	mov	dptr,#_pinMode_PARM_2
-	movx	a,@dptr
-	mov	r1,a
-	mov	b,r1
-	inc	b
-	mov	a,#0x01
-	sjmp	00129$
-00127$:
-	add	a,acc
-00129$:
-	djnz	b,00127$
-	mov	r1,a
-	cpl	a
-	anl	ar2,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r2
-	lcall	__gptrput
-;	util.c:30: *pu[port] |= 1 << pin;
-	mov	a,r7
-	add	a,#_pinMode_pu_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_pu_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r5,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	lcall	__gptrget
-	orl	ar1,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	mov	a,r1
-;	util.c:31: break;
-	ljmp	__gptrput
-;	util.c:32: case PIN_MODE_OUTPUT: //Push-pull output, high and low level strong drive
-00103$:
-;	util.c:33: PORT_CFG &= ~(bP0_OC << port);
-	mov	dptr,#_pinMode_port_65536_17
-	movx	a,@dptr
-	mov	r7,a
-	mov	r6,a
-	mov	b,r6
-	inc	b
-	mov	a,#0x01
-	sjmp	00132$
-00130$:
-	add	a,acc
-00132$:
-	djnz	b,00130$
-	cpl	a
-	anl	_PORT_CFG,a
-;	util.c:34: *dir[port] |= ~(1 << pin);
-	mov	a,r7
-	mov	b,#0x03
-	mul	ab
-	add	a,#_pinMode_dir_65536_18
-	mov	dpl,a
-	mov	a,#(_pinMode_dir_65536_18 >> 8)
-	addc	a,b
-	mov	dph,a
-	movx	a,@dptr
-	mov	r5,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	lcall	__gptrget
-	mov	r4,a
-	mov	dptr,#_pinMode_PARM_2
-	movx	a,@dptr
-	mov	r3,a
-	mov	b,r3
-	inc	b
-	mov	a,#0x01
-	sjmp	00135$
-00133$:
-	add	a,acc
-00135$:
-	djnz	b,00133$
-	cpl	a
-	orl	ar4,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	mov	a,r4
-;	util.c:35: break;
-	ljmp	__gptrput
-;	util.c:36: case PIN_MODE_OUTPUT_OPEN_DRAIN: //Open drain output, no pull-up, support input
-00104$:
-;	util.c:37: PORT_CFG |= (bP0_OC << port);
-	mov	dptr,#_pinMode_port_65536_17
-	movx	a,@dptr
-	mov	r7,a
-	mov	r6,a
-	mov	b,r6
-	inc	b
-	mov	a,#0x01
-	sjmp	00138$
-00136$:
-	add	a,acc
-00138$:
-	djnz	b,00136$
-	orl	_PORT_CFG,a
-;	util.c:38: *dir[port] &= ~(1 << pin);
-	mov	a,r7
-	mov	b,#0x03
-	mul	ab
-	mov	r7,a
-	mov	r6,b
-	add	a,#_pinMode_dir_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_dir_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r3,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	lcall	__gptrget
-	mov	r2,a
-	mov	dptr,#_pinMode_PARM_2
-	movx	a,@dptr
-	mov	r1,a
-	mov	b,r1
-	inc	b
-	mov	a,#0x01
-	sjmp	00141$
-00139$:
-	add	a,acc
-00141$:
-	djnz	b,00139$
-	cpl	a
-	mov	r1,a
-	anl	ar2,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r2
-	lcall	__gptrput
-;	util.c:39: *pu[port] &= ~(1 << pin);
-	mov	a,r7
-	add	a,#_pinMode_pu_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_pu_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r5,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	lcall	__gptrget
-	anl	ar1,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	mov	a,r1
-;	util.c:40: break;
-	ljmp	__gptrput
-;	util.c:41: case PIN_MODE_OUTPUT_OPEN_DRAIN_2CLK: //Open-drain output, no pull-up, only drives 2 clocks high when the transition output goes from low to high
-00105$:
-;	util.c:42: PORT_CFG |= (bP0_OC << port);
-	mov	dptr,#_pinMode_port_65536_17
-	movx	a,@dptr
-	mov	r7,a
-	mov	r6,a
-	mov	b,r6
-	inc	b
-	mov	a,#0x01
-	sjmp	00144$
-00142$:
-	add	a,acc
-00144$:
-	djnz	b,00142$
-	orl	_PORT_CFG,a
-;	util.c:43: *dir[port] |= 1 << pin;
-	mov	a,r7
-	mov	b,#0x03
-	mul	ab
-	mov	r7,a
-	mov	r6,b
-	add	a,#_pinMode_dir_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_dir_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r3,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	lcall	__gptrget
-	mov	r2,a
-	mov	dptr,#_pinMode_PARM_2
-	movx	a,@dptr
-	mov	r1,a
-	mov	b,r1
-	inc	b
-	mov	a,#0x01
-	sjmp	00147$
 00145$:
-	add	a,acc
-00147$:
-	djnz	b,00145$
-	mov	r1,a
-	orl	ar2,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r2
-	lcall	__gptrput
-;	util.c:44: *pu[port] &= ~(1 << pin);
-	mov	a,r7
-	add	a,#_pinMode_pu_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_pu_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r5,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	lcall	__gptrget
-	mov	r4,a
-	mov	a,r1
-	cpl	a
-	anl	ar4,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	mov	a,r4
-;	util.c:45: break;
-	ljmp	__gptrput
-;	util.c:46: case PIN_MODE_INPUT_OUTPUT_PULLUP: //Weakly bidirectional (standard 51 mode), open drain output, with pull-up
-00106$:
-;	util.c:47: PORT_CFG |= (bP0_OC << port);
-	mov	dptr,#_pinMode_port_65536_17
-	movx	a,@dptr
-	mov	r7,a
-	mov	r6,a
-	mov	b,r6
-	inc	b
-	mov	a,#0x01
-	sjmp	00150$
-00148$:
-	add	a,acc
-00150$:
-	djnz	b,00148$
-	orl	_PORT_CFG,a
-;	util.c:48: *dir[port] &= ~(1 << pin);
-	mov	a,r7
-	mov	b,#0x03
-	mul	ab
-	mov	r7,a
-	mov	r6,b
-	add	a,#_pinMode_dir_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_dir_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r3,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	lcall	__gptrget
-	mov	r2,a
-	mov	dptr,#_pinMode_PARM_2
-	movx	a,@dptr
-	mov	r1,a
-	mov	b,r1
-	inc	b
-	mov	a,#0x01
-	sjmp	00153$
-00151$:
-	add	a,acc
-00153$:
-	djnz	b,00151$
-	mov	r1,a
-	cpl	a
-	anl	ar2,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r2
-	lcall	__gptrput
-;	util.c:49: *pu[port] |= 1 << pin;
-	mov	a,r7
-	add	a,#_pinMode_pu_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_pu_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r5,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	lcall	__gptrget
-	orl	ar1,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	mov	a,r1
-;	util.c:50: break;
-	ljmp	__gptrput
-;	util.c:51: case PIN_MODE_INPUT_OUTPUT_PULLUP_2CLK: //Quasi-bidirectional (standard 51 mode), open-drain output, with pull-up, when the transition output is low to high, only drives 2 clocks high
-00107$:
-;	util.c:52: PORT_CFG |= (bP0_OC << port);
-	mov	dptr,#_pinMode_port_65536_17
-	movx	a,@dptr
-	mov	r7,a
-	mov	r6,a
-	mov	b,r6
-	inc	b
-	mov	a,#0x01
-	sjmp	00156$
-00154$:
-	add	a,acc
-00156$:
-	djnz	b,00154$
-	orl	_PORT_CFG,a
-;	util.c:53: *dir[port] |= 1 << pin;
-	mov	a,r7
-	mov	b,#0x03
-	mul	ab
-	mov	r7,a
-	mov	r6,b
-	add	a,#_pinMode_dir_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_dir_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r3,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	lcall	__gptrget
-	mov	r2,a
-	mov	dptr,#_pinMode_PARM_2
-	movx	a,@dptr
-	mov	r1,a
-	mov	b,r1
-	inc	b
-	mov	a,#0x01
-	sjmp	00159$
-00157$:
-	add	a,acc
-00159$:
-	djnz	b,00157$
-	mov	r1,a
-	orl	ar2,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r2
-	lcall	__gptrput
-;	util.c:54: *pu[port] |= 1 << pin;
-	mov	a,r7
-	add	a,#_pinMode_pu_65536_18
-	mov	dpl,a
-	mov	a,r6
-	addc	a,#(_pinMode_pu_65536_18 >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	r5,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	lcall	__gptrget
-	orl	ar1,a
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	mov	a,r1
-;	util.c:58: }
-;	util.c:59: }
-	ljmp	__gptrput
-;------------------------------------------------------------
-;Allocation info for local variables in function 'putchar'
-;------------------------------------------------------------
-;c                         Allocated with name '_putchar_c_65536_20'
-;------------------------------------------------------------
-;	util.c:64: int putchar(int c)
-;	-----------------------------------------
-;	 function putchar
-;	-----------------------------------------
-_putchar:
-	mov	r7,dph
-	mov	a,dpl
-	mov	dptr,#_putchar_c_65536_20
-	movx	@dptr,a
-	mov	a,r7
-	inc	dptr
-	movx	@dptr,a
-;	util.c:66: while (!TI);
-00101$:
-;	util.c:67: TI = 0;
-;	assignBit
-	jbc	_TI,00114$
-	sjmp	00101$
-00114$:
-;	util.c:68: SBUF = c & 0xFF;
-	mov	dptr,#_putchar_c_65536_20
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	mov	_SBUF,r6
-;	util.c:69: return c;
-	mov	dpl,r6
-	mov	dph,r7
-;	util.c:70: }
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'getchar'
-;------------------------------------------------------------
-;	util.c:72: int getchar() 
-;	-----------------------------------------
-;	 function getchar
-;	-----------------------------------------
-_getchar:
-;	util.c:74: while(!RI);
-00101$:
-;	util.c:75: RI = 0;
-;	assignBit
-	jbc	_RI,00114$
-	sjmp	00101$
-00114$:
-;	util.c:76: return SBUF;
-	mov	r6,_SBUF
-	mov	r7,#0x00
-	mov	dpl,r6
-	mov	dph,r7
-;	util.c:77: }
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'delayUs'
-;------------------------------------------------------------
-;n                         Allocated with name '_delayUs_n_65536_23'
-;------------------------------------------------------------
-;	util.c:86: void delayUs(unsigned short n)
-;	-----------------------------------------
-;	 function delayUs
-;	-----------------------------------------
-_delayUs:
-	mov	r7,dph
-	mov	a,dpl
-	mov	dptr,#_delayUs_n_65536_23
-	movx	@dptr,a
-	mov	a,r7
-	inc	dptr
-	movx	@dptr,a
-;	util.c:88: while (n) 
-	mov	dptr,#_delayUs_n_65536_23
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-00101$:
 	mov	a,r6
 	orl	a,r7
-	jz	00108$
-;	util.c:90: ++ SAFE_MOD;  // 2 Fsys cycles, for higher Fsys, add operation here
+	jz	00152$
+;	util.c:21: ++ SAFE_MOD;  // 2 Fsys cycles, for higher Fsys, add operation here
 	inc	_SAFE_MOD
-;	util.c:93: ++ SAFE_MOD;
+;	util.c:24: ADD_CYCLES_FOR_FREQ(14000000)
 	inc	_SAFE_MOD
-;	util.c:96: ++ SAFE_MOD;
+;	util.c:25: ADD_CYCLES_FOR_FREQ(16000000)
 	inc	_SAFE_MOD
-;	util.c:99: ++ SAFE_MOD;
+;	util.c:26: ADD_CYCLES_FOR_FREQ(18000000)
 	inc	_SAFE_MOD
-;	util.c:102: ++ SAFE_MOD;
+;	util.c:27: ADD_CYCLES_FOR_FREQ(20000000)
 	inc	_SAFE_MOD
-;	util.c:105: ++ SAFE_MOD;
+;	util.c:28: ADD_CYCLES_FOR_FREQ(22000000)
 	inc	_SAFE_MOD
-;	util.c:108: ++ SAFE_MOD;
+;	util.c:29: ADD_CYCLES_FOR_FREQ(24000000)
 	inc	_SAFE_MOD
-;	util.c:111: ++ SAFE_MOD;
+;	util.c:30: ADD_CYCLES_FOR_FREQ(26000000)
 	inc	_SAFE_MOD
-;	util.c:114: ++ SAFE_MOD;
+;	util.c:31: ADD_CYCLES_FOR_FREQ(28000000)
 	inc	_SAFE_MOD
-;	util.c:117: ++ SAFE_MOD;
+;	util.c:32: ADD_CYCLES_FOR_FREQ(30000000)
 	inc	_SAFE_MOD
-;	util.c:120: ++ SAFE_MOD;
+;	util.c:33: ADD_CYCLES_FOR_FREQ(32000000)
 	inc	_SAFE_MOD
-;	util.c:123: ++ SAFE_MOD;
+;	util.c:34: ADD_CYCLES_FOR_FREQ(34000000)
 	inc	_SAFE_MOD
-;	util.c:126: ++ SAFE_MOD;
+;	util.c:35: ADD_CYCLES_FOR_FREQ(36000000)
 	inc	_SAFE_MOD
-;	util.c:129: ++ SAFE_MOD;
+;	util.c:36: ADD_CYCLES_FOR_FREQ(38000000)
 	inc	_SAFE_MOD
-;	util.c:132: ++ SAFE_MOD;
+;	util.c:37: ADD_CYCLES_FOR_FREQ(40000000)
 	inc	_SAFE_MOD
-;	util.c:135: ++ SAFE_MOD;
+;	util.c:38: ADD_CYCLES_FOR_FREQ(42000000)
 	inc	_SAFE_MOD
-;	util.c:138: ++ SAFE_MOD;
+;	util.c:39: ADD_CYCLES_FOR_FREQ(44000000)
 	inc	_SAFE_MOD
-;	util.c:141: ++ SAFE_MOD;
+;	util.c:40: ADD_CYCLES_FOR_FREQ(46000000)
 	inc	_SAFE_MOD
-;	util.c:144: ++ SAFE_MOD;
+;	util.c:41: ADD_CYCLES_FOR_FREQ(48000000)
 	inc	_SAFE_MOD
-;	util.c:159: --n;
+;	util.c:47: --n;
 	dec	r6
-	cjne	r6,#0xff,00116$
+	cjne	r6,#0xff,00160$
 	dec	r7
-00116$:
-	mov	dptr,#_delayUs_n_65536_23
+00160$:
+	mov	dptr,#_delayUs_n_65536_16
 	mov	a,r6
 	movx	@dptr,a
 	mov	a,r7
 	inc	dptr
 	movx	@dptr,a
-	sjmp	00101$
-00108$:
-	mov	dptr,#_delayUs_n_65536_23
+	sjmp	00145$
+00152$:
+	mov	dptr,#_delayUs_n_65536_16
 	mov	a,r6
 	movx	@dptr,a
 	mov	a,r7
 	inc	dptr
 	movx	@dptr,a
-;	util.c:161: }
+;	util.c:49: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'delay'
 ;------------------------------------------------------------
-;n                         Allocated with name '_delay_n_65536_26'
+;n                         Allocated with name '_delay_n_65536_41'
 ;------------------------------------------------------------
-;	util.c:170: void delay(unsigned short n)
+;	util.c:58: void delay(uint16_t n)
 ;	-----------------------------------------
 ;	 function delay
 ;	-----------------------------------------
 _delay:
 	mov	r7,dph
 	mov	a,dpl
-	mov	dptr,#_delay_n_65536_26
+	mov	dptr,#_delay_n_65536_41
 	movx	@dptr,a
 	mov	a,r7
 	inc	dptr
 	movx	@dptr,a
-;	util.c:172: while (n) 
-	mov	dptr,#_delay_n_65536_26
+;	util.c:60: while (n--) {
+	mov	dptr,#_delay_n_65536_41
 	movx	a,@dptr
 	mov	r6,a
 	inc	dptr
 	movx	a,@dptr
 	mov	r7,a
 00101$:
+	mov	ar4,r6
+	mov	ar5,r7
+	dec	r6
+	cjne	r6,#0xff,00115$
+	dec	r7
+00115$:
+	mov	dptr,#_delay_n_65536_41
 	mov	a,r6
-	orl	a,r7
+	movx	@dptr,a
+	mov	a,r7
+	inc	dptr
+	movx	@dptr,a
+	mov	a,r4
+	orl	a,r5
 	jz	00108$
-;	util.c:174: delayUs(1000);
+;	util.c:61: delayUs(1000);
 	mov	dptr,#0x03e8
 	push	ar7
 	push	ar6
 	lcall	_delayUs
 	pop	ar6
 	pop	ar7
-;	util.c:175: --n;
-	dec	r6
-	cjne	r6,#0xff,00116$
-	dec	r7
-00116$:
-	mov	dptr,#_delay_n_65536_26
-	mov	a,r6
-	movx	@dptr,a
-	mov	a,r7
-	inc	dptr
-	movx	@dptr,a
 	sjmp	00101$
 00108$:
-	mov	dptr,#_delay_n_65536_26
+	mov	dptr,#_delay_n_65536_41
 	mov	a,r6
 	movx	@dptr,a
 	mov	a,r7
 	inc	dptr
 	movx	@dptr,a
-;	util.c:177: }
+;	util.c:63: }
 	ret
 	.area CSEG    (CODE)
 	.area CONST   (CODE)

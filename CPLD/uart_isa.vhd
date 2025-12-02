@@ -1,18 +1,18 @@
 -- ============================================================================
---  Project : PS/2-to-ISA Mouse Adapter — Replica
+--  Project : USB-to-ISA Mouse Adapter — Replica
 --  File    : uart_isa.vhd
 --  Author  : Pyshchev Alexander aka Yftul
 --  License : GPL-3.0
 --
 --  Description :
---      Implements ISA bus interface logic for adapting a PS/2 mouse
+--      Implements ISA bus interface logic for adapting a USD mouse
 --      to legacy PC hardware. Includes address decoding, control signal
 --      generation, and data flow between the MCU and ISA connector.
 --
 --  Notes :
 --      Designed for retro hardware restoration and compatibility testing.
 --      Part of a mixed hardware/firmware project including CPLD logic
---      and MCU-based PS/2 protocol handling.
+--      and MCU-based USB protocol handling.
 -- ============================================================================
 
 library IEEE;

@@ -704,42 +704,42 @@
                            002886   704 _LED_DMA_CN	=	0x2886
                            002888   705 _LED_DMA_XH	=	0x2888
                            002889   706 _LED_DMA_XL	=	0x2889
-      000C39                        707 _uartRxBuff::
-      000C39                        708 	.ds 64
-      000C79                        709 _initUART0_baud_65536_45:
-      000C79                        710 	.ds 4
-      000C7D                        711 _sendProtocolMSG_PARM_2:
-      000C7D                        712 	.ds 2
-      000C7F                        713 _sendProtocolMSG_PARM_3:
-      000C7F                        714 	.ds 1
-      000C80                        715 _sendProtocolMSG_PARM_4:
-      000C80                        716 	.ds 1
-      000C81                        717 _sendProtocolMSG_PARM_5:
-      000C81                        718 	.ds 1
-      000C82                        719 _sendProtocolMSG_PARM_6:
-      000C82                        720 	.ds 2
-      000C84                        721 _sendProtocolMSG_msgtype_65536_54:
-      000C84                        722 	.ds 1
-      000C85                        723 _sendHidPollMSG_PARM_2:
-      000C85                        724 	.ds 2
-      000C87                        725 _sendHidPollMSG_PARM_3:
-      000C87                        726 	.ds 1
-      000C88                        727 _sendHidPollMSG_PARM_4:
-      000C88                        728 	.ds 1
-      000C89                        729 _sendHidPollMSG_PARM_5:
-      000C89                        730 	.ds 1
-      000C8A                        731 _sendHidPollMSG_PARM_6:
-      000C8A                        732 	.ds 2
-      000C8C                        733 _sendHidPollMSG_PARM_7:
-      000C8C                        734 	.ds 1
-      000C8D                        735 _sendHidPollMSG_PARM_8:
-      000C8D                        736 	.ds 1
-      000C8E                        737 _sendHidPollMSG_PARM_9:
-      000C8E                        738 	.ds 1
-      000C8F                        739 _sendHidPollMSG_PARM_10:
-      000C8F                        740 	.ds 1
-      000C90                        741 _sendHidPollMSG_msgtype_65536_58:
-      000C90                        742 	.ds 1
+      000C57                        707 _uartRxBuff::
+      000C57                        708 	.ds 64
+      000C97                        709 _initUART0_baud_65536_45:
+      000C97                        710 	.ds 4
+      000C9B                        711 _sendProtocolMSG_PARM_2:
+      000C9B                        712 	.ds 2
+      000C9D                        713 _sendProtocolMSG_PARM_3:
+      000C9D                        714 	.ds 1
+      000C9E                        715 _sendProtocolMSG_PARM_4:
+      000C9E                        716 	.ds 1
+      000C9F                        717 _sendProtocolMSG_PARM_5:
+      000C9F                        718 	.ds 1
+      000CA0                        719 _sendProtocolMSG_PARM_6:
+      000CA0                        720 	.ds 2
+      000CA2                        721 _sendProtocolMSG_msgtype_65536_54:
+      000CA2                        722 	.ds 1
+      000CA3                        723 _sendHidPollMSG_PARM_2:
+      000CA3                        724 	.ds 2
+      000CA5                        725 _sendHidPollMSG_PARM_3:
+      000CA5                        726 	.ds 1
+      000CA6                        727 _sendHidPollMSG_PARM_4:
+      000CA6                        728 	.ds 1
+      000CA7                        729 _sendHidPollMSG_PARM_5:
+      000CA7                        730 	.ds 1
+      000CA8                        731 _sendHidPollMSG_PARM_6:
+      000CA8                        732 	.ds 2
+      000CAA                        733 _sendHidPollMSG_PARM_7:
+      000CAA                        734 	.ds 1
+      000CAB                        735 _sendHidPollMSG_PARM_8:
+      000CAB                        736 	.ds 1
+      000CAC                        737 _sendHidPollMSG_PARM_9:
+      000CAC                        738 	.ds 1
+      000CAD                        739 _sendHidPollMSG_PARM_10:
+      000CAD                        740 	.ds 1
+      000CAE                        741 _sendHidPollMSG_msgtype_65536_58:
+      000CAE                        742 	.ds 1
                                     743 ;--------------------------------------------------------
                                     744 ; absolute external ram data
                                     745 ;--------------------------------------------------------
@@ -748,8 +748,8 @@
                                     748 ; external initialized ram data
                                     749 ;--------------------------------------------------------
                                     750 	.area XISEG   (XDATA)
-      000CDF                        751 _rxPos::
-      000CDF                        752 	.ds 1
+      000CFD                        751 _rxPos::
+      000CFD                        752 	.ds 1
                                     753 	.area HOME    (CODE)
                                     754 	.area GSINIT0 (CODE)
                                     755 	.area GSINIT1 (CODE)
@@ -789,7 +789,7 @@
                                     789 ;	-----------------------------------------
                                     790 ;	 function initUART0
                                     791 ;	-----------------------------------------
-      003D23                        792 _initUART0:
+      003EF9                        792 _initUART0:
                            000007   793 	ar7 = 0x07
                            000006   794 	ar6 = 0x06
                            000005   795 	ar5 = 0x05
@@ -798,106 +798,106 @@
                            000002   798 	ar2 = 0x02
                            000001   799 	ar1 = 0x01
                            000000   800 	ar0 = 0x00
-      003D23 AF 82            [24]  801 	mov	r7,dpl
-      003D25 AE 83            [24]  802 	mov	r6,dph
-      003D27 AD F0            [24]  803 	mov	r5,b
-      003D29 FC               [12]  804 	mov	r4,a
-      003D2A 90 0C 79         [24]  805 	mov	dptr,#_initUART0_baud_65536_45
-      003D2D EF               [12]  806 	mov	a,r7
-      003D2E F0               [24]  807 	movx	@dptr,a
-      003D2F EE               [12]  808 	mov	a,r6
-      003D30 A3               [24]  809 	inc	dptr
-      003D31 F0               [24]  810 	movx	@dptr,a
-      003D32 ED               [12]  811 	mov	a,r5
-      003D33 A3               [24]  812 	inc	dptr
-      003D34 F0               [24]  813 	movx	@dptr,a
-      003D35 EC               [12]  814 	mov	a,r4
-      003D36 A3               [24]  815 	inc	dptr
-      003D37 F0               [24]  816 	movx	@dptr,a
+      003EF9 AF 82            [24]  801 	mov	r7,dpl
+      003EFB AE 83            [24]  802 	mov	r6,dph
+      003EFD AD F0            [24]  803 	mov	r5,b
+      003EFF FC               [12]  804 	mov	r4,a
+      003F00 90 0C 97         [24]  805 	mov	dptr,#_initUART0_baud_65536_45
+      003F03 EF               [12]  806 	mov	a,r7
+      003F04 F0               [24]  807 	movx	@dptr,a
+      003F05 EE               [12]  808 	mov	a,r6
+      003F06 A3               [24]  809 	inc	dptr
+      003F07 F0               [24]  810 	movx	@dptr,a
+      003F08 ED               [12]  811 	mov	a,r5
+      003F09 A3               [24]  812 	inc	dptr
+      003F0A F0               [24]  813 	movx	@dptr,a
+      003F0B EC               [12]  814 	mov	a,r4
+      003F0C A3               [24]  815 	inc	dptr
+      003F0D F0               [24]  816 	movx	@dptr,a
                                     817 ;	uart.c:24: PORT_CFG |= bP0_OC;        // Разрешить альтернативную функцию на порту P0
-      003D38 43 C6 01         [24]  818 	orl	_PORT_CFG,#0x01
+      003F0E 43 C6 01         [24]  818 	orl	_PORT_CFG,#0x01
                                     819 ;	uart.c:25: P0_DIR  |= bTXD_;          // TXD как выход
-      003D3B 43 C4 08         [24]  820 	orl	_P0_DIR,#0x08
+      003F11 43 C4 08         [24]  820 	orl	_P0_DIR,#0x08
                                     821 ;	uart.c:26: P0_PU   |= bTXD_ | bRXD_;  // Включить подтяжку на TXD и RXD
-      003D3E 43 C5 0C         [24]  822 	orl	_P0_PU,#0x0c
+      003F14 43 C5 0C         [24]  822 	orl	_P0_PU,#0x0c
                                     823 ;	uart.c:27: PIN_FUNC |= bUART0_PIN_X;  // Выбрать линию UART0 на альтернативных пинах
-      003D41 43 CE 10         [24]  824 	orl	_PIN_FUNC,#0x10
+      003F17 43 CE 10         [24]  824 	orl	_PIN_FUNC,#0x10
                                     825 ;	uart.c:30: SM0 = 0;
                                     826 ;	assignBit
-      003D44 C2 9F            [12]  827 	clr	_SM0
+      003F1A C2 9F            [12]  827 	clr	_SM0
                                     828 ;	uart.c:31: SM1 = 1; // UART mode 1: 8 data bits, 1 stop
                                     829 ;	assignBit
-      003D46 D2 9E            [12]  830 	setb	_SM1
+      003F1C D2 9E            [12]  830 	setb	_SM1
                                     831 ;	uart.c:32: SM2 = 0;
                                     832 ;	assignBit
-      003D48 C2 9D            [12]  833 	clr	_SM2
+      003F1E C2 9D            [12]  833 	clr	_SM2
                                     834 ;	uart.c:33: REN = 1; // Разрешить прием
                                     835 ;	assignBit
-      003D4A D2 9C            [12]  836 	setb	_REN
+      003F20 D2 9C            [12]  836 	setb	_REN
                                     837 ;	uart.c:36: PCON |= SMOD;
-      003D4C 43 87 80         [24]  838 	orl	_PCON,#0x80
+      003F22 43 87 80         [24]  838 	orl	_PCON,#0x80
                                     839 ;	uart.c:40: reload = (((unsigned long)FREQ_SYS / 8) / baud + 1) / 2;
-      003D4F 90 0C 79         [24]  840 	mov	dptr,#_initUART0_baud_65536_45
-      003D52 E0               [24]  841 	movx	a,@dptr
-      003D53 FC               [12]  842 	mov	r4,a
-      003D54 A3               [24]  843 	inc	dptr
-      003D55 E0               [24]  844 	movx	a,@dptr
-      003D56 FD               [12]  845 	mov	r5,a
-      003D57 A3               [24]  846 	inc	dptr
-      003D58 E0               [24]  847 	movx	a,@dptr
-      003D59 FE               [12]  848 	mov	r6,a
-      003D5A A3               [24]  849 	inc	dptr
-      003D5B E0               [24]  850 	movx	a,@dptr
-      003D5C FF               [12]  851 	mov	r7,a
-      003D5D 90 0C 98         [24]  852 	mov	dptr,#__divulong_PARM_2
-      003D60 EC               [12]  853 	mov	a,r4
-      003D61 F0               [24]  854 	movx	@dptr,a
-      003D62 ED               [12]  855 	mov	a,r5
-      003D63 A3               [24]  856 	inc	dptr
-      003D64 F0               [24]  857 	movx	@dptr,a
-      003D65 EE               [12]  858 	mov	a,r6
-      003D66 A3               [24]  859 	inc	dptr
-      003D67 F0               [24]  860 	movx	@dptr,a
-      003D68 EF               [12]  861 	mov	a,r7
-      003D69 A3               [24]  862 	inc	dptr
-      003D6A F0               [24]  863 	movx	@dptr,a
-      003D6B 90 8D 80         [24]  864 	mov	dptr,#0x8d80
-      003D6E 75 F0 5B         [24]  865 	mov	b,#0x5b
-      003D71 E4               [12]  866 	clr	a
-      003D72 12 40 9B         [24]  867 	lcall	__divulong
-      003D75 AC 82            [24]  868 	mov	r4,dpl
-      003D77 AD 83            [24]  869 	mov	r5,dph
-      003D79 0C               [12]  870 	inc	r4
-      003D7A BC 00 01         [24]  871 	cjne	r4,#0x00,00103$
-      003D7D 0D               [12]  872 	inc	r5
-      003D7E                        873 00103$:
-      003D7E ED               [12]  874 	mov	a,r5
-      003D7F C3               [12]  875 	clr	c
-      003D80 13               [12]  876 	rrc	a
-      003D81 CC               [12]  877 	xch	a,r4
-      003D82 13               [12]  878 	rrc	a
-      003D83 CC               [12]  879 	xch	a,r4
+      003F25 90 0C 97         [24]  840 	mov	dptr,#_initUART0_baud_65536_45
+      003F28 E0               [24]  841 	movx	a,@dptr
+      003F29 FC               [12]  842 	mov	r4,a
+      003F2A A3               [24]  843 	inc	dptr
+      003F2B E0               [24]  844 	movx	a,@dptr
+      003F2C FD               [12]  845 	mov	r5,a
+      003F2D A3               [24]  846 	inc	dptr
+      003F2E E0               [24]  847 	movx	a,@dptr
+      003F2F FE               [12]  848 	mov	r6,a
+      003F30 A3               [24]  849 	inc	dptr
+      003F31 E0               [24]  850 	movx	a,@dptr
+      003F32 FF               [12]  851 	mov	r7,a
+      003F33 90 0C B6         [24]  852 	mov	dptr,#__divulong_PARM_2
+      003F36 EC               [12]  853 	mov	a,r4
+      003F37 F0               [24]  854 	movx	@dptr,a
+      003F38 ED               [12]  855 	mov	a,r5
+      003F39 A3               [24]  856 	inc	dptr
+      003F3A F0               [24]  857 	movx	@dptr,a
+      003F3B EE               [12]  858 	mov	a,r6
+      003F3C A3               [24]  859 	inc	dptr
+      003F3D F0               [24]  860 	movx	@dptr,a
+      003F3E EF               [12]  861 	mov	a,r7
+      003F3F A3               [24]  862 	inc	dptr
+      003F40 F0               [24]  863 	movx	@dptr,a
+      003F41 90 8D 80         [24]  864 	mov	dptr,#0x8d80
+      003F44 75 F0 5B         [24]  865 	mov	b,#0x5b
+      003F47 E4               [12]  866 	clr	a
+      003F48 12 42 71         [24]  867 	lcall	__divulong
+      003F4B AC 82            [24]  868 	mov	r4,dpl
+      003F4D AD 83            [24]  869 	mov	r5,dph
+      003F4F 0C               [12]  870 	inc	r4
+      003F50 BC 00 01         [24]  871 	cjne	r4,#0x00,00103$
+      003F53 0D               [12]  872 	inc	r5
+      003F54                        873 00103$:
+      003F54 ED               [12]  874 	mov	a,r5
+      003F55 C3               [12]  875 	clr	c
+      003F56 13               [12]  876 	rrc	a
+      003F57 CC               [12]  877 	xch	a,r4
+      003F58 13               [12]  878 	rrc	a
+      003F59 CC               [12]  879 	xch	a,r4
                                     880 ;	uart.c:43: TMOD = (TMOD & ~(bT1_GATE | bT1_CT | MASK_T1_MOD)) | bT1_M1; // Timer1: режим 2, авто-перезагрузка
-      003D84 74 0F            [12]  881 	mov	a,#0x0f
-      003D86 55 89            [12]  882 	anl	a,_TMOD
-      003D88 44 20            [12]  883 	orl	a,#0x20
-      003D8A F5 89            [12]  884 	mov	_TMOD,a
+      003F5A 74 0F            [12]  881 	mov	a,#0x0f
+      003F5C 55 89            [12]  882 	anl	a,_TMOD
+      003F5E 44 20            [12]  883 	orl	a,#0x20
+      003F60 F5 89            [12]  884 	mov	_TMOD,a
                                     885 ;	uart.c:44: T2MOD |= bTMR_CLK | bT1_CLK;                                 // Выбрать системную частоту
-      003D8C 43 C9 A0         [24]  886 	orl	_T2MOD,#0xa0
+      003F62 43 C9 A0         [24]  886 	orl	_T2MOD,#0xa0
                                     887 ;	uart.c:45: TH1 = (uint8_t)(256 - reload);                               // Установка перезагрузки
-      003D8F C3               [12]  888 	clr	c
-      003D90 E4               [12]  889 	clr	a
-      003D91 9C               [12]  890 	subb	a,r4
-      003D92 FC               [12]  891 	mov	r4,a
-      003D93 8C 8D            [24]  892 	mov	_TH1,r4
+      003F65 C3               [12]  888 	clr	c
+      003F66 E4               [12]  889 	clr	a
+      003F67 9C               [12]  890 	subb	a,r4
+      003F68 FC               [12]  891 	mov	r4,a
+      003F69 8C 8D            [24]  892 	mov	_TH1,r4
                                     893 ;	uart.c:46: TR1 = 1;                                                     // Запускаем Timer1
                                     894 ;	assignBit
-      003D95 D2 8E            [12]  895 	setb	_TR1
+      003F6B D2 8E            [12]  895 	setb	_TR1
                                     896 ;	uart.c:49: TI = 1; // Установить флаг, чтобы первое отправление не зависло
                                     897 ;	assignBit
-      003D97 D2 99            [12]  898 	setb	_TI
+      003F6D D2 99            [12]  898 	setb	_TI
                                     899 ;	uart.c:50: }
-      003D99 22               [24]  900 	ret
+      003F6F 22               [24]  900 	ret
                                     901 ;------------------------------------------------------------
                                     902 ;Allocation info for local variables in function 'processUart'
                                     903 ;------------------------------------------------------------
@@ -907,121 +907,121 @@
                                     907 ;	-----------------------------------------
                                     908 ;	 function processUart
                                     909 ;	-----------------------------------------
-      003D9A                        910 _processUart:
+      003F70                        910 _processUart:
                                     911 ;	uart.c:53: while(RI){
-      003D9A                        912 00110$:
+      003F70                        912 00110$:
                                     913 ;	uart.c:54: RI=0;
                                     914 ;	assignBit
-      003D9A 10 98 01         [24]  915 	jbc	_RI,00147$
-      003D9D 22               [24]  916 	ret
-      003D9E                        917 00147$:
+      003F70 10 98 01         [24]  915 	jbc	_RI,00147$
+      003F73 22               [24]  916 	ret
+      003F74                        917 00147$:
                                     918 ;	uart.c:55: uartRxBuff[rxPos] = SBUF;
-      003D9E 90 0C DF         [24]  919 	mov	dptr,#_rxPos
-      003DA1 E0               [24]  920 	movx	a,@dptr
-      003DA2 24 39            [12]  921 	add	a,#_uartRxBuff
-      003DA4 F5 82            [12]  922 	mov	dpl,a
-      003DA6 E4               [12]  923 	clr	a
-      003DA7 34 0C            [12]  924 	addc	a,#(_uartRxBuff >> 8)
-      003DA9 F5 83            [12]  925 	mov	dph,a
-      003DAB E5 99            [12]  926 	mov	a,_SBUF
-      003DAD F0               [24]  927 	movx	@dptr,a
+      003F74 90 0C FD         [24]  919 	mov	dptr,#_rxPos
+      003F77 E0               [24]  920 	movx	a,@dptr
+      003F78 24 57            [12]  921 	add	a,#_uartRxBuff
+      003F7A F5 82            [12]  922 	mov	dpl,a
+      003F7C E4               [12]  923 	clr	a
+      003F7D 34 0C            [12]  924 	addc	a,#(_uartRxBuff >> 8)
+      003F7F F5 83            [12]  925 	mov	dph,a
+      003F81 E5 99            [12]  926 	mov	a,_SBUF
+      003F83 F0               [24]  927 	movx	@dptr,a
                                     928 ;	uart.c:56: if (uartRxBuff[rxPos]=='\n' || rxPos >= 64) {
-      003DAE 90 0C DF         [24]  929 	mov	dptr,#_rxPos
-      003DB1 E0               [24]  930 	movx	a,@dptr
-      003DB2 FF               [12]  931 	mov	r7,a
-      003DB3 24 39            [12]  932 	add	a,#_uartRxBuff
-      003DB5 F5 82            [12]  933 	mov	dpl,a
-      003DB7 E4               [12]  934 	clr	a
-      003DB8 34 0C            [12]  935 	addc	a,#(_uartRxBuff >> 8)
-      003DBA F5 83            [12]  936 	mov	dph,a
-      003DBC E0               [24]  937 	movx	a,@dptr
-      003DBD FE               [12]  938 	mov	r6,a
-      003DBE BE 0A 02         [24]  939 	cjne	r6,#0x0a,00148$
-      003DC1 80 08            [24]  940 	sjmp	00121$
-      003DC3                        941 00148$:
-      003DC3 BF 40 00         [24]  942 	cjne	r7,#0x40,00149$
-      003DC6                        943 00149$:
-      003DC6 50 03            [24]  944 	jnc	00150$
-      003DC8 02 3E 3B         [24]  945 	ljmp	00107$
-      003DCB                        946 00150$:
+      003F84 90 0C FD         [24]  929 	mov	dptr,#_rxPos
+      003F87 E0               [24]  930 	movx	a,@dptr
+      003F88 FF               [12]  931 	mov	r7,a
+      003F89 24 57            [12]  932 	add	a,#_uartRxBuff
+      003F8B F5 82            [12]  933 	mov	dpl,a
+      003F8D E4               [12]  934 	clr	a
+      003F8E 34 0C            [12]  935 	addc	a,#(_uartRxBuff >> 8)
+      003F90 F5 83            [12]  936 	mov	dph,a
+      003F92 E0               [24]  937 	movx	a,@dptr
+      003F93 FE               [12]  938 	mov	r6,a
+      003F94 BE 0A 02         [24]  939 	cjne	r6,#0x0a,00148$
+      003F97 80 08            [24]  940 	sjmp	00121$
+      003F99                        941 00148$:
+      003F99 BF 40 00         [24]  942 	cjne	r7,#0x40,00149$
+      003F9C                        943 00149$:
+      003F9C 50 03            [24]  944 	jnc	00150$
+      003F9E 02 40 11         [24]  945 	ljmp	00107$
+      003FA1                        946 00150$:
                                     947 ;	uart.c:57: for (uint8_t i = 0; i < rxPos; i ++ ) {
-      003DCB                        948 00121$:
-      003DCB 7E 00            [12]  949 	mov	r6,#0x00
-      003DCD                        950 00114$:
-      003DCD 90 0C DF         [24]  951 	mov	dptr,#_rxPos
-      003DD0 E0               [24]  952 	movx	a,@dptr
-      003DD1 FD               [12]  953 	mov	r5,a
-      003DD2 C3               [12]  954 	clr	c
-      003DD3 EE               [12]  955 	mov	a,r6
-      003DD4 9D               [12]  956 	subb	a,r5
-      003DD5 50 2E            [24]  957 	jnc	00101$
+      003FA1                        948 00121$:
+      003FA1 7E 00            [12]  949 	mov	r6,#0x00
+      003FA3                        950 00114$:
+      003FA3 90 0C FD         [24]  951 	mov	dptr,#_rxPos
+      003FA6 E0               [24]  952 	movx	a,@dptr
+      003FA7 FD               [12]  953 	mov	r5,a
+      003FA8 C3               [12]  954 	clr	c
+      003FA9 EE               [12]  955 	mov	a,r6
+      003FAA 9D               [12]  956 	subb	a,r5
+      003FAB 50 2E            [24]  957 	jnc	00101$
                                     958 ;	uart.c:58: printf( "0x%02X ",uartRxBuff[i]);
-      003DD7 EE               [12]  959 	mov	a,r6
-      003DD8 24 39            [12]  960 	add	a,#_uartRxBuff
-      003DDA F5 82            [12]  961 	mov	dpl,a
-      003DDC E4               [12]  962 	clr	a
-      003DDD 34 0C            [12]  963 	addc	a,#(_uartRxBuff >> 8)
-      003DDF F5 83            [12]  964 	mov	dph,a
-      003DE1 E0               [24]  965 	movx	a,@dptr
-      003DE2 FD               [12]  966 	mov	r5,a
-      003DE3 7C 00            [12]  967 	mov	r4,#0x00
-      003DE5 C0 06            [24]  968 	push	ar6
-      003DE7 C0 05            [24]  969 	push	ar5
-      003DE9 C0 04            [24]  970 	push	ar4
-      003DEB 74 A9            [12]  971 	mov	a,#___str_0
-      003DED C0 E0            [24]  972 	push	acc
-      003DEF 74 52            [12]  973 	mov	a,#(___str_0 >> 8)
-      003DF1 C0 E0            [24]  974 	push	acc
-      003DF3 74 80            [12]  975 	mov	a,#0x80
-      003DF5 C0 E0            [24]  976 	push	acc
-      003DF7 12 41 F8         [24]  977 	lcall	_printf
-      003DFA E5 81            [12]  978 	mov	a,sp
-      003DFC 24 FB            [12]  979 	add	a,#0xfb
-      003DFE F5 81            [12]  980 	mov	sp,a
-      003E00 D0 06            [24]  981 	pop	ar6
+      003FAD EE               [12]  959 	mov	a,r6
+      003FAE 24 57            [12]  960 	add	a,#_uartRxBuff
+      003FB0 F5 82            [12]  961 	mov	dpl,a
+      003FB2 E4               [12]  962 	clr	a
+      003FB3 34 0C            [12]  963 	addc	a,#(_uartRxBuff >> 8)
+      003FB5 F5 83            [12]  964 	mov	dph,a
+      003FB7 E0               [24]  965 	movx	a,@dptr
+      003FB8 FD               [12]  966 	mov	r5,a
+      003FB9 7C 00            [12]  967 	mov	r4,#0x00
+      003FBB C0 06            [24]  968 	push	ar6
+      003FBD C0 05            [24]  969 	push	ar5
+      003FBF C0 04            [24]  970 	push	ar4
+      003FC1 74 7F            [12]  971 	mov	a,#___str_0
+      003FC3 C0 E0            [24]  972 	push	acc
+      003FC5 74 54            [12]  973 	mov	a,#(___str_0 >> 8)
+      003FC7 C0 E0            [24]  974 	push	acc
+      003FC9 74 80            [12]  975 	mov	a,#0x80
+      003FCB C0 E0            [24]  976 	push	acc
+      003FCD 12 43 CE         [24]  977 	lcall	_printf
+      003FD0 E5 81            [12]  978 	mov	a,sp
+      003FD2 24 FB            [12]  979 	add	a,#0xfb
+      003FD4 F5 81            [12]  980 	mov	sp,a
+      003FD6 D0 06            [24]  981 	pop	ar6
                                     982 ;	uart.c:57: for (uint8_t i = 0; i < rxPos; i ++ ) {
-      003E02 0E               [12]  983 	inc	r6
-      003E03 80 C8            [24]  984 	sjmp	00114$
-      003E05                        985 00101$:
+      003FD8 0E               [12]  983 	inc	r6
+      003FD9 80 C8            [24]  984 	sjmp	00114$
+      003FDB                        985 00101$:
                                     986 ;	uart.c:60: printf("\n");
-      003E05 74 B1            [12]  987 	mov	a,#___str_1
-      003E07 C0 E0            [24]  988 	push	acc
-      003E09 74 52            [12]  989 	mov	a,#(___str_1 >> 8)
-      003E0B C0 E0            [24]  990 	push	acc
-      003E0D 74 80            [12]  991 	mov	a,#0x80
-      003E0F C0 E0            [24]  992 	push	acc
-      003E11 12 41 F8         [24]  993 	lcall	_printf
-      003E14 15 81            [12]  994 	dec	sp
-      003E16 15 81            [12]  995 	dec	sp
-      003E18 15 81            [12]  996 	dec	sp
+      003FDB 74 87            [12]  987 	mov	a,#___str_1
+      003FDD C0 E0            [24]  988 	push	acc
+      003FDF 74 54            [12]  989 	mov	a,#(___str_1 >> 8)
+      003FE1 C0 E0            [24]  990 	push	acc
+      003FE3 74 80            [12]  991 	mov	a,#0x80
+      003FE5 C0 E0            [24]  992 	push	acc
+      003FE7 12 43 CE         [24]  993 	lcall	_printf
+      003FEA 15 81            [12]  994 	dec	sp
+      003FEC 15 81            [12]  995 	dec	sp
+      003FEE 15 81            [12]  996 	dec	sp
                                     997 ;	uart.c:61: if(uartRxBuff[0]=='k') {
-      003E1A 90 0C 39         [24]  998 	mov	dptr,#_uartRxBuff
-      003E1D E0               [24]  999 	movx	a,@dptr
-      003E1E FE               [12] 1000 	mov	r6,a
-      003E1F BE 6B 11         [24] 1001 	cjne	r6,#0x6b,00105$
+      003FF0 90 0C 57         [24]  998 	mov	dptr,#_uartRxBuff
+      003FF3 E0               [24]  999 	movx	a,@dptr
+      003FF4 FE               [12] 1000 	mov	r6,a
+      003FF5 BE 6B 11         [24] 1001 	cjne	r6,#0x6b,00105$
                                    1002 ;	uart.c:64: if(uartRxBuff[1]=='b')
-      003E22 90 0C 3A         [24] 1003 	mov	dptr,#(_uartRxBuff + 0x0001)
-      003E25 E0               [24] 1004 	movx	a,@dptr
-      003E26 FE               [12] 1005 	mov	r6,a
-      003E27 BE 62 09         [24] 1006 	cjne	r6,#0x62,00105$
+      003FF8 90 0C 58         [24] 1003 	mov	dptr,#(_uartRxBuff + 0x0001)
+      003FFB E0               [24] 1004 	movx	a,@dptr
+      003FFC FE               [12] 1005 	mov	r6,a
+      003FFD BE 62 09         [24] 1006 	cjne	r6,#0x62,00105$
                                    1007 ;	uart.c:65: runBootloader();
-      003E2A 85 08 82         [24] 1008 	mov	dpl,_runBootloader
-      003E2D 85 09 83         [24] 1009 	mov	dph,(_runBootloader + 1)
-      003E30 12 00 41         [24] 1010 	lcall	__sdcc_call_dptr
-      003E33                       1011 00105$:
+      004000 85 08 82         [24] 1008 	mov	dpl,_runBootloader
+      004003 85 09 83         [24] 1009 	mov	dph,(_runBootloader + 1)
+      004006 12 00 41         [24] 1010 	lcall	__sdcc_call_dptr
+      004009                       1011 00105$:
                                    1012 ;	uart.c:67: rxPos=0;
-      003E33 90 0C DF         [24] 1013 	mov	dptr,#_rxPos
-      003E36 E4               [12] 1014 	clr	a
-      003E37 F0               [24] 1015 	movx	@dptr,a
-      003E38 02 3D 9A         [24] 1016 	ljmp	00110$
-      003E3B                       1017 00107$:
+      004009 90 0C FD         [24] 1013 	mov	dptr,#_rxPos
+      00400C E4               [12] 1014 	clr	a
+      00400D F0               [24] 1015 	movx	@dptr,a
+      00400E 02 3F 70         [24] 1016 	ljmp	00110$
+      004011                       1017 00107$:
                                    1018 ;	uart.c:69: rxPos++;
-      003E3B 90 0C DF         [24] 1019 	mov	dptr,#_rxPos
-      003E3E EF               [12] 1020 	mov	a,r7
-      003E3F 04               [12] 1021 	inc	a
-      003E40 F0               [24] 1022 	movx	@dptr,a
+      004011 90 0C FD         [24] 1019 	mov	dptr,#_rxPos
+      004014 EF               [12] 1020 	mov	a,r7
+      004015 04               [12] 1021 	inc	a
+      004016 F0               [24] 1022 	movx	@dptr,a
                                    1023 ;	uart.c:72: }
-      003E41 02 3D 9A         [24] 1024 	ljmp	00110$
+      004017 02 3F 70         [24] 1024 	ljmp	00110$
                                    1025 ;------------------------------------------------------------
                                    1026 ;Allocation info for local variables in function 'sendProtocolMSG'
                                    1027 ;------------------------------------------------------------
@@ -1037,134 +1037,134 @@
                                    1037 ;	-----------------------------------------
                                    1038 ;	 function sendProtocolMSG
                                    1039 ;	-----------------------------------------
-      003E44                       1040 _sendProtocolMSG:
-      003E44 E5 82            [12] 1041 	mov	a,dpl
-      003E46 90 0C 84         [24] 1042 	mov	dptr,#_sendProtocolMSG_msgtype_65536_54
-      003E49 F0               [24] 1043 	movx	@dptr,a
+      00401A                       1040 _sendProtocolMSG:
+      00401A E5 82            [12] 1041 	mov	a,dpl
+      00401C 90 0C A2         [24] 1042 	mov	dptr,#_sendProtocolMSG_msgtype_65536_54
+      00401F F0               [24] 1043 	movx	@dptr,a
                                    1044 ;	uart.c:76: putchar(0xFE);
-      003E4A 90 00 FE         [24] 1045 	mov	dptr,#0x00fe
-      003E4D 12 17 27         [24] 1046 	lcall	_putchar
+      004020 90 00 FE         [24] 1045 	mov	dptr,#0x00fe
+      004023 12 18 FD         [24] 1046 	lcall	_putchar
                                    1047 ;	uart.c:77: putchar(length);
-      003E50 90 0C 7D         [24] 1048 	mov	dptr,#_sendProtocolMSG_PARM_2
-      003E53 E0               [24] 1049 	movx	a,@dptr
-      003E54 FE               [12] 1050 	mov	r6,a
-      003E55 A3               [24] 1051 	inc	dptr
-      003E56 E0               [24] 1052 	movx	a,@dptr
-      003E57 FF               [12] 1053 	mov	r7,a
-      003E58 8E 04            [24] 1054 	mov	ar4,r6
-      003E5A 8F 05            [24] 1055 	mov	ar5,r7
-      003E5C 8C 82            [24] 1056 	mov	dpl,r4
-      003E5E 8D 83            [24] 1057 	mov	dph,r5
-      003E60 C0 07            [24] 1058 	push	ar7
-      003E62 C0 06            [24] 1059 	push	ar6
-      003E64 12 17 27         [24] 1060 	lcall	_putchar
-      003E67 D0 06            [24] 1061 	pop	ar6
-      003E69 D0 07            [24] 1062 	pop	ar7
+      004026 90 0C 9B         [24] 1048 	mov	dptr,#_sendProtocolMSG_PARM_2
+      004029 E0               [24] 1049 	movx	a,@dptr
+      00402A FE               [12] 1050 	mov	r6,a
+      00402B A3               [24] 1051 	inc	dptr
+      00402C E0               [24] 1052 	movx	a,@dptr
+      00402D FF               [12] 1053 	mov	r7,a
+      00402E 8E 04            [24] 1054 	mov	ar4,r6
+      004030 8F 05            [24] 1055 	mov	ar5,r7
+      004032 8C 82            [24] 1056 	mov	dpl,r4
+      004034 8D 83            [24] 1057 	mov	dph,r5
+      004036 C0 07            [24] 1058 	push	ar7
+      004038 C0 06            [24] 1059 	push	ar6
+      00403A 12 18 FD         [24] 1060 	lcall	_putchar
+      00403D D0 06            [24] 1061 	pop	ar6
+      00403F D0 07            [24] 1062 	pop	ar7
                                    1063 ;	uart.c:78: putchar((unsigned char)(length>>8));
-      003E6B 8F 05            [24] 1064 	mov	ar5,r7
-      003E6D 7C 00            [12] 1065 	mov	r4,#0x00
-      003E6F 8D 82            [24] 1066 	mov	dpl,r5
-      003E71 8C 83            [24] 1067 	mov	dph,r4
-      003E73 C0 07            [24] 1068 	push	ar7
-      003E75 C0 06            [24] 1069 	push	ar6
-      003E77 12 17 27         [24] 1070 	lcall	_putchar
+      004041 8F 05            [24] 1064 	mov	ar5,r7
+      004043 7C 00            [12] 1065 	mov	r4,#0x00
+      004045 8D 82            [24] 1066 	mov	dpl,r5
+      004047 8C 83            [24] 1067 	mov	dph,r4
+      004049 C0 07            [24] 1068 	push	ar7
+      00404B C0 06            [24] 1069 	push	ar6
+      00404D 12 18 FD         [24] 1070 	lcall	_putchar
                                    1071 ;	uart.c:79: putchar(msgtype);
-      003E7A 90 0C 84         [24] 1072 	mov	dptr,#_sendProtocolMSG_msgtype_65536_54
-      003E7D E0               [24] 1073 	movx	a,@dptr
-      003E7E FD               [12] 1074 	mov	r5,a
-      003E7F 7C 00            [12] 1075 	mov	r4,#0x00
-      003E81 8D 82            [24] 1076 	mov	dpl,r5
-      003E83 8C 83            [24] 1077 	mov	dph,r4
-      003E85 12 17 27         [24] 1078 	lcall	_putchar
+      004050 90 0C A2         [24] 1072 	mov	dptr,#_sendProtocolMSG_msgtype_65536_54
+      004053 E0               [24] 1073 	movx	a,@dptr
+      004054 FD               [12] 1074 	mov	r5,a
+      004055 7C 00            [12] 1075 	mov	r4,#0x00
+      004057 8D 82            [24] 1076 	mov	dpl,r5
+      004059 8C 83            [24] 1077 	mov	dph,r4
+      00405B 12 18 FD         [24] 1078 	lcall	_putchar
                                    1079 ;	uart.c:80: putchar(type);
-      003E88 90 0C 7F         [24] 1080 	mov	dptr,#_sendProtocolMSG_PARM_3
-      003E8B E0               [24] 1081 	movx	a,@dptr
-      003E8C FD               [12] 1082 	mov	r5,a
-      003E8D 7C 00            [12] 1083 	mov	r4,#0x00
-      003E8F 8D 82            [24] 1084 	mov	dpl,r5
-      003E91 8C 83            [24] 1085 	mov	dph,r4
-      003E93 12 17 27         [24] 1086 	lcall	_putchar
+      00405E 90 0C 9D         [24] 1080 	mov	dptr,#_sendProtocolMSG_PARM_3
+      004061 E0               [24] 1081 	movx	a,@dptr
+      004062 FD               [12] 1082 	mov	r5,a
+      004063 7C 00            [12] 1083 	mov	r4,#0x00
+      004065 8D 82            [24] 1084 	mov	dpl,r5
+      004067 8C 83            [24] 1085 	mov	dph,r4
+      004069 12 18 FD         [24] 1086 	lcall	_putchar
                                    1087 ;	uart.c:81: putchar(device);
-      003E96 90 0C 80         [24] 1088 	mov	dptr,#_sendProtocolMSG_PARM_4
-      003E99 E0               [24] 1089 	movx	a,@dptr
-      003E9A FD               [12] 1090 	mov	r5,a
-      003E9B 7C 00            [12] 1091 	mov	r4,#0x00
-      003E9D 8D 82            [24] 1092 	mov	dpl,r5
-      003E9F 8C 83            [24] 1093 	mov	dph,r4
-      003EA1 12 17 27         [24] 1094 	lcall	_putchar
+      00406C 90 0C 9E         [24] 1088 	mov	dptr,#_sendProtocolMSG_PARM_4
+      00406F E0               [24] 1089 	movx	a,@dptr
+      004070 FD               [12] 1090 	mov	r5,a
+      004071 7C 00            [12] 1091 	mov	r4,#0x00
+      004073 8D 82            [24] 1092 	mov	dpl,r5
+      004075 8C 83            [24] 1093 	mov	dph,r4
+      004077 12 18 FD         [24] 1094 	lcall	_putchar
                                    1095 ;	uart.c:82: putchar(endpoint);
-      003EA4 90 0C 81         [24] 1096 	mov	dptr,#_sendProtocolMSG_PARM_5
-      003EA7 E0               [24] 1097 	movx	a,@dptr
-      003EA8 FD               [12] 1098 	mov	r5,a
-      003EA9 7C 00            [12] 1099 	mov	r4,#0x00
-      003EAB 8D 82            [24] 1100 	mov	dpl,r5
-      003EAD 8C 83            [24] 1101 	mov	dph,r4
-      003EAF 12 17 27         [24] 1102 	lcall	_putchar
+      00407A 90 0C 9F         [24] 1096 	mov	dptr,#_sendProtocolMSG_PARM_5
+      00407D E0               [24] 1097 	movx	a,@dptr
+      00407E FD               [12] 1098 	mov	r5,a
+      00407F 7C 00            [12] 1099 	mov	r4,#0x00
+      004081 8D 82            [24] 1100 	mov	dpl,r5
+      004083 8C 83            [24] 1101 	mov	dph,r4
+      004085 12 18 FD         [24] 1102 	lcall	_putchar
                                    1103 ;	uart.c:83: putchar(0);
-      003EB2 90 00 00         [24] 1104 	mov	dptr,#0x0000
-      003EB5 12 17 27         [24] 1105 	lcall	_putchar
+      004088 90 00 00         [24] 1104 	mov	dptr,#0x0000
+      00408B 12 18 FD         [24] 1105 	lcall	_putchar
                                    1106 ;	uart.c:84: putchar(0);
-      003EB8 90 00 00         [24] 1107 	mov	dptr,#0x0000
-      003EBB 12 17 27         [24] 1108 	lcall	_putchar
+      00408E 90 00 00         [24] 1107 	mov	dptr,#0x0000
+      004091 12 18 FD         [24] 1108 	lcall	_putchar
                                    1109 ;	uart.c:85: putchar(0);
-      003EBE 90 00 00         [24] 1110 	mov	dptr,#0x0000
-      003EC1 12 17 27         [24] 1111 	lcall	_putchar
+      004094 90 00 00         [24] 1110 	mov	dptr,#0x0000
+      004097 12 18 FD         [24] 1111 	lcall	_putchar
                                    1112 ;	uart.c:86: putchar(0);
-      003EC4 90 00 00         [24] 1113 	mov	dptr,#0x0000
-      003EC7 12 17 27         [24] 1114 	lcall	_putchar
-      003ECA D0 06            [24] 1115 	pop	ar6
-      003ECC D0 07            [24] 1116 	pop	ar7
+      00409A 90 00 00         [24] 1113 	mov	dptr,#0x0000
+      00409D 12 18 FD         [24] 1114 	lcall	_putchar
+      0040A0 D0 06            [24] 1115 	pop	ar6
+      0040A2 D0 07            [24] 1116 	pop	ar7
                                    1117 ;	uart.c:87: for (i = 0; i < length; i++)
-      003ECE 90 0C 82         [24] 1118 	mov	dptr,#_sendProtocolMSG_PARM_6
-      003ED1 E0               [24] 1119 	movx	a,@dptr
-      003ED2 FC               [12] 1120 	mov	r4,a
-      003ED3 A3               [24] 1121 	inc	dptr
-      003ED4 E0               [24] 1122 	movx	a,@dptr
-      003ED5 FD               [12] 1123 	mov	r5,a
-      003ED6 7A 00            [12] 1124 	mov	r2,#0x00
-      003ED8 7B 00            [12] 1125 	mov	r3,#0x00
-      003EDA                       1126 00103$:
-      003EDA C3               [12] 1127 	clr	c
-      003EDB EA               [12] 1128 	mov	a,r2
-      003EDC 9E               [12] 1129 	subb	a,r6
-      003EDD EB               [12] 1130 	mov	a,r3
-      003EDE 9F               [12] 1131 	subb	a,r7
-      003EDF 50 32            [24] 1132 	jnc	00101$
+      0040A4 90 0C A0         [24] 1118 	mov	dptr,#_sendProtocolMSG_PARM_6
+      0040A7 E0               [24] 1119 	movx	a,@dptr
+      0040A8 FC               [12] 1120 	mov	r4,a
+      0040A9 A3               [24] 1121 	inc	dptr
+      0040AA E0               [24] 1122 	movx	a,@dptr
+      0040AB FD               [12] 1123 	mov	r5,a
+      0040AC 7A 00            [12] 1124 	mov	r2,#0x00
+      0040AE 7B 00            [12] 1125 	mov	r3,#0x00
+      0040B0                       1126 00103$:
+      0040B0 C3               [12] 1127 	clr	c
+      0040B1 EA               [12] 1128 	mov	a,r2
+      0040B2 9E               [12] 1129 	subb	a,r6
+      0040B3 EB               [12] 1130 	mov	a,r3
+      0040B4 9F               [12] 1131 	subb	a,r7
+      0040B5 50 32            [24] 1132 	jnc	00101$
                                    1133 ;	uart.c:89: putchar(msgbuffer[i]);
-      003EE1 EA               [12] 1134 	mov	a,r2
-      003EE2 2C               [12] 1135 	add	a,r4
-      003EE3 F5 82            [12] 1136 	mov	dpl,a
-      003EE5 EB               [12] 1137 	mov	a,r3
-      003EE6 3D               [12] 1138 	addc	a,r5
-      003EE7 F5 83            [12] 1139 	mov	dph,a
-      003EE9 E0               [24] 1140 	movx	a,@dptr
-      003EEA F8               [12] 1141 	mov	r0,a
-      003EEB 79 00            [12] 1142 	mov	r1,#0x00
-      003EED 88 82            [24] 1143 	mov	dpl,r0
-      003EEF 89 83            [24] 1144 	mov	dph,r1
-      003EF1 C0 07            [24] 1145 	push	ar7
-      003EF3 C0 06            [24] 1146 	push	ar6
-      003EF5 C0 05            [24] 1147 	push	ar5
-      003EF7 C0 04            [24] 1148 	push	ar4
-      003EF9 C0 03            [24] 1149 	push	ar3
-      003EFB C0 02            [24] 1150 	push	ar2
-      003EFD 12 17 27         [24] 1151 	lcall	_putchar
-      003F00 D0 02            [24] 1152 	pop	ar2
-      003F02 D0 03            [24] 1153 	pop	ar3
-      003F04 D0 04            [24] 1154 	pop	ar4
-      003F06 D0 05            [24] 1155 	pop	ar5
-      003F08 D0 06            [24] 1156 	pop	ar6
-      003F0A D0 07            [24] 1157 	pop	ar7
+      0040B7 EA               [12] 1134 	mov	a,r2
+      0040B8 2C               [12] 1135 	add	a,r4
+      0040B9 F5 82            [12] 1136 	mov	dpl,a
+      0040BB EB               [12] 1137 	mov	a,r3
+      0040BC 3D               [12] 1138 	addc	a,r5
+      0040BD F5 83            [12] 1139 	mov	dph,a
+      0040BF E0               [24] 1140 	movx	a,@dptr
+      0040C0 F8               [12] 1141 	mov	r0,a
+      0040C1 79 00            [12] 1142 	mov	r1,#0x00
+      0040C3 88 82            [24] 1143 	mov	dpl,r0
+      0040C5 89 83            [24] 1144 	mov	dph,r1
+      0040C7 C0 07            [24] 1145 	push	ar7
+      0040C9 C0 06            [24] 1146 	push	ar6
+      0040CB C0 05            [24] 1147 	push	ar5
+      0040CD C0 04            [24] 1148 	push	ar4
+      0040CF C0 03            [24] 1149 	push	ar3
+      0040D1 C0 02            [24] 1150 	push	ar2
+      0040D3 12 18 FD         [24] 1151 	lcall	_putchar
+      0040D6 D0 02            [24] 1152 	pop	ar2
+      0040D8 D0 03            [24] 1153 	pop	ar3
+      0040DA D0 04            [24] 1154 	pop	ar4
+      0040DC D0 05            [24] 1155 	pop	ar5
+      0040DE D0 06            [24] 1156 	pop	ar6
+      0040E0 D0 07            [24] 1157 	pop	ar7
                                    1158 ;	uart.c:87: for (i = 0; i < length; i++)
-      003F0C 0A               [12] 1159 	inc	r2
-      003F0D BA 00 CA         [24] 1160 	cjne	r2,#0x00,00103$
-      003F10 0B               [12] 1161 	inc	r3
-      003F11 80 C7            [24] 1162 	sjmp	00103$
-      003F13                       1163 00101$:
+      0040E2 0A               [12] 1159 	inc	r2
+      0040E3 BA 00 CA         [24] 1160 	cjne	r2,#0x00,00103$
+      0040E6 0B               [12] 1161 	inc	r3
+      0040E7 80 C7            [24] 1162 	sjmp	00103$
+      0040E9                       1163 00101$:
                                    1164 ;	uart.c:91: putchar('\n');
-      003F13 90 00 0A         [24] 1165 	mov	dptr,#0x000a
+      0040E9 90 00 0A         [24] 1165 	mov	dptr,#0x000a
                                    1166 ;	uart.c:92: }
-      003F16 02 17 27         [24] 1167 	ljmp	_putchar
+      0040EC 02 18 FD         [24] 1167 	ljmp	_putchar
                                    1168 ;------------------------------------------------------------
                                    1169 ;Allocation info for local variables in function 'sendHidPollMSG'
                                    1170 ;------------------------------------------------------------
@@ -1184,167 +1184,167 @@
                                    1184 ;	-----------------------------------------
                                    1185 ;	 function sendHidPollMSG
                                    1186 ;	-----------------------------------------
-      003F19                       1187 _sendHidPollMSG:
-      003F19 E5 82            [12] 1188 	mov	a,dpl
-      003F1B 90 0C 90         [24] 1189 	mov	dptr,#_sendHidPollMSG_msgtype_65536_58
-      003F1E F0               [24] 1190 	movx	@dptr,a
+      0040EF                       1187 _sendHidPollMSG:
+      0040EF E5 82            [12] 1188 	mov	a,dpl
+      0040F1 90 0C AE         [24] 1189 	mov	dptr,#_sendHidPollMSG_msgtype_65536_58
+      0040F4 F0               [24] 1190 	movx	@dptr,a
                                    1191 ;	uart.c:96: putchar(0xFE);    
-      003F1F 90 00 FE         [24] 1192 	mov	dptr,#0x00fe
-      003F22 12 17 27         [24] 1193 	lcall	_putchar
+      0040F5 90 00 FE         [24] 1192 	mov	dptr,#0x00fe
+      0040F8 12 18 FD         [24] 1193 	lcall	_putchar
                                    1194 ;	uart.c:97: putchar(length);
-      003F25 90 0C 85         [24] 1195 	mov	dptr,#_sendHidPollMSG_PARM_2
-      003F28 E0               [24] 1196 	movx	a,@dptr
-      003F29 FE               [12] 1197 	mov	r6,a
-      003F2A A3               [24] 1198 	inc	dptr
-      003F2B E0               [24] 1199 	movx	a,@dptr
-      003F2C FF               [12] 1200 	mov	r7,a
-      003F2D 8E 04            [24] 1201 	mov	ar4,r6
-      003F2F 8F 05            [24] 1202 	mov	ar5,r7
-      003F31 8C 82            [24] 1203 	mov	dpl,r4
-      003F33 8D 83            [24] 1204 	mov	dph,r5
-      003F35 C0 07            [24] 1205 	push	ar7
-      003F37 C0 06            [24] 1206 	push	ar6
-      003F39 12 17 27         [24] 1207 	lcall	_putchar
-      003F3C D0 06            [24] 1208 	pop	ar6
-      003F3E D0 07            [24] 1209 	pop	ar7
+      0040FB 90 0C A3         [24] 1195 	mov	dptr,#_sendHidPollMSG_PARM_2
+      0040FE E0               [24] 1196 	movx	a,@dptr
+      0040FF FE               [12] 1197 	mov	r6,a
+      004100 A3               [24] 1198 	inc	dptr
+      004101 E0               [24] 1199 	movx	a,@dptr
+      004102 FF               [12] 1200 	mov	r7,a
+      004103 8E 04            [24] 1201 	mov	ar4,r6
+      004105 8F 05            [24] 1202 	mov	ar5,r7
+      004107 8C 82            [24] 1203 	mov	dpl,r4
+      004109 8D 83            [24] 1204 	mov	dph,r5
+      00410B C0 07            [24] 1205 	push	ar7
+      00410D C0 06            [24] 1206 	push	ar6
+      00410F 12 18 FD         [24] 1207 	lcall	_putchar
+      004112 D0 06            [24] 1208 	pop	ar6
+      004114 D0 07            [24] 1209 	pop	ar7
                                    1210 ;	uart.c:98: putchar((unsigned char)(length>>8));
-      003F40 8F 05            [24] 1211 	mov	ar5,r7
-      003F42 7C 00            [12] 1212 	mov	r4,#0x00
-      003F44 8D 82            [24] 1213 	mov	dpl,r5
-      003F46 8C 83            [24] 1214 	mov	dph,r4
-      003F48 C0 07            [24] 1215 	push	ar7
-      003F4A C0 06            [24] 1216 	push	ar6
-      003F4C 12 17 27         [24] 1217 	lcall	_putchar
+      004116 8F 05            [24] 1211 	mov	ar5,r7
+      004118 7C 00            [12] 1212 	mov	r4,#0x00
+      00411A 8D 82            [24] 1213 	mov	dpl,r5
+      00411C 8C 83            [24] 1214 	mov	dph,r4
+      00411E C0 07            [24] 1215 	push	ar7
+      004120 C0 06            [24] 1216 	push	ar6
+      004122 12 18 FD         [24] 1217 	lcall	_putchar
                                    1218 ;	uart.c:99: putchar(msgtype);
-      003F4F 90 0C 90         [24] 1219 	mov	dptr,#_sendHidPollMSG_msgtype_65536_58
-      003F52 E0               [24] 1220 	movx	a,@dptr
-      003F53 FD               [12] 1221 	mov	r5,a
-      003F54 7C 00            [12] 1222 	mov	r4,#0x00
-      003F56 8D 82            [24] 1223 	mov	dpl,r5
-      003F58 8C 83            [24] 1224 	mov	dph,r4
-      003F5A 12 17 27         [24] 1225 	lcall	_putchar
+      004125 90 0C AE         [24] 1219 	mov	dptr,#_sendHidPollMSG_msgtype_65536_58
+      004128 E0               [24] 1220 	movx	a,@dptr
+      004129 FD               [12] 1221 	mov	r5,a
+      00412A 7C 00            [12] 1222 	mov	r4,#0x00
+      00412C 8D 82            [24] 1223 	mov	dpl,r5
+      00412E 8C 83            [24] 1224 	mov	dph,r4
+      004130 12 18 FD         [24] 1225 	lcall	_putchar
                                    1226 ;	uart.c:100: putchar(type);
-      003F5D 90 0C 87         [24] 1227 	mov	dptr,#_sendHidPollMSG_PARM_3
-      003F60 E0               [24] 1228 	movx	a,@dptr
-      003F61 FD               [12] 1229 	mov	r5,a
-      003F62 7C 00            [12] 1230 	mov	r4,#0x00
-      003F64 8D 82            [24] 1231 	mov	dpl,r5
-      003F66 8C 83            [24] 1232 	mov	dph,r4
-      003F68 12 17 27         [24] 1233 	lcall	_putchar
+      004133 90 0C A5         [24] 1227 	mov	dptr,#_sendHidPollMSG_PARM_3
+      004136 E0               [24] 1228 	movx	a,@dptr
+      004137 FD               [12] 1229 	mov	r5,a
+      004138 7C 00            [12] 1230 	mov	r4,#0x00
+      00413A 8D 82            [24] 1231 	mov	dpl,r5
+      00413C 8C 83            [24] 1232 	mov	dph,r4
+      00413E 12 18 FD         [24] 1233 	lcall	_putchar
                                    1234 ;	uart.c:101: putchar(device);
-      003F6B 90 0C 88         [24] 1235 	mov	dptr,#_sendHidPollMSG_PARM_4
-      003F6E E0               [24] 1236 	movx	a,@dptr
-      003F6F FD               [12] 1237 	mov	r5,a
-      003F70 7C 00            [12] 1238 	mov	r4,#0x00
-      003F72 8D 82            [24] 1239 	mov	dpl,r5
-      003F74 8C 83            [24] 1240 	mov	dph,r4
-      003F76 12 17 27         [24] 1241 	lcall	_putchar
+      004141 90 0C A6         [24] 1235 	mov	dptr,#_sendHidPollMSG_PARM_4
+      004144 E0               [24] 1236 	movx	a,@dptr
+      004145 FD               [12] 1237 	mov	r5,a
+      004146 7C 00            [12] 1238 	mov	r4,#0x00
+      004148 8D 82            [24] 1239 	mov	dpl,r5
+      00414A 8C 83            [24] 1240 	mov	dph,r4
+      00414C 12 18 FD         [24] 1241 	lcall	_putchar
                                    1242 ;	uart.c:102: putchar(endpoint);
-      003F79 90 0C 89         [24] 1243 	mov	dptr,#_sendHidPollMSG_PARM_5
-      003F7C E0               [24] 1244 	movx	a,@dptr
-      003F7D FD               [12] 1245 	mov	r5,a
-      003F7E 7C 00            [12] 1246 	mov	r4,#0x00
-      003F80 8D 82            [24] 1247 	mov	dpl,r5
-      003F82 8C 83            [24] 1248 	mov	dph,r4
-      003F84 12 17 27         [24] 1249 	lcall	_putchar
+      00414F 90 0C A7         [24] 1243 	mov	dptr,#_sendHidPollMSG_PARM_5
+      004152 E0               [24] 1244 	movx	a,@dptr
+      004153 FD               [12] 1245 	mov	r5,a
+      004154 7C 00            [12] 1246 	mov	r4,#0x00
+      004156 8D 82            [24] 1247 	mov	dpl,r5
+      004158 8C 83            [24] 1248 	mov	dph,r4
+      00415A 12 18 FD         [24] 1249 	lcall	_putchar
                                    1250 ;	uart.c:103: putchar(idVendorL);
-      003F87 90 0C 8C         [24] 1251 	mov	dptr,#_sendHidPollMSG_PARM_7
-      003F8A E0               [24] 1252 	movx	a,@dptr
-      003F8B FD               [12] 1253 	mov	r5,a
-      003F8C 7C 00            [12] 1254 	mov	r4,#0x00
-      003F8E 8D 82            [24] 1255 	mov	dpl,r5
-      003F90 8C 83            [24] 1256 	mov	dph,r4
-      003F92 12 17 27         [24] 1257 	lcall	_putchar
+      00415D 90 0C AA         [24] 1251 	mov	dptr,#_sendHidPollMSG_PARM_7
+      004160 E0               [24] 1252 	movx	a,@dptr
+      004161 FD               [12] 1253 	mov	r5,a
+      004162 7C 00            [12] 1254 	mov	r4,#0x00
+      004164 8D 82            [24] 1255 	mov	dpl,r5
+      004166 8C 83            [24] 1256 	mov	dph,r4
+      004168 12 18 FD         [24] 1257 	lcall	_putchar
                                    1258 ;	uart.c:104: putchar(idVendorH);
-      003F95 90 0C 8D         [24] 1259 	mov	dptr,#_sendHidPollMSG_PARM_8
-      003F98 E0               [24] 1260 	movx	a,@dptr
-      003F99 FD               [12] 1261 	mov	r5,a
-      003F9A 7C 00            [12] 1262 	mov	r4,#0x00
-      003F9C 8D 82            [24] 1263 	mov	dpl,r5
-      003F9E 8C 83            [24] 1264 	mov	dph,r4
-      003FA0 12 17 27         [24] 1265 	lcall	_putchar
+      00416B 90 0C AB         [24] 1259 	mov	dptr,#_sendHidPollMSG_PARM_8
+      00416E E0               [24] 1260 	movx	a,@dptr
+      00416F FD               [12] 1261 	mov	r5,a
+      004170 7C 00            [12] 1262 	mov	r4,#0x00
+      004172 8D 82            [24] 1263 	mov	dpl,r5
+      004174 8C 83            [24] 1264 	mov	dph,r4
+      004176 12 18 FD         [24] 1265 	lcall	_putchar
                                    1266 ;	uart.c:105: putchar(idProductL);
-      003FA3 90 0C 8E         [24] 1267 	mov	dptr,#_sendHidPollMSG_PARM_9
-      003FA6 E0               [24] 1268 	movx	a,@dptr
-      003FA7 FD               [12] 1269 	mov	r5,a
-      003FA8 7C 00            [12] 1270 	mov	r4,#0x00
-      003FAA 8D 82            [24] 1271 	mov	dpl,r5
-      003FAC 8C 83            [24] 1272 	mov	dph,r4
-      003FAE 12 17 27         [24] 1273 	lcall	_putchar
+      004179 90 0C AC         [24] 1267 	mov	dptr,#_sendHidPollMSG_PARM_9
+      00417C E0               [24] 1268 	movx	a,@dptr
+      00417D FD               [12] 1269 	mov	r5,a
+      00417E 7C 00            [12] 1270 	mov	r4,#0x00
+      004180 8D 82            [24] 1271 	mov	dpl,r5
+      004182 8C 83            [24] 1272 	mov	dph,r4
+      004184 12 18 FD         [24] 1273 	lcall	_putchar
                                    1274 ;	uart.c:106: putchar(idProductH);
-      003FB1 90 0C 8F         [24] 1275 	mov	dptr,#_sendHidPollMSG_PARM_10
-      003FB4 E0               [24] 1276 	movx	a,@dptr
-      003FB5 FD               [12] 1277 	mov	r5,a
-      003FB6 7C 00            [12] 1278 	mov	r4,#0x00
-      003FB8 8D 82            [24] 1279 	mov	dpl,r5
-      003FBA 8C 83            [24] 1280 	mov	dph,r4
-      003FBC 12 17 27         [24] 1281 	lcall	_putchar
-      003FBF D0 06            [24] 1282 	pop	ar6
-      003FC1 D0 07            [24] 1283 	pop	ar7
+      004187 90 0C AD         [24] 1275 	mov	dptr,#_sendHidPollMSG_PARM_10
+      00418A E0               [24] 1276 	movx	a,@dptr
+      00418B FD               [12] 1277 	mov	r5,a
+      00418C 7C 00            [12] 1278 	mov	r4,#0x00
+      00418E 8D 82            [24] 1279 	mov	dpl,r5
+      004190 8C 83            [24] 1280 	mov	dph,r4
+      004192 12 18 FD         [24] 1281 	lcall	_putchar
+      004195 D0 06            [24] 1282 	pop	ar6
+      004197 D0 07            [24] 1283 	pop	ar7
                                    1284 ;	uart.c:107: for (i = 0; i < length; i++)
-      003FC3 90 0C 8A         [24] 1285 	mov	dptr,#_sendHidPollMSG_PARM_6
-      003FC6 E0               [24] 1286 	movx	a,@dptr
-      003FC7 FC               [12] 1287 	mov	r4,a
-      003FC8 A3               [24] 1288 	inc	dptr
-      003FC9 E0               [24] 1289 	movx	a,@dptr
-      003FCA FD               [12] 1290 	mov	r5,a
-      003FCB 7A 00            [12] 1291 	mov	r2,#0x00
-      003FCD 7B 00            [12] 1292 	mov	r3,#0x00
-      003FCF                       1293 00103$:
-      003FCF C3               [12] 1294 	clr	c
-      003FD0 EA               [12] 1295 	mov	a,r2
-      003FD1 9E               [12] 1296 	subb	a,r6
-      003FD2 EB               [12] 1297 	mov	a,r3
-      003FD3 9F               [12] 1298 	subb	a,r7
-      003FD4 50 32            [24] 1299 	jnc	00101$
+      004199 90 0C A8         [24] 1285 	mov	dptr,#_sendHidPollMSG_PARM_6
+      00419C E0               [24] 1286 	movx	a,@dptr
+      00419D FC               [12] 1287 	mov	r4,a
+      00419E A3               [24] 1288 	inc	dptr
+      00419F E0               [24] 1289 	movx	a,@dptr
+      0041A0 FD               [12] 1290 	mov	r5,a
+      0041A1 7A 00            [12] 1291 	mov	r2,#0x00
+      0041A3 7B 00            [12] 1292 	mov	r3,#0x00
+      0041A5                       1293 00103$:
+      0041A5 C3               [12] 1294 	clr	c
+      0041A6 EA               [12] 1295 	mov	a,r2
+      0041A7 9E               [12] 1296 	subb	a,r6
+      0041A8 EB               [12] 1297 	mov	a,r3
+      0041A9 9F               [12] 1298 	subb	a,r7
+      0041AA 50 32            [24] 1299 	jnc	00101$
                                    1300 ;	uart.c:109: putchar(msgbuffer[i]);
-      003FD6 EA               [12] 1301 	mov	a,r2
-      003FD7 2C               [12] 1302 	add	a,r4
-      003FD8 F5 82            [12] 1303 	mov	dpl,a
-      003FDA EB               [12] 1304 	mov	a,r3
-      003FDB 3D               [12] 1305 	addc	a,r5
-      003FDC F5 83            [12] 1306 	mov	dph,a
-      003FDE E0               [24] 1307 	movx	a,@dptr
-      003FDF F8               [12] 1308 	mov	r0,a
-      003FE0 79 00            [12] 1309 	mov	r1,#0x00
-      003FE2 88 82            [24] 1310 	mov	dpl,r0
-      003FE4 89 83            [24] 1311 	mov	dph,r1
-      003FE6 C0 07            [24] 1312 	push	ar7
-      003FE8 C0 06            [24] 1313 	push	ar6
-      003FEA C0 05            [24] 1314 	push	ar5
-      003FEC C0 04            [24] 1315 	push	ar4
-      003FEE C0 03            [24] 1316 	push	ar3
-      003FF0 C0 02            [24] 1317 	push	ar2
-      003FF2 12 17 27         [24] 1318 	lcall	_putchar
-      003FF5 D0 02            [24] 1319 	pop	ar2
-      003FF7 D0 03            [24] 1320 	pop	ar3
-      003FF9 D0 04            [24] 1321 	pop	ar4
-      003FFB D0 05            [24] 1322 	pop	ar5
-      003FFD D0 06            [24] 1323 	pop	ar6
-      003FFF D0 07            [24] 1324 	pop	ar7
+      0041AC EA               [12] 1301 	mov	a,r2
+      0041AD 2C               [12] 1302 	add	a,r4
+      0041AE F5 82            [12] 1303 	mov	dpl,a
+      0041B0 EB               [12] 1304 	mov	a,r3
+      0041B1 3D               [12] 1305 	addc	a,r5
+      0041B2 F5 83            [12] 1306 	mov	dph,a
+      0041B4 E0               [24] 1307 	movx	a,@dptr
+      0041B5 F8               [12] 1308 	mov	r0,a
+      0041B6 79 00            [12] 1309 	mov	r1,#0x00
+      0041B8 88 82            [24] 1310 	mov	dpl,r0
+      0041BA 89 83            [24] 1311 	mov	dph,r1
+      0041BC C0 07            [24] 1312 	push	ar7
+      0041BE C0 06            [24] 1313 	push	ar6
+      0041C0 C0 05            [24] 1314 	push	ar5
+      0041C2 C0 04            [24] 1315 	push	ar4
+      0041C4 C0 03            [24] 1316 	push	ar3
+      0041C6 C0 02            [24] 1317 	push	ar2
+      0041C8 12 18 FD         [24] 1318 	lcall	_putchar
+      0041CB D0 02            [24] 1319 	pop	ar2
+      0041CD D0 03            [24] 1320 	pop	ar3
+      0041CF D0 04            [24] 1321 	pop	ar4
+      0041D1 D0 05            [24] 1322 	pop	ar5
+      0041D3 D0 06            [24] 1323 	pop	ar6
+      0041D5 D0 07            [24] 1324 	pop	ar7
                                    1325 ;	uart.c:107: for (i = 0; i < length; i++)
-      004001 0A               [12] 1326 	inc	r2
-      004002 BA 00 CA         [24] 1327 	cjne	r2,#0x00,00103$
-      004005 0B               [12] 1328 	inc	r3
-      004006 80 C7            [24] 1329 	sjmp	00103$
-      004008                       1330 00101$:
+      0041D7 0A               [12] 1326 	inc	r2
+      0041D8 BA 00 CA         [24] 1327 	cjne	r2,#0x00,00103$
+      0041DB 0B               [12] 1328 	inc	r3
+      0041DC 80 C7            [24] 1329 	sjmp	00103$
+      0041DE                       1330 00101$:
                                    1331 ;	uart.c:111: putchar('\n');
-      004008 90 00 0A         [24] 1332 	mov	dptr,#0x000a
+      0041DE 90 00 0A         [24] 1332 	mov	dptr,#0x000a
                                    1333 ;	uart.c:112: }
-      00400B 02 17 27         [24] 1334 	ljmp	_putchar
+      0041E1 02 18 FD         [24] 1334 	ljmp	_putchar
                                    1335 	.area CSEG    (CODE)
                                    1336 	.area CONST   (CODE)
                                    1337 	.area CONST   (CODE)
-      0052A9                       1338 ___str_0:
-      0052A9 30 78 25 30 32 58 20  1339 	.ascii "0x%02X "
-      0052B0 00                    1340 	.db 0x00
+      00547F                       1338 ___str_0:
+      00547F 30 78 25 30 32 58 20  1339 	.ascii "0x%02X "
+      005486 00                    1340 	.db 0x00
                                    1341 	.area CSEG    (CODE)
                                    1342 	.area CONST   (CODE)
-      0052B1                       1343 ___str_1:
-      0052B1 0A                    1344 	.db 0x0a
-      0052B2 00                    1345 	.db 0x00
+      005487                       1343 ___str_1:
+      005487 0A                    1344 	.db 0x0a
+      005488 00                    1345 	.db 0x00
                                    1346 	.area CSEG    (CODE)
                                    1347 	.area XINIT   (CODE)
-      0052BE                       1348 __xinit__rxPos:
-      0052BE 00                    1349 	.db #0x00	; 0
+      005494                       1348 __xinit__rxPos:
+      005494 00                    1349 	.db #0x00	; 0
                                    1350 	.area CABS    (ABS,CODE)

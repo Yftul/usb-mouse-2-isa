@@ -1,7 +1,7 @@
 PROJECT_NAME := CH559USB
 BUILD_DIR    := build
 SRC_DIR      := .
-SRC          := main.c util.c USBHost.c uart.c
+SRC          := main.c util.c USBHost.c
 OBJ          := $(patsubst %.c,$(BUILD_DIR)/%.rel,$(SRC))
 
 XRAM_SIZE    := 0x0800

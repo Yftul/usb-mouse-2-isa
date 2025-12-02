@@ -1358,7 +1358,7 @@ ASM example:
 #endif
 
 #ifndef USB_DEVICE_ADDR
-#define	USB_DEVICE_ADDR			0x02	/* 默认的USB设备地址 */
+#define	USB_DEVICE_ADDR			0x02 /* Адрес USB-устройства по умолчанию */
 #endif
 #ifndef DEFAULT_ENDP0_SIZE
 #define DEFAULT_ENDP0_SIZE      8       /* default maximum packet size for endpoint 0 */
@@ -1370,15 +1370,15 @@ ASM example:
 #define MAX_PACKET_SIZE         64      /* maximum packet size */
 #endif
 #ifndef USB_BO_CBW_SIZE
-#define USB_BO_CBW_SIZE			0x1F	/* 命令块CBW的总长度 */
-#define USB_BO_CSW_SIZE			0x0D	/* 命令状态块CSW的总长度 */
+#define USB_BO_CBW_SIZE			0x1F /* Общая длина блока команд CBW (Command Block Wrapper) */
+#define USB_BO_CSW_SIZE			0x0D /* Общая длина блока статуса команд CSW (Command Status Wrapper) */
 #endif
 #ifndef USB_BO_CBW_SIG0
-#define USB_BO_CBW_SIG0         0x55    /* 命令块CBW识别标志'USBC' */
+#define USB_BO_CBW_SIG0         0x55 /* Сигнатура блока команд CBW: 'USBC' */
 #define USB_BO_CBW_SIG1         0x53
 #define USB_BO_CBW_SIG2         0x42
 #define USB_BO_CBW_SIG3         0x43
-#define USB_BO_CSW_SIG0         0x55    /* 命令状态块CSW识别标志'USBS' */
+#define USB_BO_CSW_SIG0         0x55 /* Сигнатура блока статуса команд CSW: 'USBS' */
 #define USB_BO_CSW_SIG1         0x53
 #define USB_BO_CSW_SIG2         0x42
 #define USB_BO_CSW_SIG3         0x53
@@ -1595,30 +1595,30 @@ typedef UDISK_BOC_CSW __xdata *PXUDISK_BOC_CSW;
 #define Unknow            0x0F
 
 
-typedef struct  _HID_Device_Button{
+typedef struct  _HID_Device_Button {
    unsigned char Usage_min;
    unsigned char Usage_max;
    unsigned short Logical_min;
    unsigned short Logical_max;
    unsigned char Size_bit;
    unsigned char Size_reserved;
-}BUTTON;
+} BUTTON;
 
-typedef struct  _HID_Device_XY{
+typedef struct  _HID_Device_XY {
    unsigned short Logical_min;
    unsigned short Logical_max;
    unsigned char Size_bit;
    unsigned char Size_reserved;
-}XY;
+} XY;
 
-typedef struct  _HID_Device_Wheel{
+typedef struct  _HID_Device_Wheel {
    unsigned short Logical_min;
    unsigned short Logical_max;
    unsigned char Size_bit;
    unsigned char Size_reserved;
-}WHEEL;
+} WHEEL;
 
-typedef struct  _HID_Device_Mouse{
+typedef struct  _HID_Device_Mouse {
    unsigned short  X;
    unsigned short  Y;
    unsigned char  Left;

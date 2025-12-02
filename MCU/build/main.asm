@@ -9,22 +9,14 @@
 ; Public variables in this module
 ;--------------------------------------------------------
 	.globl _main
-	.globl _mouse_write
 	.globl _flash_led
-	.globl _Timer2_ISR
-	.globl _Timer3_ISR
-	.globl _timer0_isr
-	.globl _int0_isr
-	.globl _initUART0
 	.globl _processUart
 	.globl _pollHIDdevice
 	.globl _resetHubDevices
 	.globl _checkRootHubConnections
 	.globl _initUSB_Host
-	.globl _pinMode
 	.globl _delay
 	.globl _delayUs
-	.globl _printf
 	.globl _UIF_BUS_RST
 	.globl _UIF_DETECT
 	.globl _UIF_TRANSFER
@@ -299,25 +291,6 @@
 	.globl _B
 	.globl _ACC
 	.globl _PSW
-	.globl _timer0_limit
-	.globl _fatal_error
-	.globl _allow_send_data
-	.globl _device_init
-	.globl _mouse_enabled
-	.globl _mouse_start
-	.globl _spi_tx_buf_count
-	.globl _spi_tx_buf_r
-	.globl _spi_tx_buf_w
-	.globl _spi_tx_buf
-	.globl _mouse_rx_buf_count
-	.globl _mouse_rx_buf_r
-	.globl _mouse_rx_buf_w
-	.globl _mouse_rx_buf
-	.globl _m_wheel
-	.globl _opt_irq_settings
-	.globl _opt_rate_settings
-	.globl _opt_wheel_enabled
-	.globl _opt_com_settings
 	.globl _LED_DMA_XL
 	.globl _LED_DMA_XH
 	.globl _LED_DMA_CN
@@ -358,6 +331,8 @@
 	.globl _pLED_STAT
 	.globl _pUEP2_3_MOD
 	.globl _pUEP4_1_MOD
+	.globl _putchar
+	.globl _getchar
 ;--------------------------------------------------------
 ; special function registers
 ;--------------------------------------------------------
@@ -651,9 +626,20 @@ _UIF_BUS_RST	=	0x00d8
 ; internal ram data
 ;--------------------------------------------------------
 	.area DSEG    (DATA)
+_do_process_sloc0_1_0:
+	.ds 1
+_do_process_sloc1_1_0:
+	.ds 2
+_main_sloc0_1_0:
+	.ds 1
+_main_sloc1_1_0:
+	.ds 2
 ;--------------------------------------------------------
 ; overlayable items in internal ram
 ;--------------------------------------------------------
+	.area	OSEG    (OVR,DATA)
+_clamp16_sloc0_1_0:
+	.ds 4
 ;--------------------------------------------------------
 ; Stack segment in internal ram
 ;--------------------------------------------------------
@@ -724,61 +710,71 @@ _LED_DMA_AL	=	0x2885
 _LED_DMA_CN	=	0x2886
 _LED_DMA_XH	=	0x2888
 _LED_DMA_XL	=	0x2889
-_opt_com_settings::
+_opt_com_settings:
 	.ds 1
-_opt_wheel_enabled::
+_opt_wheel_enabled:
 	.ds 1
-_opt_rate_settings::
+_opt_rate_settings:
 	.ds 1
-_opt_irq_settings::
+_opt_irq_settings:
 	.ds 1
-_m_wheel::
+_m_wheel:
 	.ds 1
-_mouse_rx_buf::
-	.ds 16
-_mouse_rx_buf_w::
-	.ds 1
-_mouse_rx_buf_r::
-	.ds 1
-_mouse_rx_buf_count::
-	.ds 1
-_spi_tx_buf::
+_spi_tx_buf:
 	.ds 255
-_spi_tx_buf_w::
+_spi_tx_buf_w:
 	.ds 1
-_spi_tx_buf_r::
+_spi_tx_buf_r:
 	.ds 1
-_spi_tx_buf_count::
+_spi_tx_buf_count:
 	.ds 1
-_mouse_start::
+_uart_tx_buf:
+	.ds 128
+_uart_tx_r:
 	.ds 1
-_mouse_enabled::
+_uart_tx_w:
 	.ds 1
-_device_init::
+_uart_rx_buf:
+	.ds 16
+_uart_rx_r:
 	.ds 1
-_allow_send_data::
+_uart_rx_w:
 	.ds 1
-_fatal_error::
+_uart_rx_buf_count:
 	.ds 1
-_timer0_limit::
+_mouse_start:
 	.ds 1
-_clamp_PARM_2:
+_mouse_enabled:
 	.ds 1
-_clamp_PARM_3:
+_device_init:
 	.ds 1
-_clamp_val_65536_51:
+_allow_send_data:
+	.ds 1
+_fatal_error:
+	.ds 1
+_timer0_limit:
+	.ds 1
+_clamp8_PARM_2:
+	.ds 1
+_clamp8_PARM_3:
+	.ds 1
+_clamp8_val_65536_47:
 	.ds 2
-_timer0_isr_cnt_65536_56:
+_clamp16_PARM_2:
+	.ds 2
+_clamp16_PARM_3:
+	.ds 2
+_clamp16_val_65536_49:
+	.ds 4
+_timer0_isr_cnt_65536_54:
 	.ds 1
-_mouse_write_c_65536_105:
-	.ds 1
-_mouse_read_data_65536_111:
-	.ds 1
-_spi_send_c_65536_123:
+_putchar_c_65536_105:
+	.ds 2
+_spi_send_c_65536_121:
 	.ds 1
 _spi_send_config_PARM_2:
 	.ds 1
-_spi_send_config_opt_com_65536_132:
+_spi_send_config_opt_com_65536_130:
 	.ds 1
 _spi_m_send_PARM_2:
 	.ds 1
@@ -786,86 +782,130 @@ _spi_m_send_PARM_3:
 	.ds 1
 _spi_m_send_PARM_4:
 	.ds 1
-_spi_m_send_x_65536_134:
+_spi_m_send_x_65536_132:
 	.ds 1
-_do_process_st_m_bt_65536_143:
+_readCOMsettings_com_table_65536_141:
+	.ds 4
+_readRatesettings_rate_table_65536_145:
+	.ds 4
+_checkIRQ_opt_com_65536_146:
 	.ds 1
-_do_process_dr_ctr_65536_143:
-	.ds 1
-_do_process_m_bt_65536_143:
-	.ds 1
-_do_process_m_cx_65536_143:
+_do_process___1310720013_131072_151:
 	.ds 2
-_do_process_m_cy_65536_143:
+_do_process___1310720008_131072_151:
 	.ds 2
-_do_process_m_cz_65536_143:
+_do_process___1310720003_131072_151:
 	.ds 2
-_do_process___2621440005_262144_150:
+_do_process_st_m_bt_65536_151:
 	.ds 1
-_do_process_val_327680_160:
+_do_process_m_bt_65536_151:
+	.ds 1
+_do_process_m_cx_65536_151:
 	.ds 2
-_do_process___2621440010_262144_151:
-	.ds 1
-_do_process_val_327681_163:
+_do_process_m_cy_65536_151:
 	.ds 2
-_do_process___2621450015_262145_152:
-	.ds 1
-_do_process_val_327682_166:
+_do_process_m_cz_65536_151:
 	.ds 2
-_readCOMsettings_res_65536_169:
+_do_process_buttons_65536_151:
+	.ds 4
+_do_process_dx_65536_151:
+	.ds 4
+_do_process_dy_65536_151:
+	.ds 4
+_do_process_dw_65536_151:
+	.ds 4
+_do_process_val_196608_161:
+	.ds 4
+_do_process_val_196608_164:
+	.ds 4
+_do_process_val_196608_167:
+	.ds 4
+_do_process___2621440019_262144_157:
 	.ds 1
-_readRatesettings_res_65536_174:
-	.ds 1
-_checkIRQ_opt_com_65536_176:
-	.ds 1
-_init___1310720026_131072_185:
-	.ds 1
-_init___1310720022_131072_185:
-	.ds 1
-_init_res_262144_191:
-	.ds 1
-_init_res_262144_198:
-	.ds 1
-_init_opt_com_196608_201:
-	.ds 1
-_init_opt_com_524288_218:
-	.ds 1
-_main___1310720026_262144_236:
-	.ds 1
-_main___1310720022_262144_236:
-	.ds 1
-_main_res_458752_241:
-	.ds 1
-_main_res_458752_248:
-	.ds 1
-_main_opt_com_393216_251:
-	.ds 1
-_main_opt_com_720896_265:
-	.ds 1
-_main_st_m_bt_393216_279:
-	.ds 1
-_main_dr_ctr_393216_279:
-	.ds 1
-_main_m_bt_393216_279:
-	.ds 1
-_main_m_cx_393216_279:
+_do_process_val_327680_176:
 	.ds 2
-_main_m_cy_393216_279:
-	.ds 2
-_main_m_cz_393216_279:
-	.ds 2
-_main___2621440005_524288_292:
+_do_process___2621440024_262144_158:
 	.ds 1
-_main_val_655360_294:
+_do_process_val_327681_179:
 	.ds 2
-_main___2621440010_589824_296:
+_do_process___2621450029_262145_159:
 	.ds 1
-_main_val_720896_298:
+_do_process_val_327682_182:
 	.ds 2
-_main___2621450015_655360_300:
+_do_process_x_327682_185:
 	.ds 1
-_main_val_786432_302:
+_do_process_middle_b_393218_186:
+	.ds 1
+_init___1310720045_131072_193:
+	.ds 1
+_init___1310720041_131072_193:
+	.ds 1
+_init_com_table_262144_319:
+	.ds 4
+_init_rate_table_262144_325:
+	.ds 4
+_init_opt_com_196608_327:
+	.ds 1
+_init_opt_com_524288_344:
+	.ds 1
+_main___1310720045_262144_359:
+	.ds 1
+_main___1310720041_262144_359:
+	.ds 1
+_main_com_table_458752_484:
+	.ds 4
+_main_rate_table_458752_490:
+	.ds 4
+_main_opt_com_393216_492:
+	.ds 1
+_main_opt_com_720896_506:
+	.ds 1
+_main___1310720013_393216_517:
 	.ds 2
+_main___1310720008_393216_517:
+	.ds 2
+_main___1310720003_393216_517:
+	.ds 2
+_main_st_m_bt_393216_517:
+	.ds 1
+_main_m_bt_393216_517:
+	.ds 1
+_main_m_cx_393216_517:
+	.ds 2
+_main_m_cy_393216_517:
+	.ds 2
+_main_m_cz_393216_517:
+	.ds 2
+_main_buttons_393216_517:
+	.ds 4
+_main_dx_393216_517:
+	.ds 4
+_main_dy_393216_517:
+	.ds 4
+_main_dw_393216_517:
+	.ds 4
+_main_val_524288_519:
+	.ds 4
+_main_val_524288_522:
+	.ds 4
+_main_val_524288_525:
+	.ds 4
+_main___2621440019_524288_538:
+	.ds 1
+_main_val_655360_540:
+	.ds 2
+_main___2621440024_589824_542:
+	.ds 1
+_main_val_720896_544:
+	.ds 2
+_main___2621450029_655360_546:
+	.ds 1
+_main_val_786432_548:
+	.ds 2
+_main_x_786432_551:
+	.ds 1
+_main_middle_b_851968_552:
+	.ds 1
 ;--------------------------------------------------------
 ; absolute external ram data
 ;--------------------------------------------------------
@@ -898,8 +938,8 @@ __interrupt_vect:
 	.ds	7
 	reti
 	.ds	7
-	reti
-	.ds	7
+	ljmp	_uart_isr
+	.ds	5
 	ljmp	_Timer2_ISR
 	.ds	5
 	reti
@@ -921,110 +961,252 @@ __interrupt_vect:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'timer0_isr'
 ;------------------------------------------------------------
-;cnt                       Allocated with name '_timer0_isr_cnt_65536_56'
+;cnt                       Allocated with name '_timer0_isr_cnt_65536_54'
 ;------------------------------------------------------------
-;	main.c:279: static uint8_t cnt = 0;
-	mov	dptr,#_timer0_isr_cnt_65536_56
+;	main.c:375: static uint8_t cnt = 0;
+	mov	dptr,#_timer0_isr_cnt_65536_54
 	clr	a
 	movx	@dptr,a
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'do_process'
 ;------------------------------------------------------------
-;st_m_bt                   Allocated with name '_do_process_st_m_bt_65536_143'
-;dr_ctr                    Allocated with name '_do_process_dr_ctr_65536_143'
-;m_bt                      Allocated with name '_do_process_m_bt_65536_143'
-;m_cx                      Allocated with name '_do_process_m_cx_65536_143'
-;m_cy                      Allocated with name '_do_process_m_cy_65536_143'
-;m_cz                      Allocated with name '_do_process_m_cz_65536_143'
-;ea_state___LINE__         Allocated with name '_do_process_ea_state___LINE___262144_147'
-;__2621440005              Allocated with name '_do_process___2621440005_262144_150'
-;cx                        Allocated with name '_do_process_cx_196608_150'
-;__2621440006              Allocated with name '_do_process___2621440006_262144_159'
-;__2621440007              Allocated with name '_do_process___2621440007_262144_159'
-;__2621440008              Allocated with name '_do_process___2621440008_262144_159'
-;val                       Allocated with name '_do_process_val_327680_160'
-;min                       Allocated with name '_do_process_min_327680_160'
-;max                       Allocated with name '_do_process_max_327680_160'
-;__2621440010              Allocated with name '_do_process___2621440010_262144_151'
-;cy                        Allocated with name '_do_process_cy_196609_151'
-;__2621450011              Allocated with name '_do_process___2621450011_262145_162'
-;__2621450012              Allocated with name '_do_process___2621450012_262145_162'
-;__2621450013              Allocated with name '_do_process___2621450013_262145_162'
-;val                       Allocated with name '_do_process_val_327681_163'
-;min                       Allocated with name '_do_process_min_327681_163'
-;max                       Allocated with name '_do_process_max_327681_163'
-;__2621450015              Allocated with name '_do_process___2621450015_262145_152'
-;cz                        Allocated with name '_do_process_cz_196610_152'
-;__2621460016              Allocated with name '_do_process___2621460016_262146_165'
-;__2621460017              Allocated with name '_do_process___2621460017_262146_165'
-;__2621460018              Allocated with name '_do_process___2621460018_262146_165'
-;val                       Allocated with name '_do_process_val_327682_166'
-;min                       Allocated with name '_do_process_min_327682_166'
-;max                       Allocated with name '_do_process_max_327682_166'
+;sloc0                     Allocated with name '_do_process_sloc0_1_0'
+;sloc1                     Allocated with name '_do_process_sloc1_1_0'
+;__1310720013              Allocated with name '_do_process___1310720013_131072_151'
+;__1310720008              Allocated with name '_do_process___1310720008_131072_151'
+;__1310720003              Allocated with name '_do_process___1310720003_131072_151'
+;st_m_bt                   Allocated with name '_do_process_st_m_bt_65536_151'
+;m_bt                      Allocated with name '_do_process_m_bt_65536_151'
+;m_cx                      Allocated with name '_do_process_m_cx_65536_151'
+;m_cy                      Allocated with name '_do_process_m_cy_65536_151'
+;m_cz                      Allocated with name '_do_process_m_cz_65536_151'
+;buttons                   Allocated with name '_do_process_buttons_65536_151'
+;dx                        Allocated with name '_do_process_dx_65536_151'
+;dy                        Allocated with name '_do_process_dy_65536_151'
+;dw                        Allocated with name '_do_process_dw_65536_151'
+;__1310720004              Allocated with name '_do_process___1310720004_131072_160'
+;__1310720005              Allocated with name '_do_process___1310720005_131072_160'
+;__1310720006              Allocated with name '_do_process___1310720006_131072_160'
+;val                       Allocated with name '_do_process_val_196608_161'
+;min                       Allocated with name '_do_process_min_196608_161'
+;max                       Allocated with name '_do_process_max_196608_161'
+;__1310720009              Allocated with name '_do_process___1310720009_131072_163'
+;__1310720010              Allocated with name '_do_process___1310720010_131072_163'
+;__1310720011              Allocated with name '_do_process___1310720011_131072_163'
+;val                       Allocated with name '_do_process_val_196608_164'
+;min                       Allocated with name '_do_process_min_196608_164'
+;max                       Allocated with name '_do_process_max_196608_164'
+;__1310720014              Allocated with name '_do_process___1310720014_131072_166'
+;__1310720015              Allocated with name '_do_process___1310720015_131072_166'
+;__1310720016              Allocated with name '_do_process___1310720016_131072_166'
+;val                       Allocated with name '_do_process_val_196608_167'
+;min                       Allocated with name '_do_process_min_196608_167'
+;max                       Allocated with name '_do_process_max_196608_167'
+;_ea_state                 Allocated with name '_do_process__ea_state_262144_154'
+;__2621440019              Allocated with name '_do_process___2621440019_262144_157'
+;cx                        Allocated with name '_do_process_cx_196608_157'
+;__2621440020              Allocated with name '_do_process___2621440020_262144_175'
+;__2621440021              Allocated with name '_do_process___2621440021_262144_175'
+;__2621440022              Allocated with name '_do_process___2621440022_262144_175'
+;val                       Allocated with name '_do_process_val_327680_176'
+;min                       Allocated with name '_do_process_min_327680_176'
+;max                       Allocated with name '_do_process_max_327680_176'
+;__2621440024              Allocated with name '_do_process___2621440024_262144_158'
+;cy                        Allocated with name '_do_process_cy_196609_158'
+;__2621450025              Allocated with name '_do_process___2621450025_262145_178'
+;__2621450026              Allocated with name '_do_process___2621450026_262145_178'
+;__2621450027              Allocated with name '_do_process___2621450027_262145_178'
+;val                       Allocated with name '_do_process_val_327681_179'
+;min                       Allocated with name '_do_process_min_327681_179'
+;max                       Allocated with name '_do_process_max_327681_179'
+;__2621450029              Allocated with name '_do_process___2621450029_262145_159'
+;cz                        Allocated with name '_do_process_cz_196610_159'
+;__2621460030              Allocated with name '_do_process___2621460030_262146_181'
+;__2621460031              Allocated with name '_do_process___2621460031_262146_181'
+;__2621460032              Allocated with name '_do_process___2621460032_262146_181'
+;val                       Allocated with name '_do_process_val_327682_182'
+;min                       Allocated with name '_do_process_min_327682_182'
+;max                       Allocated with name '_do_process_max_327682_182'
+;__2621460034              Allocated with name '_do_process___2621460034_262146_184'
+;__2621460035              Allocated with name '_do_process___2621460035_262146_184'
+;__2621460036              Allocated with name '_do_process___2621460036_262146_184'
+;__2621460037              Allocated with name '_do_process___2621460037_262146_184'
+;x                         Allocated with name '_do_process_x_327682_185'
+;y                         Allocated with name '_do_process_y_327682_185'
+;z                         Allocated with name '_do_process_z_327682_185'
+;b                         Allocated with name '_do_process_b_327682_185'
+;left_b                    Allocated with name '_do_process_left_b_393218_186'
+;right_b                   Allocated with name '_do_process_right_b_393218_186'
+;middle_b                  Allocated with name '_do_process_middle_b_393218_186'
 ;------------------------------------------------------------
-;	main.c:484: static uint8_t st_m_bt = 0;
-	mov	dptr,#_do_process_st_m_bt_65536_143
+;	main.c:685: static uint8_t st_m_bt = 0;
+	mov	dptr,#_do_process_st_m_bt_65536_151
 	clr	a
 	movx	@dptr,a
-;	main.c:485: static uint8_t dr_ctr = 0;
-	mov	dptr,#_do_process_dr_ctr_65536_143
+;	main.c:690: static uint32_t buttons = 0;
+	mov	dptr,#_do_process_buttons_65536_151
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:691: static int32_t dx = 0;
+	mov	dptr,#_do_process_dx_65536_151
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:692: static int32_t dy = 0;
+	mov	dptr,#_do_process_dy_65536_151
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:693: static int32_t dw = 0;
+	mov	dptr,#_do_process_dw_65536_151
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
 	movx	@dptr,a
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
-;__1310720029              Allocated with name '_main___1310720029_262144_236'
-;__1310720026              Allocated with name '_main___1310720026_262144_236'
-;__1310720024              Allocated with name '_main___1310720024_262144_236'
-;__1310720022              Allocated with name '_main___1310720022_262144_236'
-;__1310720020              Allocated with name '_main___1310720020_262144_236'
-;res                       Allocated with name '_main_res_458752_241'
-;res                       Allocated with name '_main_res_458752_248'
-;__1310720027              Allocated with name '_main___1310720027_327680_250'
-;opt_com                   Allocated with name '_main_opt_com_393216_251'
-;ea_state___LINE__         Allocated with name '_main_ea_state___LINE___524288_262'
-;__4587520032              Allocated with name '_main___4587520032_655360_264'
-;__4587520033              Allocated with name '_main___4587520033_655360_264'
-;opt_com                   Allocated with name '_main_opt_com_720896_265'
-;opt_irq                   Allocated with name '_main_opt_irq_720896_265'
-;config_data               Allocated with name '_main_config_data_786432_266'
-;st_m_bt                   Allocated with name '_main_st_m_bt_393216_279'
-;dr_ctr                    Allocated with name '_main_dr_ctr_393216_279'
-;m_bt                      Allocated with name '_main_m_bt_393216_279'
-;m_cx                      Allocated with name '_main_m_cx_393216_279'
-;m_cy                      Allocated with name '_main_m_cy_393216_279'
-;m_cz                      Allocated with name '_main_m_cz_393216_279'
-;ea_state___LINE__         Allocated with name '_main_ea_state___LINE___589824_283'
-;__2621440005              Allocated with name '_main___2621440005_524288_292'
-;cx                        Allocated with name '_main_cx_524288_292'
-;__2621440006              Allocated with name '_main___2621440006_589824_293'
-;__2621440007              Allocated with name '_main___2621440007_589824_293'
-;__2621440008              Allocated with name '_main___2621440008_589824_293'
-;val                       Allocated with name '_main_val_655360_294'
-;min                       Allocated with name '_main_min_655360_294'
-;max                       Allocated with name '_main_max_655360_294'
-;__2621440010              Allocated with name '_main___2621440010_589824_296'
-;cy                        Allocated with name '_main_cy_589824_296'
-;__2621450011              Allocated with name '_main___2621450011_655360_297'
-;__2621450012              Allocated with name '_main___2621450012_655360_297'
-;__2621450013              Allocated with name '_main___2621450013_655360_297'
-;val                       Allocated with name '_main_val_720896_298'
-;min                       Allocated with name '_main_min_720896_298'
-;max                       Allocated with name '_main_max_720896_298'
-;__2621450015              Allocated with name '_main___2621450015_655360_300'
-;cz                        Allocated with name '_main_cz_655360_300'
-;__2621460016              Allocated with name '_main___2621460016_720896_301'
-;__2621460017              Allocated with name '_main___2621460017_720896_301'
-;__2621460018              Allocated with name '_main___2621460018_720896_301'
-;val                       Allocated with name '_main_val_786432_302'
-;min                       Allocated with name '_main_min_786432_302'
-;max                       Allocated with name '_main_max_786432_302'
+;sloc0                     Allocated with name '_main_sloc0_1_0'
+;sloc1                     Allocated with name '_main_sloc1_1_0'
+;__1310720048              Allocated with name '_main___1310720048_262144_359'
+;__1310720045              Allocated with name '_main___1310720045_262144_359'
+;__1310720043              Allocated with name '_main___1310720043_262144_359'
+;__1310720041              Allocated with name '_main___1310720041_262144_359'
+;__1310720039              Allocated with name '_main___1310720039_262144_359'
+;com_table                 Allocated with name '_main_com_table_458752_484'
+;jumpers                   Allocated with name '_main_jumpers_458752_484'
+;rate_table                Allocated with name '_main_rate_table_458752_490'
+;jumpers                   Allocated with name '_main_jumpers_458752_490'
+;__1310720046              Allocated with name '_main___1310720046_327680_491'
+;opt_com                   Allocated with name '_main_opt_com_393216_492'
+;_ea_state                 Allocated with name '_main__ea_state_524288_503'
+;__4587520051              Allocated with name '_main___4587520051_655360_505'
+;__4587520052              Allocated with name '_main___4587520052_655360_505'
+;opt_com                   Allocated with name '_main_opt_com_720896_506'
+;opt_irq                   Allocated with name '_main_opt_irq_720896_506'
+;config_data               Allocated with name '_main_config_data_786432_507'
+;__1310720013              Allocated with name '_main___1310720013_393216_517'
+;__1310720008              Allocated with name '_main___1310720008_393216_517'
+;__1310720003              Allocated with name '_main___1310720003_393216_517'
+;st_m_bt                   Allocated with name '_main_st_m_bt_393216_517'
+;m_bt                      Allocated with name '_main_m_bt_393216_517'
+;m_cx                      Allocated with name '_main_m_cx_393216_517'
+;m_cy                      Allocated with name '_main_m_cy_393216_517'
+;m_cz                      Allocated with name '_main_m_cz_393216_517'
+;buttons                   Allocated with name '_main_buttons_393216_517'
+;dx                        Allocated with name '_main_dx_393216_517'
+;dy                        Allocated with name '_main_dy_393216_517'
+;dw                        Allocated with name '_main_dw_393216_517'
+;__1310720004              Allocated with name '_main___1310720004_458752_518'
+;__1310720005              Allocated with name '_main___1310720005_458752_518'
+;__1310720006              Allocated with name '_main___1310720006_458752_518'
+;val                       Allocated with name '_main_val_524288_519'
+;min                       Allocated with name '_main_min_524288_519'
+;max                       Allocated with name '_main_max_524288_519'
+;__1310720009              Allocated with name '_main___1310720009_458752_521'
+;__1310720010              Allocated with name '_main___1310720010_458752_521'
+;__1310720011              Allocated with name '_main___1310720011_458752_521'
+;val                       Allocated with name '_main_val_524288_522'
+;min                       Allocated with name '_main_min_524288_522'
+;max                       Allocated with name '_main_max_524288_522'
+;__1310720014              Allocated with name '_main___1310720014_458752_524'
+;__1310720015              Allocated with name '_main___1310720015_458752_524'
+;__1310720016              Allocated with name '_main___1310720016_458752_524'
+;val                       Allocated with name '_main_val_524288_525'
+;min                       Allocated with name '_main_min_524288_525'
+;max                       Allocated with name '_main_max_524288_525'
+;_ea_state                 Allocated with name '_main__ea_state_589824_529'
+;__2621440019              Allocated with name '_main___2621440019_524288_538'
+;cx                        Allocated with name '_main_cx_524288_538'
+;__2621440020              Allocated with name '_main___2621440020_589824_539'
+;__2621440021              Allocated with name '_main___2621440021_589824_539'
+;__2621440022              Allocated with name '_main___2621440022_589824_539'
+;val                       Allocated with name '_main_val_655360_540'
+;min                       Allocated with name '_main_min_655360_540'
+;max                       Allocated with name '_main_max_655360_540'
+;__2621440024              Allocated with name '_main___2621440024_589824_542'
+;cy                        Allocated with name '_main_cy_589824_542'
+;__2621450025              Allocated with name '_main___2621450025_655360_543'
+;__2621450026              Allocated with name '_main___2621450026_655360_543'
+;__2621450027              Allocated with name '_main___2621450027_655360_543'
+;val                       Allocated with name '_main_val_720896_544'
+;min                       Allocated with name '_main_min_720896_544'
+;max                       Allocated with name '_main_max_720896_544'
+;__2621450029              Allocated with name '_main___2621450029_655360_546'
+;cz                        Allocated with name '_main_cz_655360_546'
+;__2621460030              Allocated with name '_main___2621460030_720896_547'
+;__2621460031              Allocated with name '_main___2621460031_720896_547'
+;__2621460032              Allocated with name '_main___2621460032_720896_547'
+;val                       Allocated with name '_main_val_786432_548'
+;min                       Allocated with name '_main_min_786432_548'
+;max                       Allocated with name '_main_max_786432_548'
+;__2621460034              Allocated with name '_main___2621460034_720896_550'
+;__2621460035              Allocated with name '_main___2621460035_720896_550'
+;__2621460036              Allocated with name '_main___2621460036_720896_550'
+;__2621460037              Allocated with name '_main___2621460037_720896_550'
+;x                         Allocated with name '_main_x_786432_551'
+;y                         Allocated with name '_main_y_786432_551'
+;z                         Allocated with name '_main_z_786432_551'
+;b                         Allocated with name '_main_b_786432_551'
+;left_b                    Allocated with name '_main_left_b_851968_552'
+;right_b                   Allocated with name '_main_right_b_851968_552'
+;middle_b                  Allocated with name '_main_middle_b_851968_552'
 ;------------------------------------------------------------
-;	main.c:484: static uint8_t st_m_bt = 0;
-	mov	dptr,#_main_st_m_bt_393216_279
+;	main.c:685: static uint8_t st_m_bt = 0;
+	mov	dptr,#_main_st_m_bt_393216_517
 	clr	a
 	movx	@dptr,a
-;	main.c:485: static uint8_t dr_ctr = 0;
-	mov	dptr,#_main_dr_ctr_393216_279
+;	main.c:690: static uint32_t buttons = 0;
+	mov	dptr,#_main_buttons_393216_517
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:691: static int32_t dx = 0;
+	mov	dptr,#_main_dx_393216_517
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:692: static int32_t dy = 0;
+	mov	dptr,#_main_dy_393216_517
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:693: static int32_t dw = 0;
+	mov	dptr,#_main_dw_393216_517
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
 	movx	@dptr,a
 	.area GSFINAL (CODE)
 	ljmp	__sdcc_program_startup
@@ -1043,7 +1225,7 @@ __sdcc_program_startup:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'mcu_sleep'
 ;------------------------------------------------------------
-;	main.c:258: static inline void mcu_sleep(void) {
+;	main.c:341: static inline void mcu_sleep(void)
 ;	-----------------------------------------
 ;	 function mcu_sleep
 ;	-----------------------------------------
@@ -1056,36 +1238,36 @@ _mcu_sleep:
 	ar2 = 0x02
 	ar1 = 0x01
 	ar0 = 0x00
-;	main.c:261: }
+;	main.c:345: }
 	ret
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'clamp'
+;Allocation info for local variables in function 'clamp8'
 ;------------------------------------------------------------
-;min                       Allocated with name '_clamp_PARM_2'
-;max                       Allocated with name '_clamp_PARM_3'
-;val                       Allocated with name '_clamp_val_65536_51'
+;min                       Allocated with name '_clamp8_PARM_2'
+;max                       Allocated with name '_clamp8_PARM_3'
+;val                       Allocated with name '_clamp8_val_65536_47'
 ;------------------------------------------------------------
-;	main.c:264: static inline int8_t clamp(int16_t val, int8_t min, int8_t max) {
+;	main.c:349: static inline int8_t clamp8(int16_t val, int8_t min, int8_t max)
 ;	-----------------------------------------
-;	 function clamp
+;	 function clamp8
 ;	-----------------------------------------
-_clamp:
+_clamp8:
 	mov	r7,dph
 	mov	a,dpl
-	mov	dptr,#_clamp_val_65536_51
+	mov	dptr,#_clamp8_val_65536_47
 	movx	@dptr,a
 	mov	a,r7
 	inc	dptr
 	movx	@dptr,a
-;	main.c:265: if (val < (int16_t)min) return min;
-	mov	dptr,#_clamp_PARM_2
+;	main.c:351: if (val < (int16_t)min) return min;
+	mov	dptr,#_clamp8_PARM_2
 	movx	a,@dptr
 	mov	r7,a
 	mov	r5,a
 	rlc	a
 	subb	a,acc
 	mov	r6,a
-	mov	dptr,#_clamp_val_65536_51
+	mov	dptr,#_clamp8_val_65536_47
 	movx	a,@dptr
 	mov	r3,a
 	inc	dptr
@@ -1103,8 +1285,8 @@ _clamp:
 	mov	dpl,r7
 	ret
 00102$:
-;	main.c:266: if (val > (int16_t)max) return max;
-	mov	dptr,#_clamp_PARM_3
+;	main.c:352: if (val > (int16_t)max) return max;
+	mov	dptr,#_clamp8_PARM_3
 	movx	a,@dptr
 	mov	r7,a
 	mov	r5,a
@@ -1123,14 +1305,124 @@ _clamp:
 	mov	dpl,r7
 	ret
 00104$:
-;	main.c:267: return (int8_t)val;
+;	main.c:353: return (int8_t)val;
 	mov	dpl,r3
-;	main.c:268: }
+;	main.c:354: }
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'clamp16'
+;------------------------------------------------------------
+;min                       Allocated with name '_clamp16_PARM_2'
+;max                       Allocated with name '_clamp16_PARM_3'
+;val                       Allocated with name '_clamp16_val_65536_49'
+;sloc0                     Allocated with name '_clamp16_sloc0_1_0'
+;------------------------------------------------------------
+;	main.c:356: static inline int16_t clamp16(int32_t val, int16_t min, int16_t max)
+;	-----------------------------------------
+;	 function clamp16
+;	-----------------------------------------
+_clamp16:
+	mov	r7,dpl
+	mov	r6,dph
+	mov	r5,b
+	mov	r4,a
+	mov	dptr,#_clamp16_val_65536_49
+	mov	a,r7
+	movx	@dptr,a
+	mov	a,r6
+	inc	dptr
+	movx	@dptr,a
+	mov	a,r5
+	inc	dptr
+	movx	@dptr,a
+	mov	a,r4
+	inc	dptr
+	movx	@dptr,a
+;	main.c:358: if (val < (int32_t)min) return min;
+	mov	dptr,#_clamp16_PARM_2
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	ar2,r6
+	mov	a,r7
+	mov	r3,a
+	rlc	a
+	subb	a,acc
+	mov	r4,a
+	mov	r5,a
+	mov	dptr,#_clamp16_val_65536_49
+	movx	a,@dptr
+	mov	_clamp16_sloc0_1_0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_clamp16_sloc0_1_0 + 1),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_clamp16_sloc0_1_0 + 2),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_clamp16_sloc0_1_0 + 3),a
+	clr	c
+	mov	a,_clamp16_sloc0_1_0
+	subb	a,r2
+	mov	a,(_clamp16_sloc0_1_0 + 1)
+	subb	a,r3
+	mov	a,(_clamp16_sloc0_1_0 + 2)
+	subb	a,r4
+	mov	a,(_clamp16_sloc0_1_0 + 3)
+	xrl	a,#0x80
+	mov	b,r5
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00102$
+	mov	dpl,r6
+	mov	dph,r7
+	ret
+00102$:
+;	main.c:359: if (val > (int32_t)max) return max;
+	mov	dptr,#_clamp16_PARM_3
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	ar2,r6
+	mov	a,r7
+	mov	r3,a
+	rlc	a
+	subb	a,acc
+	mov	r4,a
+	mov	r5,a
+	clr	c
+	mov	a,r2
+	subb	a,_clamp16_sloc0_1_0
+	mov	a,r3
+	subb	a,(_clamp16_sloc0_1_0 + 1)
+	mov	a,r4
+	subb	a,(_clamp16_sloc0_1_0 + 2)
+	mov	a,r5
+	xrl	a,#0x80
+	mov	b,(_clamp16_sloc0_1_0 + 3)
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00104$
+	mov	dpl,r6
+	mov	dph,r7
+	ret
+00104$:
+;	main.c:360: return (int16_t)val;
+	mov	r6,_clamp16_sloc0_1_0
+	mov	r7,(_clamp16_sloc0_1_0 + 1)
+	mov	dpl,r6
+	mov	dph,r7
+;	main.c:361: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'int0_isr'
 ;------------------------------------------------------------
-;	main.c:274: void int0_isr(void) __interrupt (INT_NO_INT0) {
+;	main.c:367: static void int0_isr(void) __interrupt (INT_NO_INT0)
 ;	-----------------------------------------
 ;	 function int0_isr
 ;	-----------------------------------------
@@ -1138,12 +1430,12 @@ _int0_isr:
 	push	acc
 	push	dpl
 	push	dph
-;	main.c:275: mouse_enabled = get_mouse_power_state();
+;	main.c:369: mouse_enabled = get_mouse_power_state();
 	mov	dptr,#_mouse_enabled
 	mov	a,#0x04
 	anl	a,_P3
 	movx	@dptr,a
-;	main.c:276: }
+;	main.c:370: }
 	pop	dph
 	pop	dpl
 	pop	acc
@@ -1154,9 +1446,9 @@ _int0_isr:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'timer0_isr'
 ;------------------------------------------------------------
-;cnt                       Allocated with name '_timer0_isr_cnt_65536_56'
+;cnt                       Allocated with name '_timer0_isr_cnt_65536_54'
 ;------------------------------------------------------------
-;	main.c:278: void timer0_isr(void) __interrupt (INT_NO_TMR0) {
+;	main.c:373: static void timer0_isr(void) __interrupt (INT_NO_TMR0)
 ;	-----------------------------------------
 ;	 function timer0_isr
 ;	-----------------------------------------
@@ -1168,8 +1460,8 @@ _timer0_isr:
 	push	ar6
 	push	psw
 	mov	psw,#0x00
-;	main.c:281: if (++cnt > timer0_limit) {
-	mov	dptr,#_timer0_isr_cnt_65536_56
+;	main.c:377: if (++cnt >= timer0_limit) {
+	mov	dptr,#_timer0_isr_cnt_65536_54
 	movx	a,@dptr
 	add	a,#0x01
 	movx	@dptr,a
@@ -1177,19 +1469,21 @@ _timer0_isr:
 	mov	r7,a
 	mov	dptr,#_timer0_limit
 	movx	a,@dptr
+	mov	r6,a
 	clr	c
-	subb	a,r7
-	jnc	00103$
-;	main.c:282: cnt = 0;
-	mov	dptr,#_timer0_isr_cnt_65536_56
+	mov	a,r7
+	subb	a,r6
+	jc	00103$
+;	main.c:378: cnt = 0;
+	mov	dptr,#_timer0_isr_cnt_65536_54
 	clr	a
 	movx	@dptr,a
-;	main.c:283: allow_send_data = true;
+;	main.c:379: allow_send_data = true;
 	mov	dptr,#_allow_send_data
 	inc	a
 	movx	@dptr,a
 00103$:
-;	main.c:285: }
+;	main.c:381: }
 	pop	psw
 	pop	ar6
 	pop	ar7
@@ -1201,16 +1495,18 @@ _timer0_isr:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'Timer3_ISR'
 ;------------------------------------------------------------
-;	main.c:287: void Timer3_ISR(void) __interrupt (INT_NO_TMR3) {
+;	main.c:384: static void Timer3_ISR(void) __interrupt (INT_NO_TMR3)
 ;	-----------------------------------------
 ;	 function Timer3_ISR
 ;	-----------------------------------------
 _Timer3_ISR:
-;	main.c:288: T3_CTRL = 0; // Стоп таймер
-	mov	_T3_CTRL,#0x00
-;	main.c:290: led_off();
+;	main.c:386: T3_STAT |= bT3_IF_END;
+	orl	_T3_STAT,#0x10
+;	main.c:387: led_off();
 	orl	_P4_OUT,#0x40
-;	main.c:291: }
+;	main.c:388: led_timer_stop();
+	anl	_T3_CTRL,#0xfb
+;	main.c:389: }
 	reti
 ;	eliminated unneeded mov psw,# (no regs used in bank)
 ;	eliminated unneeded push/pop not_psw
@@ -1221,9 +1517,9 @@ _Timer3_ISR:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'Timer2_ISR'
 ;------------------------------------------------------------
-;current_byte              Allocated with name '_Timer2_ISR_current_byte_65536_61'
+;current_byte              Allocated with name '_Timer2_ISR_current_byte_65536_60'
 ;------------------------------------------------------------
-;	main.c:293: void Timer2_ISR(void) __interrupt (INT_NO_TMR2) {
+;	main.c:392: static void Timer2_ISR(void) __interrupt (INT_NO_TMR2)
 ;	-----------------------------------------
 ;	 function Timer2_ISR
 ;	-----------------------------------------
@@ -1235,16 +1531,16 @@ _Timer2_ISR:
 	push	ar6
 	push	psw
 	mov	psw,#0x00
-;	main.c:295: TF2 = 0; // Не сбрасывается автоматически
+;	main.c:395: TF2 = 0; // Не сбрасывается автоматически
 ;	assignBit
 	clr	_TF2
-;	main.c:298: if (not_rdy_2rcv() && device_init) {
+;	main.c:398: if (not_rdy_2rcv() && device_init) {
 	mov	a,_P1
 	jnb	acc.6,00105$
 	mov	dptr,#_device_init
 	movx	a,@dptr
 	jz	00105$
-;	main.c:300: spi_timer_slow();
+;	main.c:400: spi_timer_slow();
 ;	assignBit
 	clr	_TR2
 	mov	_RCAP2H,#0xfe
@@ -1253,24 +1549,24 @@ _Timer2_ISR:
 	mov	_TL2,_RCAP2L
 ;	assignBit
 	setb	_TR2
-;	main.c:301: return;
+;	main.c:401: return;
 	ljmp	00231$
 00105$:
-;	main.c:305: if (!spi_tx_buf_count) {
+;	main.c:405: if (!spi_tx_buf_count) {
 	mov	dptr,#_spi_tx_buf_count
 	movx	a,@dptr
 	jnz	00111$
-;	main.c:306: spi_timer_stop();
+;	main.c:406: spi_timer_stop();
 ;	assignBit
 	clr	_TR2
-;	main.c:307: return;
+;	main.c:407: return;
 	ljmp	00231$
 00111$:
-;	main.c:310: device_init = true;
+;	main.c:410: device_init = true;
 	mov	dptr,#_device_init
 	mov	a,#0x01
 	movx	@dptr,a
-;	main.c:313: current_byte = spi_tx_buf[spi_tx_buf_r];
+;	main.c:413: current_byte = spi_tx_buf[spi_tx_buf_r];
 	mov	dptr,#_spi_tx_buf_r
 	movx	a,@dptr
 	add	a,#_spi_tx_buf
@@ -1280,28 +1576,28 @@ _Timer2_ISR:
 	mov	dph,a
 	movx	a,@dptr
 	mov	r7,a
-;	main.c:314: if (++spi_tx_buf_r == SPI_TX_BUFFER_SIZE) {
+;	main.c:414: if (++spi_tx_buf_r == SPI_TX_BUFFER_SIZE) {
 	mov	dptr,#_spi_tx_buf_r
 	movx	a,@dptr
 	add	a,#0x01
 	mov	r6,a
 	movx	@dptr,a
 	cjne	r6,#0xff,00113$
-;	main.c:315: spi_tx_buf_r = 0;
+;	main.c:415: spi_tx_buf_r = 0;
 	mov	dptr,#_spi_tx_buf_r
 	clr	a
 	movx	@dptr,a
 00113$:
-;	main.c:317: spi_tx_buf_count--;
+;	main.c:417: spi_tx_buf_count--;
 	mov	dptr,#_spi_tx_buf_count
 	movx	a,@dptr
 	dec	a
 	movx	@dptr,a
-;	main.c:320: SPI_SEND_PACKET(current_byte);
+;	main.c:420: SPI_SEND_PACKET(current_byte);
 	anl	_P1,#0x7f
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	mov	a,r7
 	jnb	acc.6,00118$
 	orl	_P1,#0x20
@@ -1309,17 +1605,17 @@ _Timer2_ISR:
 00118$:
 	anl	_P1,#0xdf
 00120$:
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	orl	_P1,#0x80
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	anl	_P1,#0x7f
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	mov	a,r7
 	jnb	acc.5,00133$
 	orl	_P1,#0x20
@@ -1327,17 +1623,17 @@ _Timer2_ISR:
 00133$:
 	anl	_P1,#0xdf
 00135$:
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	orl	_P1,#0x80
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	anl	_P1,#0x7f
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	mov	a,r7
 	jnb	acc.4,00148$
 	orl	_P1,#0x20
@@ -1345,17 +1641,17 @@ _Timer2_ISR:
 00148$:
 	anl	_P1,#0xdf
 00150$:
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	orl	_P1,#0x80
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	anl	_P1,#0x7f
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	mov	a,r7
 	jnb	acc.3,00163$
 	orl	_P1,#0x20
@@ -1363,17 +1659,17 @@ _Timer2_ISR:
 00163$:
 	anl	_P1,#0xdf
 00165$:
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	orl	_P1,#0x80
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	anl	_P1,#0x7f
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	mov	a,r7
 	jnb	acc.2,00178$
 	orl	_P1,#0x20
@@ -1381,17 +1677,17 @@ _Timer2_ISR:
 00178$:
 	anl	_P1,#0xdf
 00180$:
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	orl	_P1,#0x80
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	anl	_P1,#0x7f
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	mov	a,r7
 	jnb	acc.1,00193$
 	orl	_P1,#0x20
@@ -1399,17 +1695,17 @@ _Timer2_ISR:
 00193$:
 	anl	_P1,#0xdf
 00195$:
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	orl	_P1,#0x80
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	anl	_P1,#0x7f
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	mov	a,r7
 	jnb	acc.0,00208$
 	orl	_P1,#0x20
@@ -1417,23 +1713,23 @@ _Timer2_ISR:
 00208$:
 	anl	_P1,#0xdf
 00210$:
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	orl	_P1,#0x80
-	NOP
-	NOP
-	NOP
+	nop
+	nop
+	nop
 	anl	_P1,#0x7f
 	anl	_P1,#0xdf
-;	main.c:323: if (!spi_tx_buf_count) { // Нечего передавать, останавливаемся
+;	main.c:423: if (!spi_tx_buf_count) { // Нечего передавать, останавливаемся
 	mov	dptr,#_spi_tx_buf_count
 	movx	a,@dptr
 	jnz	00225$
-;	main.c:324: spi_timer_stop();
+;	main.c:424: spi_timer_stop();
 ;	assignBit
 	clr	_TR2
-;	main.c:326: spi_timer_fast();
+;	main.c:426: spi_timer_fast();
 	sjmp	00231$
 00225$:
 ;	assignBit
@@ -1445,7 +1741,7 @@ _Timer2_ISR:
 ;	assignBit
 	setb	_TR2
 00231$:
-;	main.c:328: }
+;	main.c:428: }
 	pop	psw
 	pop	ar6
 	pop	ar7
@@ -1455,178 +1751,197 @@ _Timer2_ISR:
 	reti
 ;	eliminated unneeded push/pop b
 ;------------------------------------------------------------
+;Allocation info for local variables in function 'uart_isr'
+;------------------------------------------------------------
+;next                      Allocated with name '_uart_isr_next_65536_100'
+;------------------------------------------------------------
+;	main.c:431: static void uart_isr(void) __interrupt (INT_NO_UART0)
+;	-----------------------------------------
+;	 function uart_isr
+;	-----------------------------------------
+_uart_isr:
+	push	acc
+	push	dpl
+	push	dph
+	push	ar7
+	push	ar6
+	push	psw
+	mov	psw,#0x00
+;	main.c:434: if (TI) {
+;	main.c:435: TI = 0;
+;	assignBit
+	jbc	_TI,00127$
+	sjmp	00104$
+00127$:
+;	main.c:436: next = (uart_tx_r + 1) & UART_TX_MASK;
+	mov	dptr,#_uart_tx_r
+	movx	a,@dptr
+	inc	a
+	anl	a,#0x7f
+	mov	r7,a
+;	main.c:437: if (next != uart_tx_w) {
+	mov	dptr,#_uart_tx_w
+	movx	a,@dptr
+	mov	r6,a
+	mov	a,r7
+	cjne	a,ar6,00128$
+	sjmp	00104$
+00128$:
+;	main.c:438: SBUF = uart_tx_buf[uart_tx_r];
+	mov	dptr,#_uart_tx_r
+	movx	a,@dptr
+	mov	r6,a
+	add	a,#_uart_tx_buf
+	mov	dpl,a
+	clr	a
+	addc	a,#(_uart_tx_buf >> 8)
+	mov	dph,a
+	movx	a,@dptr
+	mov	_SBUF,a
+;	main.c:439: uart_tx_r = next;
+	mov	dptr,#_uart_tx_r
+	mov	a,r7
+	movx	@dptr,a
+00104$:
+;	main.c:443: if (RI) {
+;	main.c:444: RI = 0;
+;	assignBit
+	jbc	_RI,00129$
+	sjmp	00109$
+00129$:
+;	main.c:445: if (uart_rx_buf_count < UART_RX_BUF_SIZE) {
+	mov	dptr,#_uart_rx_buf_count
+	movx	a,@dptr
+	mov	r7,a
+	cjne	r7,#0x10,00130$
+00130$:
+	jnc	00109$
+;	main.c:446: uart_rx_buf[uart_rx_w] = SBUF;
+	mov	dptr,#_uart_rx_w
+	movx	a,@dptr
+	add	a,#_uart_rx_buf
+	mov	dpl,a
+	clr	a
+	addc	a,#(_uart_rx_buf >> 8)
+	mov	dph,a
+	mov	a,_SBUF
+	movx	@dptr,a
+;	main.c:447: uart_rx_w = (uart_rx_w + 1) & UART_RX_MASK;
+	mov	dptr,#_uart_rx_w
+	movx	a,@dptr
+	mov	r7,a
+	inc	a
+	anl	a,#0x0f
+	movx	@dptr,a
+;	main.c:448: uart_rx_buf_count++;
+	mov	dptr,#_uart_rx_buf_count
+	movx	a,@dptr
+	inc	a
+	movx	@dptr,a
+00109$:
+;	main.c:451: }
+	pop	psw
+	pop	ar6
+	pop	ar7
+	pop	dph
+	pop	dpl
+	pop	acc
+	reti
+;	eliminated unneeded push/pop b
+;------------------------------------------------------------
+;Allocation info for local variables in function 'putchar'
+;------------------------------------------------------------
+;c                         Allocated with name '_putchar_c_65536_105'
+;------------------------------------------------------------
+;	main.c:476: int putchar(int c)
+;	-----------------------------------------
+;	 function putchar
+;	-----------------------------------------
+_putchar:
+	mov	r7,dph
+	mov	a,dpl
+	mov	dptr,#_putchar_c_65536_105
+	movx	@dptr,a
+	mov	a,r7
+	inc	dptr
+	movx	@dptr,a
+;	main.c:478: while(!TI) ;
+00101$:
+;	main.c:479: TI = 0;
+;	assignBit
+	jbc	_TI,00114$
+	sjmp	00101$
+00114$:
+;	main.c:480: SBUF = c & 0xFF;
+	mov	dptr,#_putchar_c_65536_105
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	_SBUF,r6
+;	main.c:481: return c;
+	mov	dpl,r6
+	mov	dph,r7
+;	main.c:482: }
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'getchar'
+;------------------------------------------------------------
+;	main.c:499: int getchar()
+;	-----------------------------------------
+;	 function getchar
+;	-----------------------------------------
+_getchar:
+;	main.c:501: while(!RI) ;
+00101$:
+;	main.c:502: RI = 0;
+;	assignBit
+	jbc	_RI,00114$
+	sjmp	00101$
+00114$:
+;	main.c:503: return SBUF;
+	mov	r6,_SBUF
+	mov	r7,#0x00
+	mov	dpl,r6
+	mov	dph,r7
+;	main.c:504: }
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'processUart'
+;------------------------------------------------------------
+;	main.c:508: void processUart()
+;	-----------------------------------------
+;	 function processUart
+;	-----------------------------------------
+_processUart:
+;	main.c:518: }
+	ret
+;------------------------------------------------------------
 ;Allocation info for local variables in function 'flash_led'
 ;------------------------------------------------------------
-;	main.c:334: void flash_led(void) {
+;	main.c:524: void flash_led(void)
 ;	-----------------------------------------
 ;	 function flash_led
 ;	-----------------------------------------
 _flash_led:
-;	main.c:335: led_on();
+;	main.c:526: led_on();
 	anl	_P4_OUT,#0xbf
-;	main.c:336: led_timer_start();
-	mov	_T3_CTRL,#0x01
-;	main.c:337: }
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'usb_mouse_init'
-;------------------------------------------------------------
-;	main.c:343: static inline void usb_mouse_init(void) {
-;	-----------------------------------------
-;	 function usb_mouse_init
-;	-----------------------------------------
-_usb_mouse_init:
-;	main.c:344: m_wheel = opt_wheel_enabled;
-	mov	dptr,#_opt_wheel_enabled
-	movx	a,@dptr
-	mov	dptr,#_m_wheel
-	movx	@dptr,a
-;	main.c:345: }
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'mouse_write'
-;------------------------------------------------------------
-;c                         Allocated with name '_mouse_write_c_65536_105'
-;ea_state___LINE__         Allocated with name '_mouse_write_ea_state___LINE___131072_108'
-;------------------------------------------------------------
-;	main.c:347: void mouse_write(uint8_t c) {
-;	-----------------------------------------
-;	 function mouse_write
-;	-----------------------------------------
-_mouse_write:
-	mov	a,dpl
-	mov	dptr,#_mouse_write_c_65536_105
-	movx	@dptr,a
-;	main.c:349: if (!mouse_enabled)
-	mov	dptr,#_mouse_enabled
-	movx	a,@dptr
-	jnz	00102$
-;	main.c:350: return;
-	ret
-00102$:
-;	main.c:353: if (mouse_rx_buf_count >= MS_RX_BUF_SIZE) {
-	mov	dptr,#_mouse_rx_buf_count
-	movx	a,@dptr
-	mov	r7,a
-	cjne	r7,#0x10,00125$
-00125$:
-	jc	00107$
-;	main.c:354: fatal_error = true;
-	mov	dptr,#_fatal_error
-	mov	a,#0x01
-	movx	@dptr,a
-;	main.c:355: return;
-;	main.c:357: CRITICAL_SECTION (
-	ret
-00107$:
-	mov	c,_EA
-	clr	a
-	rlc	a
-	mov	r7,a
-;	assignBit
-	clr	_EA
-	mov	dptr,#_mouse_rx_buf_w
-	movx	a,@dptr
-	add	a,#_mouse_rx_buf
-	mov	r6,a
-	clr	a
-	addc	a,#(_mouse_rx_buf >> 8)
-	mov	r5,a
-	mov	dptr,#_mouse_write_c_65536_105
-	movx	a,@dptr
-	mov	dpl,r6
-	mov	dph,r5
-	movx	@dptr,a
-	mov	dptr,#_mouse_rx_buf_count
-	movx	a,@dptr
-	inc	a
-	movx	@dptr,a
-	mov	dptr,#_mouse_rx_buf_w
-	movx	a,@dptr
-	add	a,#0x01
-	mov	r6,a
-	movx	@dptr,a
-	cjne	r6,#0x10,00106$
-	mov	dptr,#_mouse_rx_buf_w
-	clr	a
-	movx	@dptr,a
-00106$:
-;	assignBit
-	mov	a,r7
-	add	a,#0xff
-	mov	_EA,c
-;	main.c:364: }
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'mouse_read'
-;------------------------------------------------------------
-;data                      Allocated with name '_mouse_read_data_65536_111'
-;ea_state___LINE__         Allocated with name '_mouse_read_ea_state___LINE___131072_112'
-;------------------------------------------------------------
-;	main.c:366: static uint8_t mouse_read(void) {
-;	-----------------------------------------
-;	 function mouse_read
-;	-----------------------------------------
-_mouse_read:
-;	main.c:367: uint8_t data = 0;
-	mov	dptr,#_mouse_read_data_65536_111
-	clr	a
-	movx	@dptr,a
-;	main.c:370: CRITICAL_SECTION (
-	mov	c,_EA
-	clr	a
-	rlc	a
-	mov	r7,a
-;	assignBit
-	clr	_EA
-	mov	dptr,#_mouse_rx_buf_count
-	movx	a,@dptr
-	jz	00104$
-	mov	dptr,#_mouse_rx_buf_r
-	movx	a,@dptr
-	add	a,#_mouse_rx_buf
-	mov	dpl,a
-	clr	a
-	addc	a,#(_mouse_rx_buf >> 8)
-	mov	dph,a
-	movx	a,@dptr
-	mov	dptr,#_mouse_read_data_65536_111
-	movx	@dptr,a
-	mov	dptr,#_mouse_rx_buf_count
-	movx	a,@dptr
-	dec	a
-	movx	@dptr,a
-	mov	dptr,#_mouse_rx_buf_r
-	movx	a,@dptr
-	add	a,#0x01
-	mov	r6,a
-	movx	@dptr,a
-	cjne	r6,#0x10,00104$
-	mov	dptr,#_mouse_rx_buf_r
-	clr	a
-	movx	@dptr,a
-00104$:
-;	assignBit
-	mov	a,r7
-	add	a,#0xff
-	mov	_EA,c
-;	main.c:380: return data;
-	mov	dptr,#_mouse_read_data_65536_111
-	movx	a,@dptr
-;	main.c:381: }
-	mov	dpl,a
+;	main.c:527: led_timer_start();
+	orl	_T3_CTRL,#0x04
+;	main.c:528: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'spi_init'
 ;------------------------------------------------------------
-;ea_state___LINE__         Allocated with name '_spi_init_ea_state___LINE___131072_117'
+;_ea_state                 Allocated with name '_spi_init__ea_state_131072_115'
 ;------------------------------------------------------------
-;	main.c:387: static inline void spi_init(void) {
+;	main.c:534: static inline void spi_init(void)
 ;	-----------------------------------------
 ;	 function spi_init
 ;	-----------------------------------------
 _spi_init:
-;	main.c:388: CRITICAL_SECTION (
+;	main.c:536: CRITICAL_SECTION (
 	mov	c,_EA
 	clr	a
 	rlc	a
@@ -1665,34 +1980,34 @@ _spi_init:
 	push	ar7
 	lcall	_delayUs
 	pop	ar7
-	anl	_P1,#0xf7
+	anl	_P4_OUT,#0x7f
 ;	assignBit
 	mov	a,r7
 	add	a,#0xff
 	mov	_EA,c
-;	main.c:407: while (!device_init) {
+;	main.c:555: while (!device_init) {
 00106$:
 	mov	dptr,#_device_init
 	movx	a,@dptr
 	jz	00106$
-;	main.c:408: mcu_sleep();
-;	main.c:410: }
+;	main.c:556: mcu_sleep();
+;	main.c:558: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'spi_send'
 ;------------------------------------------------------------
-;c                         Allocated with name '_spi_send_c_65536_123'
-;ea_state___LINE__         Allocated with name '_spi_send_ea_state___LINE___131072_126'
+;c                         Allocated with name '_spi_send_c_65536_121'
+;_ea_state                 Allocated with name '_spi_send__ea_state_131072_124'
 ;------------------------------------------------------------
-;	main.c:412: static void spi_send(uint8_t c) {
+;	main.c:561: static void spi_send(uint8_t c)
 ;	-----------------------------------------
 ;	 function spi_send
 ;	-----------------------------------------
 _spi_send:
 	mov	a,dpl
-	mov	dptr,#_spi_send_c_65536_123
+	mov	dptr,#_spi_send_c_65536_121
 	movx	@dptr,a
-;	main.c:413: while (spi_tx_buf_count == SPI_TX_BUFFER_SIZE) {
+;	main.c:563: while (spi_tx_buf_count == SPI_TX_BUFFER_SIZE) {
 00101$:
 	mov	dptr,#_spi_tx_buf_count
 	movx	a,@dptr
@@ -1700,7 +2015,7 @@ _spi_send:
 	cjne	r7,#0xff,00133$
 	sjmp	00101$
 00133$:
-;	main.c:417: CRITICAL_SECTION (
+;	main.c:567: CRITICAL_SECTION (
 	mov	c,_EA
 	clr	a
 	rlc	a
@@ -1714,7 +2029,7 @@ _spi_send:
 	clr	a
 	addc	a,#(_spi_tx_buf >> 8)
 	mov	r5,a
-	mov	dptr,#_spi_send_c_65536_123
+	mov	dptr,#_spi_send_c_65536_121
 	movx	a,@dptr
 	mov	dpl,r6
 	mov	dph,r5
@@ -1749,28 +2064,28 @@ _spi_send:
 	mov	a,r7
 	add	a,#0xff
 	mov	_EA,c
-;	main.c:425: }
+;	main.c:575: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'spi_send_config'
 ;------------------------------------------------------------
 ;opt_irq                   Allocated with name '_spi_send_config_PARM_2'
-;opt_com                   Allocated with name '_spi_send_config_opt_com_65536_132'
-;config_data               Allocated with name '_spi_send_config_config_data_65536_133'
+;opt_com                   Allocated with name '_spi_send_config_opt_com_65536_130'
+;config_data               Allocated with name '_spi_send_config_config_data_65536_131'
 ;------------------------------------------------------------
-;	main.c:428: static inline void spi_send_config(uint8_t opt_com, uint8_t opt_irq) {
+;	main.c:578: static inline void spi_send_config(uint8_t opt_com, uint8_t opt_irq)
 ;	-----------------------------------------
 ;	 function spi_send_config
 ;	-----------------------------------------
 _spi_send_config:
 	mov	a,dpl
-	mov	dptr,#_spi_send_config_opt_com_65536_132
+	mov	dptr,#_spi_send_config_opt_com_65536_130
 	movx	@dptr,a
-;	main.c:430: config_data |= (opt_com & 0x03); // Base adress
+;	main.c:581: config_data |= (opt_com & 0x03); // Base adress
 	movx	a,@dptr
 	anl	a,#0x03
 	mov	r7,a
-;	main.c:431: config_data |= (opt_irq == USE_IRQX) ? 0x4 : 0; // Не использовать стандартное IRQ
+;	main.c:582: config_data |= (opt_irq == USE_IRQX) ? 0x4 : 0; // Не использовать стандартное IRQ
 	mov	dptr,#_spi_send_config_PARM_2
 	movx	a,@dptr
 	mov	r6,a
@@ -1784,9 +2099,9 @@ _spi_send_config:
 00104$:
 	mov	a,r5
 	orl	ar7,a
-;	main.c:433: spi_send(config_data);
+;	main.c:584: spi_send(config_data);
 	mov	dpl,r7
-;	main.c:434: }
+;	main.c:585: }
 	ljmp	_spi_send
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'spi_m_send'
@@ -1794,38 +2109,38 @@ _spi_send_config:
 ;y                         Allocated with name '_spi_m_send_PARM_2'
 ;z                         Allocated with name '_spi_m_send_PARM_3'
 ;b                         Allocated with name '_spi_m_send_PARM_4'
-;x                         Allocated with name '_spi_m_send_x_65536_134'
-;left_b                    Allocated with name '_spi_m_send_left_b_65536_135'
-;right_b                   Allocated with name '_spi_m_send_right_b_65536_135'
-;middle_b                  Allocated with name '_spi_m_send_middle_b_65536_135'
+;x                         Allocated with name '_spi_m_send_x_65536_132'
+;left_b                    Allocated with name '_spi_m_send_left_b_65536_133'
+;right_b                   Allocated with name '_spi_m_send_right_b_65536_133'
+;middle_b                  Allocated with name '_spi_m_send_middle_b_65536_133'
 ;------------------------------------------------------------
-;	main.c:437: static void spi_m_send(int8_t x, int8_t y, int8_t z, uint8_t b) {
+;	main.c:588: static inline void spi_m_send(int8_t x, int8_t y, int8_t z, uint8_t b)
 ;	-----------------------------------------
 ;	 function spi_m_send
 ;	-----------------------------------------
 _spi_m_send:
 	mov	a,dpl
-	mov	dptr,#_spi_m_send_x_65536_134
+	mov	dptr,#_spi_m_send_x_65536_132
 	movx	@dptr,a
-;	main.c:440: left_b = b & 1;
+;	main.c:592: left_b = b & 1;
 	mov	dptr,#_spi_m_send_PARM_4
 	movx	a,@dptr
 	mov	r7,a
 	mov	a,#0x01
 	anl	a,r7
 	mov	r6,a
-;	main.c:441: right_b = (b >> 1) & 1;
+;	main.c:593: right_b = (b >> 1) & 1;
 	mov	a,r7
 	rr	a
 	anl	a,#0x01
 	mov	r5,a
-;	main.c:442: middle_b = (b >> 2) & 1;
+;	main.c:594: middle_b = (b >> 2) & 1;
 	mov	a,r7
 	rr	a
 	rr	a
 	anl	a,#0x01
 	mov	r7,a
-;	main.c:444: spi_send((1 << 6) | (left_b << 5) | (right_b << 4) |
+;	main.c:596: spi_send((1 << 6) | (left_b << 5) | (right_b << 4) |
 	mov	a,r6
 	swap	a
 	rl	a
@@ -1836,7 +2151,7 @@ _spi_m_send:
 	swap	a
 	anl	a,#0xf0
 	orl	ar6,a
-;	main.c:445: ((y & 0xC0) >> 4) | ((x & 0xC0) >> 6));
+;	main.c:597: ((y & 0xC0) >> 4) | ((x & 0xC0) >> 6));
 	mov	dptr,#_spi_m_send_PARM_2
 	movx	a,@dptr
 	mov	r5,a
@@ -1859,7 +2174,7 @@ _spi_m_send:
 00109$:
 	mov	a,r3
 	orl	ar6,a
-	mov	dptr,#_spi_m_send_x_65536_134
+	mov	dptr,#_spi_m_send_x_65536_132
 	movx	a,@dptr
 	mov	r4,a
 	mov	r2,a
@@ -1890,21 +2205,21 @@ _spi_m_send:
 	push	ar4
 	lcall	_spi_send
 	pop	ar4
-;	main.c:446: spi_send(x & 0x3F);
+;	main.c:598: spi_send(x & 0x3F);
 	anl	ar4,#0x3f
 	mov	dpl,r4
 	lcall	_spi_send
 	pop	ar5
-;	main.c:447: spi_send(y & 0x3F);
+;	main.c:599: spi_send(y & 0x3F);
 	anl	ar5,#0x3f
 	mov	dpl,r5
 	lcall	_spi_send
 	pop	ar7
-;	main.c:449: if (m_wheel) {
+;	main.c:602: if (m_wheel) {
 	mov	dptr,#_m_wheel
 	movx	a,@dptr
 	jz	00102$
-;	main.c:450: spi_send((middle_b << 4) | (z & 0x0F));
+;	main.c:603: spi_send((middle_b << 4) | (z & 0x0F));
 	mov	a,r7
 	swap	a
 	anl	a,#0xf0
@@ -1918,667 +2233,127 @@ _spi_m_send:
 	mov	dpl,r6
 	lcall	_spi_send
 00102$:
-;	main.c:453: flash_led();
-;	main.c:454: }
+;	main.c:606: flash_led();
+;	main.c:607: }
 	ljmp	_flash_led
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'send_mouse_id'
 ;------------------------------------------------------------
-;	main.c:457: static inline void send_mouse_id(void) {
+;	main.c:610: static inline void send_mouse_id(void)
 ;	-----------------------------------------
 ;	 function send_mouse_id
 ;	-----------------------------------------
 _send_mouse_id:
-;	main.c:459: delay(20);
+;	main.c:613: delay(20);
 	mov	dptr,#0x0014
 	lcall	_delay
-;	main.c:462: if (!mouse_enabled) {
+;	main.c:616: if (!mouse_enabled) {
 	mov	dptr,#_mouse_enabled
 	movx	a,@dptr
 	jnz	00102$
-;	main.c:463: return;
+;	main.c:617: return;
 	ret
 00102$:
-;	main.c:467: spi_send(0x4D); // Сигнатура MS mouse "M"
+;	main.c:621: spi_send(0x4D); // Сигнатура MS mouse "M"
 	mov	dpl,#0x4d
 	lcall	_spi_send
-;	main.c:468: if (m_wheel) {
+;	main.c:622: if (m_wheel) {
 	mov	dptr,#_m_wheel
 	movx	a,@dptr
 	jz	00104$
-;	main.c:469: spi_send(0x5A); // Сигнатура мыши с колёсиком "Z"
+;	main.c:623: spi_send(0x5A); // Сигнатура мыши с колёсиком "Z"
 	mov	dpl,#0x5a
 	lcall	_spi_send
-;	main.c:470: spi_send(0x40); // Четырехбайтные пакеты
+;	main.c:624: spi_send(0x40); // Четырехбайтные пакеты
 	mov	dpl,#0x40
 	lcall	_spi_send
-;	main.c:471: spi_send(0x00); // Пустой пакет байт 2
+;	main.c:625: spi_send(0x00); // Пустой пакет байт 2
 	mov	dpl,#0x00
 	lcall	_spi_send
-;	main.c:472: spi_send(0x00); // Пустой пакет байт 3
+;	main.c:626: spi_send(0x00); // Пустой пакет байт 3
 	mov	dpl,#0x00
 	lcall	_spi_send
-;	main.c:473: spi_send(0x00); // Пустой пакет байт 4
+;	main.c:627: spi_send(0x00); // Пустой пакет байт 4
 	mov	dpl,#0x00
 	ljmp	_spi_send
 00104$:
-;	main.c:475: spi_send(0x33); // Сигнатура 3х кнопочной мыши "3"
+;	main.c:629: spi_send(0x33); // Сигнатура 3х кнопочной мыши "3"
 	mov	dpl,#0x33
 	lcall	_spi_send
-;	main.c:476: spi_send(0x40); // Трёхбайтные пакеты
+;	main.c:630: spi_send(0x40); // Трёхбайтные пакеты
 	mov	dpl,#0x40
 	lcall	_spi_send
-;	main.c:477: spi_send(0x00); // Пустой пакет байт 2
+;	main.c:631: spi_send(0x00); // Пустой пакет байт 2
 	mov	dpl,#0x00
 	lcall	_spi_send
-;	main.c:478: spi_send(0x00); // Пустой пакет байт 3
+;	main.c:632: spi_send(0x00); // Пустой пакет байт 3
 	mov	dpl,#0x00
-;	main.c:480: }
+;	main.c:634: }
 	ljmp	_spi_send
-;------------------------------------------------------------
-;Allocation info for local variables in function 'do_process'
-;------------------------------------------------------------
-;st_m_bt                   Allocated with name '_do_process_st_m_bt_65536_143'
-;dr_ctr                    Allocated with name '_do_process_dr_ctr_65536_143'
-;m_bt                      Allocated with name '_do_process_m_bt_65536_143'
-;m_cx                      Allocated with name '_do_process_m_cx_65536_143'
-;m_cy                      Allocated with name '_do_process_m_cy_65536_143'
-;m_cz                      Allocated with name '_do_process_m_cz_65536_143'
-;ea_state___LINE__         Allocated with name '_do_process_ea_state___LINE___262144_147'
-;__2621440005              Allocated with name '_do_process___2621440005_262144_150'
-;cx                        Allocated with name '_do_process_cx_196608_150'
-;__2621440006              Allocated with name '_do_process___2621440006_262144_159'
-;__2621440007              Allocated with name '_do_process___2621440007_262144_159'
-;__2621440008              Allocated with name '_do_process___2621440008_262144_159'
-;val                       Allocated with name '_do_process_val_327680_160'
-;min                       Allocated with name '_do_process_min_327680_160'
-;max                       Allocated with name '_do_process_max_327680_160'
-;__2621440010              Allocated with name '_do_process___2621440010_262144_151'
-;cy                        Allocated with name '_do_process_cy_196609_151'
-;__2621450011              Allocated with name '_do_process___2621450011_262145_162'
-;__2621450012              Allocated with name '_do_process___2621450012_262145_162'
-;__2621450013              Allocated with name '_do_process___2621450013_262145_162'
-;val                       Allocated with name '_do_process_val_327681_163'
-;min                       Allocated with name '_do_process_min_327681_163'
-;max                       Allocated with name '_do_process_max_327681_163'
-;__2621450015              Allocated with name '_do_process___2621450015_262145_152'
-;cz                        Allocated with name '_do_process_cz_196610_152'
-;__2621460016              Allocated with name '_do_process___2621460016_262146_165'
-;__2621460017              Allocated with name '_do_process___2621460017_262146_165'
-;__2621460018              Allocated with name '_do_process___2621460018_262146_165'
-;val                       Allocated with name '_do_process_val_327682_166'
-;min                       Allocated with name '_do_process_min_327682_166'
-;max                       Allocated with name '_do_process_max_327682_166'
-;------------------------------------------------------------
-;	main.c:483: static inline void do_process(void) {
-;	-----------------------------------------
-;	 function do_process
-;	-----------------------------------------
-_do_process:
-;	main.c:491: checkRootHubConnections();
-	lcall	_checkRootHubConnections
-;	main.c:494: pollHIDdevice();
-	lcall	_pollHIDdevice
-;	main.c:497: while (mouse_rx_buf_count >= 4) {
-00101$:
-	mov	dptr,#_mouse_rx_buf_count
-	movx	a,@dptr
-	mov	r7,a
-	cjne	r7,#0x04,00216$
-00216$:
-	jnc	00217$
-	ljmp	00103$
-00217$:
-;	main.c:498: m_bt = mouse_read() & (m_wheel?7:3); // byte 0: 00000RML  (битовые флаги левой/правой/средней кнопки)
-	lcall	_mouse_read
-	mov	r7,dpl
-	mov	dptr,#_m_wheel
-	movx	a,@dptr
-	jz	00146$
-	mov	r5,#0x07
-	mov	r6,#0x00
-	sjmp	00147$
-00146$:
-	mov	r5,#0x03
-	mov	r6,#0x00
-00147$:
-	mov	dptr,#_do_process_m_bt_65536_143
-	mov	a,r5
-	anl	a,r7
-	movx	@dptr,a
-;	main.c:499: m_cx += (int8_t)mouse_read(); // byte 1: ΔX (signed)
-	lcall	_mouse_read
-	mov	a,dpl
-	mov	r7,a
-	rlc	a
-	subb	a,acc
-	mov	r6,a
-	mov	dptr,#_do_process_m_cx_65536_143
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	mov	a,r7
-	add	a,r4
-	mov	r7,a
-	mov	a,r6
-	addc	a,r5
-	mov	r6,a
-	mov	dptr,#_do_process_m_cx_65536_143
-	mov	a,r7
-	movx	@dptr,a
-	mov	a,r6
-	inc	dptr
-	movx	@dptr,a
-;	main.c:500: m_cy -= (int8_t)mouse_read(); // byte 2: ΔY (signed)
-	lcall	_mouse_read
-	mov	a,dpl
-	mov	r7,a
-	rlc	a
-	subb	a,acc
-	mov	r6,a
-	mov	dptr,#_do_process_m_cy_65536_143
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	mov	a,r4
-	clr	c
-	subb	a,r7
-	mov	r7,a
-	mov	a,r5
-	subb	a,r6
-	mov	r6,a
-	mov	dptr,#_do_process_m_cy_65536_143
-	mov	a,r7
-	movx	@dptr,a
-	mov	a,r6
-	inc	dptr
-	movx	@dptr,a
-;	main.c:501: m_cz += (int8_t)mouse_read(); // byte 3: ΔWheel (signed)
-	lcall	_mouse_read
-	mov	a,dpl
-	mov	r7,a
-	rlc	a
-	subb	a,acc
-	mov	r6,a
-	mov	dptr,#_do_process_m_cz_65536_143
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	mov	a,r7
-	add	a,r4
-	mov	r7,a
-	mov	a,r6
-	addc	a,r5
-	mov	r6,a
-	mov	dptr,#_do_process_m_cz_65536_143
-	mov	a,r7
-	movx	@dptr,a
-	mov	a,r6
-	inc	dptr
-	movx	@dptr,a
-	ljmp	00101$
-00103$:
-;	main.c:505: if (allow_send_data && mouse_enabled) {
-	mov	dptr,#_allow_send_data
-	movx	a,@dptr
-	jnz	00219$
-	ret
-00219$:
-	mov	dptr,#_mouse_enabled
-	movx	a,@dptr
-	jnz	00220$
-	ret
-00220$:
-;	main.c:506: allow_send_data = false;
-	mov	dptr,#_allow_send_data
-	clr	a
-	movx	@dptr,a
-;	main.c:507: dr_ctr = (dr_ctr + 1) & 0x03;
-	mov	dptr,#_do_process_dr_ctr_65536_143
-	movx	a,@dptr
-	mov	r7,a
-	inc	r7
-	mov	a,#0x03
-	anl	a,r7
-	movx	@dptr,a
-;	main.c:510: if (mouse_start) {
-	mov	dptr,#_mouse_start
-	movx	a,@dptr
-	jnz	00221$
-	ljmp	00114$
-00221$:
-;	main.c:511: mouse_start = false;
-	mov	dptr,#_mouse_start
-	clr	a
-	movx	@dptr,a
-;	main.c:514: CRITICAL_SECTION (
-	mov	c,_EA
-	clr	a
-	rlc	a
-	mov	r7,a
-;	assignBit
-	clr	_EA
-	mov	dptr,#_do_process_m_cx_65536_143
-	clr	a
-	movx	@dptr,a
-	inc	dptr
-	movx	@dptr,a
-	mov	dptr,#_do_process_m_cy_65536_143
-	movx	@dptr,a
-	inc	dptr
-	movx	@dptr,a
-	mov	dptr,#_do_process_m_cz_65536_143
-	movx	@dptr,a
-	inc	dptr
-	movx	@dptr,a
-	mov	dptr,#_do_process_m_bt_65536_143
-	movx	@dptr,a
-	mov	dptr,#_spi_tx_buf_w
-	movx	a,@dptr
-	mov	dptr,#_spi_tx_buf_r
-	movx	@dptr,a
-	mov	dptr,#_spi_tx_buf_count
-	clr	a
-	movx	@dptr,a
-;	assignBit
-	clr	_TR2
-	orl	_P1,#0x08
-	anl	_P1,#0xf7
-;	assignBit
-	mov	a,r7
-	add	a,#0xff
-	mov	_EA,c
-;	main.c:459: delay(20);
-	mov	dptr,#0x0014
-	lcall	_delay
-;	main.c:462: if (!mouse_enabled) {
-	mov	dptr,#_mouse_enabled
-	movx	a,@dptr
-	jz	00114$
-;	main.c:467: spi_send(0x4D); // Сигнатура MS mouse "M"
-	mov	dpl,#0x4d
-	lcall	_spi_send
-;	main.c:468: if (m_wheel) {
-	mov	dptr,#_m_wheel
-	movx	a,@dptr
-	jz	00126$
-;	main.c:469: spi_send(0x5A); // Сигнатура мыши с колёсиком "Z"
-	mov	dpl,#0x5a
-	lcall	_spi_send
-;	main.c:470: spi_send(0x40); // Четырехбайтные пакеты
-	mov	dpl,#0x40
-	lcall	_spi_send
-;	main.c:471: spi_send(0x00); // Пустой пакет байт 2
-	mov	dpl,#0x00
-	lcall	_spi_send
-;	main.c:472: spi_send(0x00); // Пустой пакет байт 3
-	mov	dpl,#0x00
-	lcall	_spi_send
-;	main.c:473: spi_send(0x00); // Пустой пакет байт 4
-	mov	dpl,#0x00
-	lcall	_spi_send
-	sjmp	00114$
-00126$:
-;	main.c:475: spi_send(0x33); // Сигнатура 3х кнопочной мыши "3"
-	mov	dpl,#0x33
-	lcall	_spi_send
-;	main.c:476: spi_send(0x40); // Трёхбайтные пакеты
-	mov	dpl,#0x40
-	lcall	_spi_send
-;	main.c:477: spi_send(0x00); // Пустой пакет байт 2
-	mov	dpl,#0x00
-	lcall	_spi_send
-;	main.c:478: spi_send(0x00); // Пустой пакет байт 3
-	mov	dpl,#0x00
-	lcall	_spi_send
-;	main.c:524: send_mouse_id();
-00114$:
-;	main.c:528: if (m_bt != st_m_bt || m_cx || m_cy || m_cz) {
-	mov	dptr,#_do_process_m_bt_65536_143
-	movx	a,@dptr
-	mov	r7,a
-	mov	dptr,#_do_process_st_m_bt_65536_143
-	movx	a,@dptr
-	mov	r6,a
-	mov	a,r7
-	cjne	a,ar6,00115$
-	mov	dptr,#_do_process_m_cx_65536_143
-	movx	a,@dptr
-	mov	b,a
-	inc	dptr
-	movx	a,@dptr
-	orl	a,b
-	jnz	00115$
-	mov	dptr,#_do_process_m_cy_65536_143
-	movx	a,@dptr
-	mov	b,a
-	inc	dptr
-	movx	a,@dptr
-	orl	a,b
-	jnz	00115$
-	mov	dptr,#_do_process_m_cz_65536_143
-	movx	a,@dptr
-	mov	b,a
-	inc	dptr
-	movx	a,@dptr
-	orl	a,b
-	jnz	00228$
-	ret
-00228$:
-00115$:
-;	main.c:529: int8_t cx = clamp(m_cx, -128, 127);
-	mov	dptr,#_do_process_m_cx_65536_143
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	clr	c
-	mov	a,r6
-	subb	a,#0x80
-	mov	a,r7
-	xrl	a,#0x80
-	subb	a,#0x7f
-	jnc	00130$
-	mov	dptr,#_do_process___2621440005_262144_150
-	mov	a,#0x80
-	movx	@dptr,a
-	sjmp	00133$
-00130$:
-	clr	c
-	mov	a,#0x7f
-	subb	a,r6
-	mov	a,#(0x00 ^ 0x80)
-	mov	b,r7
-	xrl	b,#0x80
-	subb	a,b
-	jnc	00132$
-	mov	dptr,#_do_process___2621440005_262144_150
-	mov	a,#0x7f
-	movx	@dptr,a
-	sjmp	00133$
-00132$:
-	mov	dptr,#_do_process___2621440005_262144_150
-	mov	a,r6
-	movx	@dptr,a
-00133$:
-	mov	dptr,#_do_process___2621440005_262144_150
-	movx	a,@dptr
-;	main.c:530: m_cx -= cx;
-	mov	r7,a
-	mov	r5,a
-	rlc	a
-	subb	a,acc
-	mov	r6,a
-	mov	dptr,#_do_process_m_cx_65536_143
-	movx	a,@dptr
-	mov	r3,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r4,a
-	mov	a,r3
-	clr	c
-	subb	a,r5
-	mov	r5,a
-	mov	a,r4
-	subb	a,r6
-	mov	r6,a
-	mov	dptr,#_do_process_m_cx_65536_143
-	mov	a,r5
-	movx	@dptr,a
-	mov	a,r6
-	inc	dptr
-	movx	@dptr,a
-;	main.c:531: int8_t cy = clamp(m_cy, -128, 127);
-	mov	dptr,#_do_process_m_cy_65536_143
-	movx	a,@dptr
-	mov	r5,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r6,a
-	clr	c
-	mov	a,r5
-	subb	a,#0x80
-	mov	a,r6
-	xrl	a,#0x80
-	subb	a,#0x7f
-	jnc	00135$
-	mov	dptr,#_do_process___2621440010_262144_151
-	mov	a,#0x80
-	movx	@dptr,a
-	sjmp	00138$
-00135$:
-	clr	c
-	mov	a,#0x7f
-	subb	a,r5
-	mov	a,#(0x00 ^ 0x80)
-	mov	b,r6
-	xrl	b,#0x80
-	subb	a,b
-	jnc	00137$
-	mov	dptr,#_do_process___2621440010_262144_151
-	mov	a,#0x7f
-	movx	@dptr,a
-	sjmp	00138$
-00137$:
-	mov	dptr,#_do_process___2621440010_262144_151
-	mov	a,r5
-	movx	@dptr,a
-00138$:
-	mov	dptr,#_do_process___2621440010_262144_151
-	movx	a,@dptr
-;	main.c:532: m_cy -= cy;
-	mov	r6,a
-	mov	r4,a
-	rlc	a
-	subb	a,acc
-	mov	r5,a
-	mov	dptr,#_do_process_m_cy_65536_143
-	movx	a,@dptr
-	mov	r2,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r3,a
-	mov	a,r2
-	clr	c
-	subb	a,r4
-	mov	r4,a
-	mov	a,r3
-	subb	a,r5
-	mov	r5,a
-	mov	dptr,#_do_process_m_cy_65536_143
-	mov	a,r4
-	movx	@dptr,a
-	mov	a,r5
-	inc	dptr
-	movx	@dptr,a
-;	main.c:533: int8_t cz = clamp(m_cz, -8, 7);
-	mov	dptr,#_do_process_m_cz_65536_143
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	clr	c
-	mov	a,r4
-	subb	a,#0xf8
-	mov	a,r5
-	xrl	a,#0x80
-	subb	a,#0x7f
-	jnc	00140$
-	mov	dptr,#_do_process___2621450015_262145_152
-	mov	a,#0xf8
-	movx	@dptr,a
-	sjmp	00143$
-00140$:
-	clr	c
-	mov	a,#0x07
-	subb	a,r4
-	mov	a,#(0x00 ^ 0x80)
-	mov	b,r5
-	xrl	b,#0x80
-	subb	a,b
-	jnc	00142$
-	mov	dptr,#_do_process___2621450015_262145_152
-	mov	a,#0x07
-	movx	@dptr,a
-	sjmp	00143$
-00142$:
-	mov	dptr,#_do_process___2621450015_262145_152
-	mov	a,r4
-	movx	@dptr,a
-00143$:
-	mov	dptr,#_do_process___2621450015_262145_152
-	movx	a,@dptr
-;	main.c:534: m_cz -= cz;
-	mov	r5,a
-	mov	r3,a
-	rlc	a
-	subb	a,acc
-	mov	r4,a
-	mov	dptr,#_do_process_m_cz_65536_143
-	movx	a,@dptr
-	mov	r1,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r2,a
-	mov	a,r1
-	clr	c
-	subb	a,r3
-	mov	r3,a
-	mov	a,r2
-	subb	a,r4
-	mov	r4,a
-	mov	dptr,#_do_process_m_cz_65536_143
-	mov	a,r3
-	movx	@dptr,a
-	mov	a,r4
-	inc	dptr
-	movx	@dptr,a
-;	main.c:536: st_m_bt = m_bt;
-	mov	dptr,#_do_process_m_bt_65536_143
-	movx	a,@dptr
-	mov	r4,a
-	mov	dptr,#_do_process_st_m_bt_65536_143
-	movx	@dptr,a
-;	main.c:538: spi_m_send(cx, cy, cz, m_bt);
-	mov	dptr,#_spi_m_send_PARM_2
-	mov	a,r6
-	movx	@dptr,a
-	mov	dptr,#_spi_m_send_PARM_3
-	mov	a,r5
-	movx	@dptr,a
-	mov	dptr,#_spi_m_send_PARM_4
-	mov	a,r4
-	movx	@dptr,a
-	mov	dpl,r7
-;	main.c:541: }
-	ljmp	_spi_m_send
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'readCOMsettings'
 ;------------------------------------------------------------
-;res                       Allocated with name '_readCOMsettings_res_65536_169'
+;com_table                 Allocated with name '_readCOMsettings_com_table_65536_141'
+;jumpers                   Allocated with name '_readCOMsettings_jumpers_65536_141'
 ;------------------------------------------------------------
-;	main.c:546: static inline uint8_t readCOMsettings(void) {
+;	main.c:639: static inline uint8_t readCOMsettings(void)
 ;	-----------------------------------------
 ;	 function readCOMsettings
 ;	-----------------------------------------
 _readCOMsettings:
-;	main.c:547: uint8_t res = (((PORT_IN(COM_SEL1_PORT) & _BV(COM_SEL1_PIN))?1:0) |
-	mov	a,_P2
-	jnb	acc.6,00109$
-	mov	r6,#0x01
-	mov	r7,#0x00
-	sjmp	00110$
-00109$:
-	mov	r6,#0x00
-	mov	r7,#0x00
-00110$:
-	mov	a,_P2
-	jnb	acc.7,00111$
-	mov	r4,#0x02
-	mov	r5,#0x00
-	sjmp	00112$
-00111$:
-	mov	r4,#0x00
-	mov	r5,#0x00
-00112$:
-	mov	a,r4
-	orl	ar6,a
-;	main.c:550: switch (res) {
-	mov	a,r6
-	mov	r7,a
-	add	a,#0xff - 0x03
-	jc	00105$
-	mov	a,r7
-	add	a,r7
-	add	a,r7
-	mov	dptr,#00128$
-	jmp	@a+dptr
-00128$:
-	ljmp	00104$
-	ljmp	00103$
-	ljmp	00102$
-;	main.c:551: case 3: 
-;	main.c:552: res = SELECT_COM1;
-	mov	dptr,#_readCOMsettings_res_65536_169
-	clr	a
-	movx	@dptr,a
-;	main.c:553: break;
-;	main.c:554: case 2:
-	sjmp	00106$
-00102$:
-;	main.c:555: res = SELECT_COM2;
-	mov	dptr,#_readCOMsettings_res_65536_169
-	mov	a,#0x01
-	movx	@dptr,a
-;	main.c:556: break;
-;	main.c:557: case 1:
-	sjmp	00106$
-00103$:
-;	main.c:558: res = SELECT_COM3;
-	mov	dptr,#_readCOMsettings_res_65536_169
-	mov	a,#0x02
-	movx	@dptr,a
-;	main.c:559: break;
-;	main.c:560: case 0:
-	sjmp	00106$
-00104$:
-;	main.c:561: res = SELECT_COM4;
-	mov	dptr,#_readCOMsettings_res_65536_169
+;	main.c:641: const uint8_t com_table[4] = {
+	mov	dptr,#_readCOMsettings_com_table_65536_141
 	mov	a,#0x03
 	movx	@dptr,a
-;	main.c:562: break;
-;	main.c:563: default:
-	sjmp	00106$
-00105$:
-;	main.c:564: res = SELECT_COM1;
-	mov	dptr,#_readCOMsettings_res_65536_169
+	mov	dptr,#(_readCOMsettings_com_table_65536_141 + 0x0001)
+	dec	a
+	movx	@dptr,a
+	mov	dptr,#(_readCOMsettings_com_table_65536_141 + 0x0002)
+	dec	a
+	movx	@dptr,a
+	mov	dptr,#(_readCOMsettings_com_table_65536_141 + 0x0003)
 	clr	a
 	movx	@dptr,a
-;	main.c:565: }
+;	main.c:645: uint8_t jumpers = (((PORT_IN(COM_SEL1_PORT) & _BV(COM_SEL1_PIN))?1:0) |
+	mov	a,_P2
+	jnb	acc.6,00103$
+	mov	r6,#0x01
+	mov	r7,#0x00
+	sjmp	00104$
+00103$:
+	mov	r6,#0x00
+	mov	r7,#0x00
+00104$:
+	mov	a,_P2
+	jnb	acc.7,00105$
+	mov	r4,#0x02
+	mov	r5,#0x00
+	sjmp	00106$
+00105$:
+	mov	r4,#0x00
+	mov	r5,#0x00
 00106$:
-;	main.c:566: return res;
-	mov	dptr,#_readCOMsettings_res_65536_169
+	mov	a,r4
+	orl	a,r6
+;	main.c:648: return com_table[jumpers];
+	add	a,#_readCOMsettings_com_table_65536_141
+	mov	dpl,a
+	clr	a
+	addc	a,#(_readCOMsettings_com_table_65536_141 >> 8)
+	mov	dph,a
 	movx	a,@dptr
-;	main.c:567: }
+;	main.c:649: }
 	mov	dpl,a
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'readWheelsettings'
 ;------------------------------------------------------------
-;	main.c:569: static inline bool readWheelsettings(void) {
+;	main.c:651: static inline bool readWheelsettings(void)
 ;	-----------------------------------------
 ;	 function readWheelsettings
 ;	-----------------------------------------
 _readWheelsettings:
-;	main.c:570: return !(PORT_IN(WHEEL_SEL_PORT) & _BV(WHEEL_SEL_PIN));
+;	main.c:653: return !(PORT_IN(WHEEL_SEL_PORT) & _BV(WHEEL_SEL_PIN));
 	mov	a,_P3
 	swap	a
 	anl	a,#0x01
@@ -2588,1712 +2363,596 @@ _readWheelsettings:
 	clr	a
 	rlc	a
 	mov	dpl,a
-;	main.c:571: }
+;	main.c:654: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'readRatesettings'
 ;------------------------------------------------------------
-;res                       Allocated with name '_readRatesettings_res_65536_174'
+;rate_table                Allocated with name '_readRatesettings_rate_table_65536_145'
+;jumpers                   Allocated with name '_readRatesettings_jumpers_65536_145'
 ;------------------------------------------------------------
-;	main.c:573: static inline uint8_t readRatesettings(void) {
+;	main.c:656: static inline uint8_t readRatesettings(void)
 ;	-----------------------------------------
 ;	 function readRatesettings
 ;	-----------------------------------------
 _readRatesettings:
-;	main.c:574: uint8_t res = (((PORT_IN(RATE_SEL1_PORT) & _BV(RATE_SEL1_PIN))?1:0) |
-	mov	a,_P1
-	jnb	acc.2,00109$
-	mov	r6,#0x01
-	mov	r7,#0x00
-	sjmp	00110$
-00109$:
-	mov	r6,#0x00
-	mov	r7,#0x00
-00110$:
-	mov	a,_P1
-	jnb	acc.4,00111$
-	mov	r4,#0x02
-	mov	r5,#0x00
-	sjmp	00112$
-00111$:
-	mov	r4,#0x00
-	mov	r5,#0x00
-00112$:
-	mov	a,r4
-	orl	ar6,a
-;	main.c:577: switch (res) {
-	mov	a,r6
-	mov	r7,a
-	add	a,#0xff - 0x03
-	jc	00105$
-	mov	a,r7
-	add	a,r7
-	add	a,r7
-	mov	dptr,#00128$
-	jmp	@a+dptr
-00128$:
-	ljmp	00104$
-	ljmp	00103$
-	ljmp	00102$
-;	main.c:578: case 3:
-;	main.c:579: res = PS2_SAMPLES_PER_SEC_UFAST;
-	mov	dptr,#_readRatesettings_res_65536_174
-	mov	a,#0x64
-	movx	@dptr,a
-;	main.c:580: break;
-;	main.c:581: case 2:
-	sjmp	00106$
-00102$:
-;	main.c:582: res = PS2_SAMPLES_PER_SEC_FAST;
-	mov	dptr,#_readRatesettings_res_65536_174
-	mov	a,#0x50
-	movx	@dptr,a
-;	main.c:583: break;
-;	main.c:584: case 1:
-	sjmp	00106$
-00103$:
-;	main.c:585: res = PS2_SAMPLES_PER_SEC_MID;
-	mov	dptr,#_readRatesettings_res_65536_174
-	mov	a,#0x28
-	movx	@dptr,a
-;	main.c:586: break;
-;	main.c:587: case 0:
-	sjmp	00106$
-00104$:
-;	main.c:588: res = PS2_SAMPLES_PER_SEC_SLOW;
-	mov	dptr,#_readRatesettings_res_65536_174
+;	main.c:658: const uint8_t rate_table[4] = {
+	mov	dptr,#_readRatesettings_rate_table_65536_145
 	mov	a,#0x14
 	movx	@dptr,a
-;	main.c:589: break;
-;	main.c:590: default:
-	sjmp	00106$
-00105$:
-;	main.c:591: res = PS2_SAMPLES_PER_SEC_UFAST;
-	mov	dptr,#_readRatesettings_res_65536_174
+	mov	dptr,#(_readRatesettings_rate_table_65536_145 + 0x0001)
+	rl	a
+	movx	@dptr,a
+	mov	dptr,#(_readRatesettings_rate_table_65536_145 + 0x0002)
+	rl	a
+	movx	@dptr,a
+	mov	dptr,#(_readRatesettings_rate_table_65536_145 + 0x0003)
 	mov	a,#0x64
 	movx	@dptr,a
-;	main.c:592: }
+;	main.c:662: uint8_t jumpers = (((PORT_IN(RATE_SEL1_PORT) & _BV(RATE_SEL1_PIN))?1:0) |
+	mov	a,_P1
+	jnb	acc.2,00103$
+	mov	r6,#0x01
+	mov	r7,#0x00
+	sjmp	00104$
+00103$:
+	mov	r6,#0x00
+	mov	r7,#0x00
+00104$:
+	mov	a,_P1
+	jnb	acc.4,00105$
+	mov	r4,#0x02
+	mov	r5,#0x00
+	sjmp	00106$
+00105$:
+	mov	r4,#0x00
+	mov	r5,#0x00
 00106$:
-;	main.c:593: return res;
-	mov	dptr,#_readRatesettings_res_65536_174
+	mov	a,r4
+	orl	a,r6
+;	main.c:665: return rate_table[jumpers];
+	add	a,#_readRatesettings_rate_table_65536_145
+	mov	dpl,a
+	clr	a
+	addc	a,#(_readRatesettings_rate_table_65536_145 >> 8)
+	mov	dph,a
 	movx	a,@dptr
-;	main.c:594: }
+;	main.c:666: }
 	mov	dpl,a
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'checkIRQ'
 ;------------------------------------------------------------
-;opt_com                   Allocated with name '_checkIRQ_opt_com_65536_176'
+;opt_com                   Allocated with name '_checkIRQ_opt_com_65536_146'
 ;------------------------------------------------------------
-;	main.c:596: static inline uint8_t checkIRQ(uint8_t opt_com) {
+;	main.c:668: static inline uint8_t checkIRQ(uint8_t opt_com)
 ;	-----------------------------------------
 ;	 function checkIRQ
 ;	-----------------------------------------
 _checkIRQ:
 	mov	a,dpl
-	mov	dptr,#_checkIRQ_opt_com_65536_176
+	mov	dptr,#_checkIRQ_opt_com_65536_146
 	movx	@dptr,a
-;	main.c:597: if (!(PORT_IN(IRQX_SEL_PORT) & _BV(IRQX_SEL_PIN))) {
+;	main.c:670: if (!(PORT_IN(IRQX_SEL_PORT) & _BV(IRQX_SEL_PIN))) {
 	mov	a,_P2
 	jb	acc.5,00102$
-;	main.c:598: return USE_IRQX;
+;	main.c:671: return USE_IRQX;
 	mov	dpl,#0x01
 	ret
 00102$:
-;	main.c:600: if (opt_com == SELECT_COM1 || opt_com == SELECT_COM3) {
-	mov	dptr,#_checkIRQ_opt_com_65536_176
+;	main.c:673: if (opt_com == SELECT_COM1 || opt_com == SELECT_COM3) {
+	mov	dptr,#_checkIRQ_opt_com_65536_146
 	movx	a,@dptr
 	mov	r7,a
 	movx	a,@dptr
 	jz	00103$
 	cjne	r7,#0x02,00104$
 00103$:
-;	main.c:601: return USE_IRQ4;
+;	main.c:674: return USE_IRQ4;
 	mov	dpl,#0x02
 	ret
 00104$:
-;	main.c:603: return USE_IRQ3;
+;	main.c:676: return USE_IRQ3;
 	mov	dpl,#0x00
-;	main.c:604: }
+;	main.c:677: }
 	ret
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'get_reset_source'
+;Allocation info for local variables in function 'do_process'
 ;------------------------------------------------------------
-;	main.c:609: static inline uint8_t get_reset_source(void) {
-;	-----------------------------------------
-;	 function get_reset_source
-;	-----------------------------------------
-_get_reset_source:
-;	main.c:610: return (PCON & (bRST_FLAG1 | bRST_FLAG0)) >> 4;
-	mov	a,#0x30
-	anl	a,_PCON
-	swap	a
-	anl	a,#0x0f
-;	main.c:611: }
-	mov	dpl,a
-	ret
+;sloc0                     Allocated with name '_do_process_sloc0_1_0'
+;sloc1                     Allocated with name '_do_process_sloc1_1_0'
+;__1310720013              Allocated with name '_do_process___1310720013_131072_151'
+;__1310720008              Allocated with name '_do_process___1310720008_131072_151'
+;__1310720003              Allocated with name '_do_process___1310720003_131072_151'
+;st_m_bt                   Allocated with name '_do_process_st_m_bt_65536_151'
+;m_bt                      Allocated with name '_do_process_m_bt_65536_151'
+;m_cx                      Allocated with name '_do_process_m_cx_65536_151'
+;m_cy                      Allocated with name '_do_process_m_cy_65536_151'
+;m_cz                      Allocated with name '_do_process_m_cz_65536_151'
+;buttons                   Allocated with name '_do_process_buttons_65536_151'
+;dx                        Allocated with name '_do_process_dx_65536_151'
+;dy                        Allocated with name '_do_process_dy_65536_151'
+;dw                        Allocated with name '_do_process_dw_65536_151'
+;__1310720004              Allocated with name '_do_process___1310720004_131072_160'
+;__1310720005              Allocated with name '_do_process___1310720005_131072_160'
+;__1310720006              Allocated with name '_do_process___1310720006_131072_160'
+;val                       Allocated with name '_do_process_val_196608_161'
+;min                       Allocated with name '_do_process_min_196608_161'
+;max                       Allocated with name '_do_process_max_196608_161'
+;__1310720009              Allocated with name '_do_process___1310720009_131072_163'
+;__1310720010              Allocated with name '_do_process___1310720010_131072_163'
+;__1310720011              Allocated with name '_do_process___1310720011_131072_163'
+;val                       Allocated with name '_do_process_val_196608_164'
+;min                       Allocated with name '_do_process_min_196608_164'
+;max                       Allocated with name '_do_process_max_196608_164'
+;__1310720014              Allocated with name '_do_process___1310720014_131072_166'
+;__1310720015              Allocated with name '_do_process___1310720015_131072_166'
+;__1310720016              Allocated with name '_do_process___1310720016_131072_166'
+;val                       Allocated with name '_do_process_val_196608_167'
+;min                       Allocated with name '_do_process_min_196608_167'
+;max                       Allocated with name '_do_process_max_196608_167'
+;_ea_state                 Allocated with name '_do_process__ea_state_262144_154'
+;__2621440019              Allocated with name '_do_process___2621440019_262144_157'
+;cx                        Allocated with name '_do_process_cx_196608_157'
+;__2621440020              Allocated with name '_do_process___2621440020_262144_175'
+;__2621440021              Allocated with name '_do_process___2621440021_262144_175'
+;__2621440022              Allocated with name '_do_process___2621440022_262144_175'
+;val                       Allocated with name '_do_process_val_327680_176'
+;min                       Allocated with name '_do_process_min_327680_176'
+;max                       Allocated with name '_do_process_max_327680_176'
+;__2621440024              Allocated with name '_do_process___2621440024_262144_158'
+;cy                        Allocated with name '_do_process_cy_196609_158'
+;__2621450025              Allocated with name '_do_process___2621450025_262145_178'
+;__2621450026              Allocated with name '_do_process___2621450026_262145_178'
+;__2621450027              Allocated with name '_do_process___2621450027_262145_178'
+;val                       Allocated with name '_do_process_val_327681_179'
+;min                       Allocated with name '_do_process_min_327681_179'
+;max                       Allocated with name '_do_process_max_327681_179'
+;__2621450029              Allocated with name '_do_process___2621450029_262145_159'
+;cz                        Allocated with name '_do_process_cz_196610_159'
+;__2621460030              Allocated with name '_do_process___2621460030_262146_181'
+;__2621460031              Allocated with name '_do_process___2621460031_262146_181'
+;__2621460032              Allocated with name '_do_process___2621460032_262146_181'
+;val                       Allocated with name '_do_process_val_327682_182'
+;min                       Allocated with name '_do_process_min_327682_182'
+;max                       Allocated with name '_do_process_max_327682_182'
+;__2621460034              Allocated with name '_do_process___2621460034_262146_184'
+;__2621460035              Allocated with name '_do_process___2621460035_262146_184'
+;__2621460036              Allocated with name '_do_process___2621460036_262146_184'
+;__2621460037              Allocated with name '_do_process___2621460037_262146_184'
+;x                         Allocated with name '_do_process_x_327682_185'
+;y                         Allocated with name '_do_process_y_327682_185'
+;z                         Allocated with name '_do_process_z_327682_185'
+;b                         Allocated with name '_do_process_b_327682_185'
+;left_b                    Allocated with name '_do_process_left_b_393218_186'
+;right_b                   Allocated with name '_do_process_right_b_393218_186'
+;middle_b                  Allocated with name '_do_process_middle_b_393218_186'
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'usb_init'
-;------------------------------------------------------------
-;	main.c:613: static inline void usb_init(void) {
+;	main.c:683: static inline void do_process(void)
 ;	-----------------------------------------
-;	 function usb_init
+;	 function do_process
 ;	-----------------------------------------
-_usb_init:
-;	main.c:614: resetHubDevices(0);
-	mov	dpl,#0x00
-	lcall	_resetHubDevices
-;	main.c:615: resetHubDevices(1);
-	mov	dpl,#0x01
-	lcall	_resetHubDevices
-;	main.c:616: initUSB_Host();
-;	main.c:617: }
-	ljmp	_initUSB_Host
-;------------------------------------------------------------
-;Allocation info for local variables in function 'init'
-;------------------------------------------------------------
-;__1310720029              Allocated with name '_init___1310720029_131072_185'
-;__1310720026              Allocated with name '_init___1310720026_131072_185'
-;__1310720024              Allocated with name '_init___1310720024_131072_185'
-;__1310720022              Allocated with name '_init___1310720022_131072_185'
-;__1310720020              Allocated with name '_init___1310720020_131072_185'
-;res                       Allocated with name '_init_res_262144_191'
-;res                       Allocated with name '_init_res_262144_198'
-;__1310720027              Allocated with name '_init___1310720027_131072_200'
-;opt_com                   Allocated with name '_init_opt_com_196608_201'
-;ea_state___LINE__         Allocated with name '_init_ea_state___LINE___327680_211'
-;__4587520032              Allocated with name '_init___4587520032_458752_217'
-;__4587520033              Allocated with name '_init___4587520033_458752_217'
-;opt_com                   Allocated with name '_init_opt_com_524288_218'
-;opt_irq                   Allocated with name '_init_opt_irq_524288_218'
-;config_data               Allocated with name '_init_config_data_589824_219'
-;------------------------------------------------------------
-;	main.c:619: static inline void init(void) {
-;	-----------------------------------------
-;	 function init
-;	-----------------------------------------
-_init:
-;	main.c:620: WDOG_COUNT = 0;
-	mov	_WDOG_COUNT,#0x00
-;	main.c:623: SAFE_MOD = 0x55;
-	mov	_SAFE_MOD,#0x55
-;	main.c:624: SAFE_MOD = 0xAA;
-	mov	_SAFE_MOD,#0xaa
-;	main.c:626: PLL_CFG = (MASK_USB_4X_DIV & (6 << 5)) | (MASK_PLL_MULT & 24);
-	mov	_PLL_CFG,#0xd8
-;	main.c:627: CLOCK_CFG = bOSC_EN_INT | (MASK_SYS_CK_DIV & 6);
-	mov	_CLOCK_CFG,#0x86
-;	main.c:629: SAFE_MOD = 0xFF;
-	mov	_SAFE_MOD,#0xff
-;	main.c:631: delay(7);
-	mov	dptr,#0x0007
-	lcall	_delay
-;	main.c:642: pinMode(PORT_OUT(SPI_RESOUT_PORT), SPI_RESOUT_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x03
+_do_process:
+;	main.c:696: checkRootHubConnections();
+	lcall	_checkRootHubConnections
+;	main.c:699: pollHIDdevice(&buttons, &dx, &dy, &dw);
+	mov	dptr,#_pollHIDdevice_PARM_2
+	mov	a,#_do_process_dx_65536_151
 	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	dec	a
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:643: pinMode(PORT_OUT(SPI_MOSI_PORT), SPI_MOSI_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x05
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:644: pinMode(PORT_OUT(SPI_SCK_PORT), SPI_SCK_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x07
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:645: pinMode(PORT_OUT(TxD_PORT), TxD_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x03
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	dec	a
-	movx	@dptr,a
-	mov	dpl,_P0
-	lcall	_pinMode
-;	main.c:647: pinMode(PORT_IN(RxD_PORT), RxD_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	dec	a
-	movx	@dptr,a
-	mov	dpl,_P0
-	lcall	_pinMode
-;	main.c:648: pinMode(PORT_IN(DTR_PORT), DTR_PIN, PIN_MODE_INPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	clr	a
-	movx	@dptr,a
-	mov	dpl,_P3
-	lcall	_pinMode
-;	main.c:649: pinMode(PORT_IN(COM_SEL1_PORT), COM_SEL1_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x06
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P2
-	lcall	_pinMode
-;	main.c:650: pinMode(PORT_IN(COM_SEL2_PORT), COM_SEL2_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x07
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P2
-	lcall	_pinMode
-;	main.c:651: pinMode(PORT_IN(RATE_SEL1_PORT), RATE_SEL1_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	dec	a
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:652: pinMode(PORT_IN(RATE_SEL2_PORT), RATE_SEL2_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x04
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	rr	a
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:654: pinMode(PORT_IN(RATE_SEL2_PORT), RATE_SEL2_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x04
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:655: pinMode(PORT_IN(WHEEL_SEL_PORT), WHEEL_SEL_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x04
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P3
-	lcall	_pinMode
-;	main.c:656: pinMode(PORT_IN(IRQX_SEL_PORT), IRQX_SEL_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x05
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P2
-	lcall	_pinMode
-;	main.c:657: pinMode(PORT_IN(RxIRQ_PORT), RxIRQ_PIN, PIN_MODE_INPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x06
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	clr	a
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:658: pinMode(PORT_IN(PRG_PORT), PRG_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x06
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P4_IN
-	lcall	_pinMode
-;	main.c:661: if (!(PORT_IN(PRG_PORT) & _BV(PRG_PIN))) {
-	mov	a,_P4_IN
-	jb	acc.6,00102$
-;	main.c:662: runBootloader();
-	mov	dpl,_runBootloader
-	mov	dph,(_runBootloader + 1)
-	lcall	__sdcc_call_dptr
-	sjmp	00103$
-00102$:
-;	main.c:664: pinMode(PORT_OUT(LED_PORT), LED_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x06
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dpl,_P4_OUT
-	lcall	_pinMode
-00103$:
-;	main.c:547: uint8_t res = (((PORT_IN(COM_SEL1_PORT) & _BV(COM_SEL1_PIN))?1:0) |
-	mov	a,_P2
-	jnb	acc.6,00146$
-	mov	r6,#0x01
-	mov	r7,#0x00
-	sjmp	00147$
-00146$:
-	mov	r6,#0x00
-	mov	r7,#0x00
-00147$:
-	mov	a,_P2
-	jnb	acc.7,00148$
-	mov	r4,#0x02
-	mov	r5,#0x00
-	sjmp	00149$
-00148$:
-	mov	r4,#0x00
-	mov	r5,#0x00
-00149$:
-	mov	a,r4
-	orl	ar6,a
-;	main.c:550: switch (res) {
-	mov	a,r6
-	mov	r7,a
-	add	a,#0xff - 0x03
-	jc	00113$
-	mov	a,r7
-	add	a,r7
-	add	a,r7
-	mov	dptr,#00216$
-	jmp	@a+dptr
-00216$:
-	ljmp	00112$
-	ljmp	00111$
-	ljmp	00110$
-;	main.c:551: case 3: 
-;	main.c:552: res = SELECT_COM1;
-	mov	dptr,#_init_res_262144_191
-	clr	a
-	movx	@dptr,a
-;	main.c:553: break;
-;	main.c:554: case 2:
-	sjmp	00114$
-00110$:
-;	main.c:555: res = SELECT_COM2;
-	mov	dptr,#_init_res_262144_191
-	mov	a,#0x01
-	movx	@dptr,a
-;	main.c:556: break;
-;	main.c:557: case 1:
-	sjmp	00114$
-00111$:
-;	main.c:558: res = SELECT_COM3;
-	mov	dptr,#_init_res_262144_191
-	mov	a,#0x02
-	movx	@dptr,a
-;	main.c:559: break;
-;	main.c:560: case 0:
-	sjmp	00114$
-00112$:
-;	main.c:561: res = SELECT_COM4;
-	mov	dptr,#_init_res_262144_191
-	mov	a,#0x03
-	movx	@dptr,a
-;	main.c:562: break;
-;	main.c:563: default:
-	sjmp	00114$
-00113$:
-;	main.c:564: res = SELECT_COM1;
-	mov	dptr,#_init_res_262144_191
-	clr	a
-	movx	@dptr,a
-;	main.c:565: }
-00114$:
-;	main.c:566: return res;
-	mov	dptr,#_init_res_262144_191
-	movx	a,@dptr
-;	main.c:668: opt_com_settings = readCOMsettings();
-	mov	r7,a
-	mov	dptr,#_opt_com_settings
-	movx	@dptr,a
-;	main.c:570: return !(PORT_IN(WHEEL_SEL_PORT) & _BV(WHEEL_SEL_PIN));
-	mov	a,_P3
-	swap	a
-	anl	a,#0x01
-	mov	dptr,#_init___1310720022_131072_185
-	cjne	a,#0x01,00217$
-00217$:
-	clr	a
-	rlc	a
-	movx	@dptr,a
-;	main.c:669: opt_wheel_enabled = readWheelsettings();
-	mov	dptr,#_init___1310720022_131072_185
-	movx	a,@dptr
-	mov	dptr,#_opt_wheel_enabled
-	movx	@dptr,a
-;	main.c:574: uint8_t res = (((PORT_IN(RATE_SEL1_PORT) & _BV(RATE_SEL1_PIN))?1:0) |
-	mov	a,_P1
-	jnb	acc.2,00150$
-	mov	r5,#0x01
-	mov	r6,#0x00
-	sjmp	00151$
-00150$:
-	mov	r5,#0x00
-	mov	r6,#0x00
-00151$:
-	mov	a,_P1
-	jnb	acc.4,00152$
-	mov	r3,#0x02
-	mov	r4,#0x00
-	sjmp	00153$
-00152$:
-	mov	r3,#0x00
-	mov	r4,#0x00
-00153$:
-	mov	a,r3
-	orl	ar5,a
-;	main.c:577: switch (res) {
-	mov	a,r5
-	mov	r6,a
-	add	a,#0xff - 0x03
-	jc	00121$
-	mov	a,r6
-	add	a,r6
-	add	a,r6
-	mov	dptr,#00221$
-	jmp	@a+dptr
-00221$:
-	ljmp	00120$
-	ljmp	00119$
-	ljmp	00118$
-;	main.c:578: case 3:
-;	main.c:579: res = PS2_SAMPLES_PER_SEC_UFAST;
-	mov	dptr,#_init_res_262144_198
-	mov	a,#0x64
-	movx	@dptr,a
-;	main.c:580: break;
-;	main.c:581: case 2:
-	sjmp	00122$
-00118$:
-;	main.c:582: res = PS2_SAMPLES_PER_SEC_FAST;
-	mov	dptr,#_init_res_262144_198
-	mov	a,#0x50
-	movx	@dptr,a
-;	main.c:583: break;
-;	main.c:584: case 1:
-	sjmp	00122$
-00119$:
-;	main.c:585: res = PS2_SAMPLES_PER_SEC_MID;
-	mov	dptr,#_init_res_262144_198
-	mov	a,#0x28
-	movx	@dptr,a
-;	main.c:586: break;
-;	main.c:587: case 0:
-	sjmp	00122$
-00120$:
-;	main.c:588: res = PS2_SAMPLES_PER_SEC_SLOW;
-	mov	dptr,#_init_res_262144_198
-	mov	a,#0x14
-	movx	@dptr,a
-;	main.c:589: break;
-;	main.c:590: default:
-	sjmp	00122$
-00121$:
-;	main.c:591: res = PS2_SAMPLES_PER_SEC_UFAST;
-	mov	dptr,#_init_res_262144_198
-	mov	a,#0x64
-	movx	@dptr,a
-;	main.c:592: }
-00122$:
-;	main.c:593: return res;
-	mov	dptr,#_init_res_262144_198
-	movx	a,@dptr
-;	main.c:670: opt_rate_settings = readRatesettings();
-	mov	r6,a
-	mov	dptr,#_opt_rate_settings
-	movx	@dptr,a
-;	main.c:672: timer0_limit = (uint8_t)((2000U + opt_rate_settings) / (2U * opt_rate_settings));
-	mov	ar4,r6
-	mov	r5,#0x00
-	mov	a,#0xd0
-	add	a,r4
-	mov	r4,a
-	mov	a,#0x07
-	addc	a,r5
-	mov	r5,a
-	mov	r3,#0x00
-	mov	a,r6
-	add	a,r6
-	mov	r6,a
-	mov	a,r3
-	rlc	a
-	mov	r3,a
-	mov	dptr,#__divuint_PARM_2
-	mov	a,r6
-	movx	@dptr,a
-	mov	a,r3
+	mov	a,#(_do_process_dx_65536_151 >> 8)
 	inc	dptr
 	movx	@dptr,a
-	mov	dpl,r4
-	mov	dph,r5
-	push	ar7
-	lcall	__divuint
-	mov	r5,dpl
-	pop	ar7
-	mov	dptr,#_timer0_limit
-	mov	a,r5
-	movx	@dptr,a
-;	main.c:597: if (!(PORT_IN(IRQX_SEL_PORT) & _BV(IRQX_SEL_PIN))) {
-	mov	a,_P2
-	jb	acc.5,00125$
-;	main.c:598: return USE_IRQX;
-	mov	dptr,#_init___1310720026_131072_185
-	mov	a,#0x01
-	movx	@dptr,a
-	sjmp	00129$
-00125$:
-;	main.c:600: if (opt_com == SELECT_COM1 || opt_com == SELECT_COM3) {
-	mov	a,r7
-	jz	00127$
-	cjne	r7,#0x02,00128$
-00127$:
-;	main.c:601: return USE_IRQ4;
-	mov	dptr,#_init___1310720026_131072_185
-	mov	a,#0x02
-	movx	@dptr,a
-	sjmp	00129$
-00128$:
-;	main.c:603: return USE_IRQ3;
-	mov	dptr,#_init___1310720026_131072_185
 	clr	a
+	inc	dptr
 	movx	@dptr,a
-;	main.c:674: opt_irq_settings = checkIRQ(opt_com_settings);
-00129$:
-	mov	dptr,#_init___1310720026_131072_185
+	mov	dptr,#_pollHIDdevice_PARM_3
+	mov	a,#_do_process_dy_65536_151
+	movx	@dptr,a
+	mov	a,#(_do_process_dy_65536_151 >> 8)
+	inc	dptr
+	movx	@dptr,a
+	clr	a
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_pollHIDdevice_PARM_4
+	mov	a,#_do_process_dw_65536_151
+	movx	@dptr,a
+	mov	a,#(_do_process_dw_65536_151 >> 8)
+	inc	dptr
+	movx	@dptr,a
+	clr	a
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_do_process_buttons_65536_151
+	mov	b,#0x00
+	lcall	_pollHIDdevice
+;	main.c:702: m_bt = (uint8_t)(buttons & 0x7);
+	mov	dptr,#_do_process_buttons_65536_151
 	movx	a,@dptr
-	mov	dptr,#_opt_irq_settings
-	movx	@dptr,a
-;	main.c:681: TH0 = (uint8_t)(TIMER0_CONST >> 8);
-	mov	_TH0,#0xf0
-;	main.c:682: TL0 = (uint8_t)(TIMER0_CONST & 0xFF);
-	mov	_TL0,#0x60
-;	main.c:683: TF0 = 0;
-;	assignBit
-	clr	_TF0
-;	main.c:684: TR0 = 1;
-;	assignBit
-	setb	_TR0
-;	main.c:688: TR2 = 0;         // останов таймера
-;	assignBit
-	clr	_TR2
-;	main.c:689: T2MOD = 0x00;    // обычный режим, авто-перезагрузка 16-бит
-	mov	_T2MOD,#0x00
-;	main.c:690: RCAP2H = (uint8_t)((TIMER2_RELOAD_FAST >> 8) & 0xFF);
-	mov	_RCAP2H,#0xff
-;	main.c:691: RCAP2L = (uint8_t)(TIMER2_RELOAD_FAST & 0xFF);
-	mov	_RCAP2L,#0x9c
-;	main.c:692: TH2 = RCAP2H;
-	mov	_TH2,_RCAP2H
-;	main.c:693: TL2 = RCAP2L;
-	mov	_TL2,_RCAP2L
-;	main.c:694: TF2 = 0;
-;	assignBit
-	clr	_TF2
-;	main.c:698: T3_SETUP = 0;           // Режим таймера (не захвата)
-;	main.c:699: T3_COUNT = 0;           // Сброс счетчика
-	clr	a
-	mov	_T3_SETUP,a
-	mov	((_T3_COUNT >> 0) & 0xFF),a
-	mov	((_T3_COUNT >> 8) & 0xFF),a
-;	main.c:700: T3_END = TIMER1_CONST;  // Установка периода
-	mov	((_T3_END >> 0) & 0xFF),#0x10
-	mov	((_T3_END >> 8) & 0xFF),#0x27
-;	main.c:701: T3_CTRL = 0;            // Изначально остановлен, сброс флагов
-;	1-genFromRTrack replaced	mov	_T3_CTRL,#0x00
-	mov	_T3_CTRL,a
-;	main.c:705: IT0 = 1; // Активен по спаду сигнала
-;	assignBit
-	setb	_IT0
-;	main.c:706: IE0 = 0; // Сброс флага прерывания INT0
-;	assignBit
-	clr	_IE0
-;	main.c:710: ET0 = 1; // разрешить прерывания таймера 0
-;	assignBit
-	setb	_ET0
-;	main.c:711: ET2 = 1; // разрешить прерывания таймера 2
-;	assignBit
-	setb	_ET2
-;	main.c:712: IE_TMR3 = 1; // разрешить прерывания таймера 3
-;	assignBit
-	setb	_IE_TMR3
-;	main.c:713: EX0 = 1; // разрешить прерывания INT0
-;	assignBit
-	setb	_EX0
-;	main.c:715: SAFE_MOD = 0x55;
-	mov	_SAFE_MOD,#0x55
-;	main.c:716: SAFE_MOD = 0xAA;
-	mov	_SAFE_MOD,#0xaa
-;	main.c:718: WAKE_CTRL = bWAK_BY_USB | bWAK_RXD1_LO | bWAK_P3_2E_3L | bWAK_RXD0_LO;
-	mov	_WAKE_CTRL,#0xc3
-;	main.c:721: bSLP_OFF_SPI0 | bSLP_OFF_TMR3 | bSLP_OFF_XRAM;
-	mov	_SLEEP_CTRL,#0x7d
-;	main.c:724: GLOBAL_CFG |= bWDOG_EN;
-	orl	_GLOBAL_CFG,#0x01
-;	main.c:726: SAFE_MOD = 0xFF;
-	mov	_SAFE_MOD,#0xff
-;	main.c:610: return (PCON & (bRST_FLAG1 | bRST_FLAG0)) >> 4;
-	mov	a,#0x30
-	anl	a,_PCON
-	swap	a
-	anl	a,#0x0f
-;	main.c:728: switch (get_reset_source()) {
-	mov	r7,a
-	mov	r6,a
-	add	a,#0xff - 0x03
-	jc	00108$
-	mov	a,r6
-	add	a,r6
-;	main.c:729: case 0b10: // 10 - Переполнение watchdog
-	mov	dptr,#00227$
-	jmp	@a+dptr
-00227$:
-	sjmp	00107$
-	sjmp	00107$
-	sjmp	00104$
-	sjmp	00105$
-00104$:
-;	main.c:730: device_init = true;
-	mov	dptr,#_device_init
-	mov	a,#0x01
-	movx	@dptr,a
-;	main.c:731: break;
-;	main.c:732: case 0b11: // 11 - Аппаратный сброс
-	sjmp	00108$
-00105$:
-;	main.c:733: led_on(); // Сигнализируем исправность светодиода
-	anl	_P4_OUT,#0xbf
-;	main.c:734: delay(50);
-	mov	dptr,#0x0032
-	lcall	_delay
-;	main.c:737: case 0b01: // 01 - Сброс при включении питания
-00107$:
-;	main.c:738: delay(50); // Ждём окончания переходных процессов
-	mov	dptr,#0x0032
-	lcall	_delay
-;	main.c:739: led_off();
-	orl	_P4_OUT,#0x40
-;	main.c:740: device_init = false;
-	mov	dptr,#_device_init
-	clr	a
-	movx	@dptr,a
-;	main.c:742: }
-00108$:
-;	main.c:745: EA = 1;
-;	assignBit
-	setb	_EA
-;	main.c:388: CRITICAL_SECTION (
-	mov	c,_EA
-	clr	a
-	rlc	a
-	mov	r7,a
-;	assignBit
-	clr	_EA
-	mov	dptr,#_spi_tx_buf_w
-	clr	a
-	movx	@dptr,a
-	mov	dptr,#_spi_tx_buf_r
-	movx	@dptr,a
-	mov	dptr,#_spi_tx_buf_count
-	movx	@dptr,a
-	mov	dptr,#_device_init
+	mov	r4,a
+	inc	dptr
 	movx	a,@dptr
-	jnz	00132$
-	orl	_P1,#0x20
-	mov	dptr,#0x0001
-	push	ar7
-	lcall	_delayUs
-	pop	ar7
-	anl	_P1,#0xdf
-	mov	dptr,#_opt_irq_settings
+	inc	dptr
+	movx	a,@dptr
+	inc	dptr
+	movx	a,@dptr
+	mov	dptr,#_do_process_m_bt_65536_151
+	mov	a,#0x07
+	anl	a,r4
+	movx	@dptr,a
+;	main.c:703: m_cx = clamp16(dx + m_cx, -15000, 15000); dx = 0;
+	mov	dptr,#_do_process_m_cx_65536_151
 	movx	a,@dptr
 	mov	r6,a
-	mov	dptr,#_opt_com_settings
+	inc	dptr
 	movx	a,@dptr
-;	main.c:430: config_data |= (opt_com & 0x03); // Base adress
-	anl	a,#0x03
+	mov	r7,a
+	mov	dptr,#_do_process_dx_65536_151
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
 	mov	r5,a
-;	main.c:431: config_data |= (opt_irq == USE_IRQX) ? 0x4 : 0; // Не использовать стандартное IRQ
-	cjne	r6,#0x01,00154$
-	mov	r4,#0x04
-	mov	r6,#0x00
-	sjmp	00155$
-00154$:
-	mov	r4,#0x00
-	mov	r6,#0x00
-00155$:
-	mov	a,r4
-	orl	ar5,a
-;	main.c:433: spi_send(config_data);
-	mov	dpl,r5
-	push	ar7
-	lcall	_spi_send
-	pop	ar7
-;	main.c:388: CRITICAL_SECTION (
-00132$:
-	mov	dptr,#0x0001
-	push	ar7
-	lcall	_delayUs
-	pop	ar7
-	anl	_P1,#0xf7
-;	assignBit
+	inc	dptr
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	mov	ar0,r6
 	mov	a,r7
-	add	a,#0xff
-	mov	_EA,c
-;	main.c:407: while (!device_init) {
-00136$:
-	mov	dptr,#_device_init
-	movx	a,@dptr
-	jz	00136$
-;	main.c:750: initUART0(115200);
-	mov	dptr,#0xc200
-	mov	b,#0x01
-	clr	a
-	lcall	_initUART0
-;	main.c:751: DEBUG_OUT("Startup\n");
-	mov	a,#___str_0
-	push	acc
-	mov	a,#(___str_0 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	main.c:614: resetHubDevices(0);
-	mov	dpl,#0x00
-	lcall	_resetHubDevices
-;	main.c:615: resetHubDevices(1);
-	mov	dpl,#0x01
-	lcall	_resetHubDevices
-;	main.c:616: initUSB_Host();
-	lcall	_initUSB_Host
-;	main.c:344: m_wheel = opt_wheel_enabled;
-	mov	dptr,#_opt_wheel_enabled
-	movx	a,@dptr
-	mov	dptr,#_m_wheel
-	movx	@dptr,a
-;	main.c:757: mouse_enabled = get_mouse_power_state();
-	mov	dptr,#_mouse_enabled
-	mov	a,#0x04
-	anl	a,_P3
-	movx	@dptr,a
-;	main.c:758: mouse_start = true;
-	mov	dptr,#_mouse_start
-	mov	a,#0x01
-	movx	@dptr,a
-;	main.c:759: fatal_error = false;
-	mov	dptr,#_fatal_error
-	clr	a
-	movx	@dptr,a
-;	main.c:760: }
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'main'
-;------------------------------------------------------------
-;__1310720029              Allocated with name '_main___1310720029_262144_236'
-;__1310720026              Allocated with name '_main___1310720026_262144_236'
-;__1310720024              Allocated with name '_main___1310720024_262144_236'
-;__1310720022              Allocated with name '_main___1310720022_262144_236'
-;__1310720020              Allocated with name '_main___1310720020_262144_236'
-;res                       Allocated with name '_main_res_458752_241'
-;res                       Allocated with name '_main_res_458752_248'
-;__1310720027              Allocated with name '_main___1310720027_327680_250'
-;opt_com                   Allocated with name '_main_opt_com_393216_251'
-;ea_state___LINE__         Allocated with name '_main_ea_state___LINE___524288_262'
-;__4587520032              Allocated with name '_main___4587520032_655360_264'
-;__4587520033              Allocated with name '_main___4587520033_655360_264'
-;opt_com                   Allocated with name '_main_opt_com_720896_265'
-;opt_irq                   Allocated with name '_main_opt_irq_720896_265'
-;config_data               Allocated with name '_main_config_data_786432_266'
-;st_m_bt                   Allocated with name '_main_st_m_bt_393216_279'
-;dr_ctr                    Allocated with name '_main_dr_ctr_393216_279'
-;m_bt                      Allocated with name '_main_m_bt_393216_279'
-;m_cx                      Allocated with name '_main_m_cx_393216_279'
-;m_cy                      Allocated with name '_main_m_cy_393216_279'
-;m_cz                      Allocated with name '_main_m_cz_393216_279'
-;ea_state___LINE__         Allocated with name '_main_ea_state___LINE___589824_283'
-;__2621440005              Allocated with name '_main___2621440005_524288_292'
-;cx                        Allocated with name '_main_cx_524288_292'
-;__2621440006              Allocated with name '_main___2621440006_589824_293'
-;__2621440007              Allocated with name '_main___2621440007_589824_293'
-;__2621440008              Allocated with name '_main___2621440008_589824_293'
-;val                       Allocated with name '_main_val_655360_294'
-;min                       Allocated with name '_main_min_655360_294'
-;max                       Allocated with name '_main_max_655360_294'
-;__2621440010              Allocated with name '_main___2621440010_589824_296'
-;cy                        Allocated with name '_main_cy_589824_296'
-;__2621450011              Allocated with name '_main___2621450011_655360_297'
-;__2621450012              Allocated with name '_main___2621450012_655360_297'
-;__2621450013              Allocated with name '_main___2621450013_655360_297'
-;val                       Allocated with name '_main_val_720896_298'
-;min                       Allocated with name '_main_min_720896_298'
-;max                       Allocated with name '_main_max_720896_298'
-;__2621450015              Allocated with name '_main___2621450015_655360_300'
-;cz                        Allocated with name '_main_cz_655360_300'
-;__2621460016              Allocated with name '_main___2621460016_720896_301'
-;__2621460017              Allocated with name '_main___2621460017_720896_301'
-;__2621460018              Allocated with name '_main___2621460018_720896_301'
-;val                       Allocated with name '_main_val_786432_302'
-;min                       Allocated with name '_main_min_786432_302'
-;max                       Allocated with name '_main_max_786432_302'
-;------------------------------------------------------------
-;	main.c:762: int main(void) {
-;	-----------------------------------------
-;	 function main
-;	-----------------------------------------
-_main:
-;	main.c:620: WDOG_COUNT = 0;
-	mov	_WDOG_COUNT,#0x00
-;	main.c:623: SAFE_MOD = 0x55;
-	mov	_SAFE_MOD,#0x55
-;	main.c:624: SAFE_MOD = 0xAA;
-	mov	_SAFE_MOD,#0xaa
-;	main.c:626: PLL_CFG = (MASK_USB_4X_DIV & (6 << 5)) | (MASK_PLL_MULT & 24);
-	mov	_PLL_CFG,#0xd8
-;	main.c:627: CLOCK_CFG = bOSC_EN_INT | (MASK_SYS_CK_DIV & 6);
-	mov	_CLOCK_CFG,#0x86
-;	main.c:629: SAFE_MOD = 0xFF;
-	mov	_SAFE_MOD,#0xff
-;	main.c:631: delay(7);
-	mov	dptr,#0x0007
-	lcall	_delay
-;	main.c:642: pinMode(PORT_OUT(SPI_RESOUT_PORT), SPI_RESOUT_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x03
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	dec	a
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:643: pinMode(PORT_OUT(SPI_MOSI_PORT), SPI_MOSI_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x05
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:644: pinMode(PORT_OUT(SPI_SCK_PORT), SPI_SCK_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x07
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:645: pinMode(PORT_OUT(TxD_PORT), TxD_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x03
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	dec	a
-	movx	@dptr,a
-	mov	dpl,_P0
-	lcall	_pinMode
-;	main.c:647: pinMode(PORT_IN(RxD_PORT), RxD_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	dec	a
-	movx	@dptr,a
-	mov	dpl,_P0
-	lcall	_pinMode
-;	main.c:648: pinMode(PORT_IN(DTR_PORT), DTR_PIN, PIN_MODE_INPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	clr	a
-	movx	@dptr,a
-	mov	dpl,_P3
-	lcall	_pinMode
-;	main.c:649: pinMode(PORT_IN(COM_SEL1_PORT), COM_SEL1_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x06
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P2
-	lcall	_pinMode
-;	main.c:650: pinMode(PORT_IN(COM_SEL2_PORT), COM_SEL2_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x07
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P2
-	lcall	_pinMode
-;	main.c:651: pinMode(PORT_IN(RATE_SEL1_PORT), RATE_SEL1_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	dec	a
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:652: pinMode(PORT_IN(RATE_SEL2_PORT), RATE_SEL2_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x04
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	rr	a
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:654: pinMode(PORT_IN(RATE_SEL2_PORT), RATE_SEL2_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x04
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:655: pinMode(PORT_IN(WHEEL_SEL_PORT), WHEEL_SEL_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x04
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P3
-	lcall	_pinMode
-;	main.c:656: pinMode(PORT_IN(IRQX_SEL_PORT), IRQX_SEL_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x05
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P2
-	lcall	_pinMode
-;	main.c:657: pinMode(PORT_IN(RxIRQ_PORT), RxIRQ_PIN, PIN_MODE_INPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x06
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	clr	a
-	movx	@dptr,a
-	mov	dpl,_P1
-	lcall	_pinMode
-;	main.c:658: pinMode(PORT_IN(PRG_PORT), PRG_PIN, PIN_MODE_INPUT_PULLUP);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x06
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x01
-	movx	@dptr,a
-	mov	dpl,_P4_IN
-	lcall	_pinMode
-;	main.c:661: if (!(PORT_IN(PRG_PORT) & _BV(PRG_PIN))) {
-	mov	a,_P4_IN
-	jb	acc.6,00114$
-;	main.c:662: runBootloader();
-	mov	dpl,_runBootloader
-	mov	dph,(_runBootloader + 1)
-	lcall	__sdcc_call_dptr
-	sjmp	00115$
-00114$:
-;	main.c:664: pinMode(PORT_OUT(LED_PORT), LED_PIN, PIN_MODE_OUTPUT);
-	mov	dptr,#_pinMode_PARM_2
-	mov	a,#0x06
-	movx	@dptr,a
-	mov	dptr,#_pinMode_PARM_3
-	mov	a,#0x02
-	movx	@dptr,a
-	mov	dpl,_P4_OUT
-	lcall	_pinMode
-00115$:
-;	main.c:547: uint8_t res = (((PORT_IN(COM_SEL1_PORT) & _BV(COM_SEL1_PIN))?1:0) |
-	mov	a,_P2
-	jnb	acc.6,00206$
-	mov	r6,#0x01
-	mov	r7,#0x00
-	sjmp	00207$
-00206$:
-	mov	r6,#0x00
-	mov	r7,#0x00
-00207$:
-	mov	a,_P2
-	jnb	acc.7,00208$
-	mov	r4,#0x02
-	mov	r5,#0x00
-	sjmp	00209$
-00208$:
-	mov	r4,#0x00
-	mov	r5,#0x00
-00209$:
-	mov	a,r4
-	orl	ar6,a
-;	main.c:550: switch (res) {
-	mov	a,r6
-	mov	r7,a
-	add	a,#0xff - 0x03
-	jc	00120$
-	mov	a,r7
-	add	a,r7
-	add	a,r7
-	mov	dptr,#00374$
-	jmp	@a+dptr
-00374$:
-	ljmp	00119$
-	ljmp	00118$
-	ljmp	00117$
-;	main.c:551: case 3: 
-;	main.c:552: res = SELECT_COM1;
-	mov	dptr,#_main_res_458752_241
-	clr	a
-	movx	@dptr,a
-;	main.c:553: break;
-;	main.c:554: case 2:
-	sjmp	00121$
-00117$:
-;	main.c:555: res = SELECT_COM2;
-	mov	dptr,#_main_res_458752_241
-	mov	a,#0x01
-	movx	@dptr,a
-;	main.c:556: break;
-;	main.c:557: case 1:
-	sjmp	00121$
-00118$:
-;	main.c:558: res = SELECT_COM3;
-	mov	dptr,#_main_res_458752_241
-	mov	a,#0x02
-	movx	@dptr,a
-;	main.c:559: break;
-;	main.c:560: case 0:
-	sjmp	00121$
-00119$:
-;	main.c:561: res = SELECT_COM4;
-	mov	dptr,#_main_res_458752_241
-	mov	a,#0x03
-	movx	@dptr,a
-;	main.c:562: break;
-;	main.c:563: default:
-	sjmp	00121$
-00120$:
-;	main.c:564: res = SELECT_COM1;
-	mov	dptr,#_main_res_458752_241
-	clr	a
-	movx	@dptr,a
-;	main.c:565: }
-00121$:
-;	main.c:566: return res;
-	mov	dptr,#_main_res_458752_241
-	movx	a,@dptr
-;	main.c:668: opt_com_settings = readCOMsettings();
-	mov	r7,a
-	mov	dptr,#_opt_com_settings
-	movx	@dptr,a
-;	main.c:570: return !(PORT_IN(WHEEL_SEL_PORT) & _BV(WHEEL_SEL_PIN));
-	mov	a,_P3
-	swap	a
-	anl	a,#0x01
-	mov	dptr,#_main___1310720022_262144_236
-	cjne	a,#0x01,00375$
-00375$:
-	clr	a
+	mov	r1,a
 	rlc	a
-	movx	@dptr,a
-;	main.c:669: opt_wheel_enabled = readWheelsettings();
-	mov	dptr,#_main___1310720022_262144_236
-	movx	a,@dptr
-	mov	dptr,#_opt_wheel_enabled
-	movx	@dptr,a
-;	main.c:574: uint8_t res = (((PORT_IN(RATE_SEL1_PORT) & _BV(RATE_SEL1_PIN))?1:0) |
-	mov	a,_P1
-	jnb	acc.2,00210$
-	mov	r5,#0x01
-	mov	r6,#0x00
-	sjmp	00211$
-00210$:
-	mov	r5,#0x00
-	mov	r6,#0x00
-00211$:
-	mov	a,_P1
-	jnb	acc.4,00212$
-	mov	r3,#0x02
-	mov	r4,#0x00
-	sjmp	00213$
-00212$:
-	mov	r3,#0x00
-	mov	r4,#0x00
-00213$:
-	mov	a,r3
-	orl	ar5,a
-;	main.c:577: switch (res) {
-	mov	a,r5
+	subb	a,acc
 	mov	r6,a
-	add	a,#0xff - 0x03
-	jc	00128$
+	mov	r7,a
+	mov	a,r0
+	add	a,r4
+	mov	r4,a
+	mov	a,r1
+	addc	a,r5
+	mov	r5,a
 	mov	a,r6
-	add	a,r6
-	add	a,r6
-	mov	dptr,#00379$
-	jmp	@a+dptr
-00379$:
-	ljmp	00127$
-	ljmp	00126$
-	ljmp	00125$
-;	main.c:578: case 3:
-;	main.c:579: res = PS2_SAMPLES_PER_SEC_UFAST;
-	mov	dptr,#_main_res_458752_248
-	mov	a,#0x64
+	addc	a,r2
+	mov	r6,a
+	mov	a,r7
+	addc	a,r3
+	mov	r7,a
+;	main.c:358: if (val < (int32_t)min) return min;
+	clr	c
+	mov	a,r4
+	subb	a,#0x68
+	mov	a,r5
+	subb	a,#0xc5
+	mov	a,r6
+	subb	a,#0xff
+	mov	a,r7
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	00121$
+	mov	dptr,#_do_process___1310720003_131072_151
+	mov	a,#0x68
 	movx	@dptr,a
-;	main.c:580: break;
-;	main.c:581: case 2:
-	sjmp	00129$
-00125$:
-;	main.c:582: res = PS2_SAMPLES_PER_SEC_FAST;
-	mov	dptr,#_main_res_458752_248
-	mov	a,#0x50
+	mov	a,#0xc5
+	inc	dptr
 	movx	@dptr,a
-;	main.c:583: break;
-;	main.c:584: case 1:
+	sjmp	00124$
+00121$:
+;	main.c:359: if (val > (int32_t)max) return max;
+	clr	c
+	mov	a,#0x98
+	subb	a,r4
+	mov	a,#0x3a
+	subb	a,r5
+	clr	a
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00123$
+	mov	dptr,#_do_process___1310720003_131072_151
+	mov	a,#0x98
+	movx	@dptr,a
+	mov	a,#0x3a
+	inc	dptr
+	movx	@dptr,a
+	sjmp	00124$
+00123$:
+;	main.c:360: return (int16_t)val;
+	mov	dptr,#_do_process___1310720003_131072_151
+	mov	a,r4
+	movx	@dptr,a
+	mov	a,r5
+	inc	dptr
+	movx	@dptr,a
+;	main.c:703: m_cx = clamp16(dx + m_cx, -15000, 15000); dx = 0;
+00124$:
+	mov	dptr,#_do_process___1310720003_131072_151
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_do_process_m_cx_65536_151
+	mov	a,r6
+	movx	@dptr,a
+	mov	a,r7
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_do_process_dx_65536_151
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:704: m_cy = clamp16(dy + m_cy, -15000, 15000); dy = 0;
+	mov	dptr,#_do_process_m_cy_65536_151
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_do_process_dy_65536_151
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	mov	ar0,r6
+	mov	a,r7
+	mov	r1,a
+	rlc	a
+	subb	a,acc
+	mov	r6,a
+	mov	r7,a
+	mov	a,r0
+	add	a,r4
+	mov	r4,a
+	mov	a,r1
+	addc	a,r5
+	mov	r5,a
+	mov	a,r6
+	addc	a,r2
+	mov	r6,a
+	mov	a,r7
+	addc	a,r3
+	mov	r7,a
+;	main.c:358: if (val < (int32_t)min) return min;
+	clr	c
+	mov	a,r4
+	subb	a,#0x68
+	mov	a,r5
+	subb	a,#0xc5
+	mov	a,r6
+	subb	a,#0xff
+	mov	a,r7
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	00126$
+	mov	dptr,#_do_process___1310720008_131072_151
+	mov	a,#0x68
+	movx	@dptr,a
+	mov	a,#0xc5
+	inc	dptr
+	movx	@dptr,a
 	sjmp	00129$
 00126$:
-;	main.c:585: res = PS2_SAMPLES_PER_SEC_MID;
-	mov	dptr,#_main_res_458752_248
-	mov	a,#0x28
+;	main.c:359: if (val > (int32_t)max) return max;
+	clr	c
+	mov	a,#0x98
+	subb	a,r4
+	mov	a,#0x3a
+	subb	a,r5
+	clr	a
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00128$
+	mov	dptr,#_do_process___1310720008_131072_151
+	mov	a,#0x98
 	movx	@dptr,a
-;	main.c:586: break;
-;	main.c:587: case 0:
-	sjmp	00129$
-00127$:
-;	main.c:588: res = PS2_SAMPLES_PER_SEC_SLOW;
-	mov	dptr,#_main_res_458752_248
-	mov	a,#0x14
+	mov	a,#0x3a
+	inc	dptr
 	movx	@dptr,a
-;	main.c:589: break;
-;	main.c:590: default:
 	sjmp	00129$
 00128$:
-;	main.c:591: res = PS2_SAMPLES_PER_SEC_UFAST;
-	mov	dptr,#_main_res_458752_248
-	mov	a,#0x64
+;	main.c:360: return (int16_t)val;
+	mov	dptr,#_do_process___1310720008_131072_151
+	mov	a,r4
 	movx	@dptr,a
-;	main.c:592: }
+	mov	a,r5
+	inc	dptr
+	movx	@dptr,a
+;	main.c:704: m_cy = clamp16(dy + m_cy, -15000, 15000); dy = 0;
 00129$:
-;	main.c:593: return res;
-	mov	dptr,#_main_res_458752_248
+	mov	dptr,#_do_process___1310720008_131072_151
 	movx	a,@dptr
-;	main.c:670: opt_rate_settings = readRatesettings();
 	mov	r6,a
-	mov	dptr,#_opt_rate_settings
-	movx	@dptr,a
-;	main.c:672: timer0_limit = (uint8_t)((2000U + opt_rate_settings) / (2U * opt_rate_settings));
-	mov	ar4,r6
-	mov	r5,#0x00
-	mov	a,#0xd0
-	add	a,r4
-	mov	r4,a
-	mov	a,#0x07
-	addc	a,r5
-	mov	r5,a
-	mov	r3,#0x00
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_do_process_m_cy_65536_151
 	mov	a,r6
-	add	a,r6
+	movx	@dptr,a
+	mov	a,r7
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_do_process_dy_65536_151
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:705: m_cz = clamp16(dw + m_cz, -127, 128); dw = 0;
+	mov	dptr,#_do_process_m_cz_65536_151
+	movx	a,@dptr
 	mov	r6,a
-	mov	a,r3
-	rlc	a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_do_process_dw_65536_151
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
 	mov	r3,a
-	mov	dptr,#__divuint_PARM_2
-	mov	a,r6
-	movx	@dptr,a
-	mov	a,r3
-	inc	dptr
-	movx	@dptr,a
-	mov	dpl,r4
-	mov	dph,r5
-	push	ar7
-	lcall	__divuint
-	mov	r5,dpl
-	pop	ar7
-	mov	dptr,#_timer0_limit
-	mov	a,r5
-	movx	@dptr,a
-;	main.c:597: if (!(PORT_IN(IRQX_SEL_PORT) & _BV(IRQX_SEL_PIN))) {
-	mov	a,_P2
-	jb	acc.5,00132$
-;	main.c:598: return USE_IRQX;
-	mov	dptr,#_main___1310720026_262144_236
-	mov	a,#0x01
-	movx	@dptr,a
-	sjmp	00136$
-00132$:
-;	main.c:600: if (opt_com == SELECT_COM1 || opt_com == SELECT_COM3) {
+	mov	ar0,r6
 	mov	a,r7
-	jz	00134$
-	cjne	r7,#0x02,00135$
-00134$:
-;	main.c:601: return USE_IRQ4;
-	mov	dptr,#_main___1310720026_262144_236
-	mov	a,#0x02
-	movx	@dptr,a
-	sjmp	00136$
-00135$:
-;	main.c:603: return USE_IRQ3;
-	mov	dptr,#_main___1310720026_262144_236
-	clr	a
-	movx	@dptr,a
-;	main.c:674: opt_irq_settings = checkIRQ(opt_com_settings);
-00136$:
-	mov	dptr,#_main___1310720026_262144_236
-	movx	a,@dptr
-	mov	dptr,#_opt_irq_settings
-	movx	@dptr,a
-;	main.c:681: TH0 = (uint8_t)(TIMER0_CONST >> 8);
-	mov	_TH0,#0xf0
-;	main.c:682: TL0 = (uint8_t)(TIMER0_CONST & 0xFF);
-	mov	_TL0,#0x60
-;	main.c:683: TF0 = 0;
-;	assignBit
-	clr	_TF0
-;	main.c:684: TR0 = 1;
-;	assignBit
-	setb	_TR0
-;	main.c:688: TR2 = 0;         // останов таймера
-;	assignBit
-	clr	_TR2
-;	main.c:689: T2MOD = 0x00;    // обычный режим, авто-перезагрузка 16-бит
-	mov	_T2MOD,#0x00
-;	main.c:690: RCAP2H = (uint8_t)((TIMER2_RELOAD_FAST >> 8) & 0xFF);
-	mov	_RCAP2H,#0xff
-;	main.c:691: RCAP2L = (uint8_t)(TIMER2_RELOAD_FAST & 0xFF);
-	mov	_RCAP2L,#0x9c
-;	main.c:692: TH2 = RCAP2H;
-	mov	_TH2,_RCAP2H
-;	main.c:693: TL2 = RCAP2L;
-	mov	_TL2,_RCAP2L
-;	main.c:694: TF2 = 0;
-;	assignBit
-	clr	_TF2
-;	main.c:698: T3_SETUP = 0;           // Режим таймера (не захвата)
-;	main.c:699: T3_COUNT = 0;           // Сброс счетчика
-	clr	a
-	mov	_T3_SETUP,a
-	mov	((_T3_COUNT >> 0) & 0xFF),a
-	mov	((_T3_COUNT >> 8) & 0xFF),a
-;	main.c:700: T3_END = TIMER1_CONST;  // Установка периода
-	mov	((_T3_END >> 0) & 0xFF),#0x10
-	mov	((_T3_END >> 8) & 0xFF),#0x27
-;	main.c:701: T3_CTRL = 0;            // Изначально остановлен, сброс флагов
-;	1-genFromRTrack replaced	mov	_T3_CTRL,#0x00
-	mov	_T3_CTRL,a
-;	main.c:705: IT0 = 1; // Активен по спаду сигнала
-;	assignBit
-	setb	_IT0
-;	main.c:706: IE0 = 0; // Сброс флага прерывания INT0
-;	assignBit
-	clr	_IE0
-;	main.c:710: ET0 = 1; // разрешить прерывания таймера 0
-;	assignBit
-	setb	_ET0
-;	main.c:711: ET2 = 1; // разрешить прерывания таймера 2
-;	assignBit
-	setb	_ET2
-;	main.c:712: IE_TMR3 = 1; // разрешить прерывания таймера 3
-;	assignBit
-	setb	_IE_TMR3
-;	main.c:713: EX0 = 1; // разрешить прерывания INT0
-;	assignBit
-	setb	_EX0
-;	main.c:715: SAFE_MOD = 0x55;
-	mov	_SAFE_MOD,#0x55
-;	main.c:716: SAFE_MOD = 0xAA;
-	mov	_SAFE_MOD,#0xaa
-;	main.c:718: WAKE_CTRL = bWAK_BY_USB | bWAK_RXD1_LO | bWAK_P3_2E_3L | bWAK_RXD0_LO;
-	mov	_WAKE_CTRL,#0xc3
-;	main.c:721: bSLP_OFF_SPI0 | bSLP_OFF_TMR3 | bSLP_OFF_XRAM;
-	mov	_SLEEP_CTRL,#0x7d
-;	main.c:724: GLOBAL_CFG |= bWDOG_EN;
-	orl	_GLOBAL_CFG,#0x01
-;	main.c:726: SAFE_MOD = 0xFF;
-	mov	_SAFE_MOD,#0xff
-;	main.c:610: return (PCON & (bRST_FLAG1 | bRST_FLAG0)) >> 4;
-	mov	a,#0x30
-	anl	a,_PCON
-	swap	a
-	anl	a,#0x0f
-;	main.c:728: switch (get_reset_source()) {
-	mov	r7,a
-	mov	r6,a
-	add	a,#0xff - 0x03
-	jc	00142$
-	mov	a,r6
-	add	a,r6
-;	main.c:729: case 0b10: // 10 - Переполнение watchdog
-	mov	dptr,#00385$
-	jmp	@a+dptr
-00385$:
-	sjmp	00140$
-	sjmp	00140$
-	sjmp	00138$
-	sjmp	00139$
-00138$:
-;	main.c:730: device_init = true;
-	mov	dptr,#_device_init
-	mov	a,#0x01
-	movx	@dptr,a
-;	main.c:731: break;
-;	main.c:732: case 0b11: // 11 - Аппаратный сброс
-	sjmp	00142$
-00139$:
-;	main.c:733: led_on(); // Сигнализируем исправность светодиода
-	anl	_P4_OUT,#0xbf
-;	main.c:734: delay(50);
-	mov	dptr,#0x0032
-	lcall	_delay
-;	main.c:737: case 0b01: // 01 - Сброс при включении питания
-00140$:
-;	main.c:738: delay(50); // Ждём окончания переходных процессов
-	mov	dptr,#0x0032
-	lcall	_delay
-;	main.c:739: led_off();
-	orl	_P4_OUT,#0x40
-;	main.c:740: device_init = false;
-	mov	dptr,#_device_init
-	clr	a
-	movx	@dptr,a
-;	main.c:742: }
-00142$:
-;	main.c:745: EA = 1;
-;	assignBit
-	setb	_EA
-;	main.c:388: CRITICAL_SECTION (
-	mov	c,_EA
-	clr	a
-	rlc	a
-	mov	r7,a
-;	assignBit
-	clr	_EA
-	mov	dptr,#_spi_tx_buf_w
-	clr	a
-	movx	@dptr,a
-	mov	dptr,#_spi_tx_buf_r
-	movx	@dptr,a
-	mov	dptr,#_spi_tx_buf_count
-	movx	@dptr,a
-	mov	dptr,#_device_init
-	movx	a,@dptr
-	jnz	00145$
-	orl	_P1,#0x20
-	mov	dptr,#0x0001
-	push	ar7
-	lcall	_delayUs
-	pop	ar7
-	anl	_P1,#0xdf
-	mov	dptr,#_opt_irq_settings
-	movx	a,@dptr
-	mov	r6,a
-	mov	dptr,#_opt_com_settings
-	movx	a,@dptr
-;	main.c:430: config_data |= (opt_com & 0x03); // Base adress
-	anl	a,#0x03
-	mov	r5,a
-;	main.c:431: config_data |= (opt_irq == USE_IRQX) ? 0x4 : 0; // Не использовать стандартное IRQ
-	cjne	r6,#0x01,00214$
-	mov	r4,#0x04
-	mov	r6,#0x00
-	sjmp	00215$
-00214$:
-	mov	r4,#0x00
-	mov	r6,#0x00
-00215$:
-	mov	a,r4
-	orl	ar5,a
-;	main.c:433: spi_send(config_data);
-	mov	dpl,r5
-	push	ar7
-	lcall	_spi_send
-	pop	ar7
-;	main.c:388: CRITICAL_SECTION (
-00145$:
-	mov	dptr,#0x0001
-	push	ar7
-	lcall	_delayUs
-	pop	ar7
-	anl	_P1,#0xf7
-;	assignBit
-	mov	a,r7
-	add	a,#0xff
-	mov	_EA,c
-;	main.c:407: while (!device_init) {
-00149$:
-	mov	dptr,#_device_init
-	movx	a,@dptr
-	jz	00149$
-;	main.c:750: initUART0(115200);
-	mov	dptr,#0xc200
-	mov	b,#0x01
-	clr	a
-	lcall	_initUART0
-;	main.c:751: DEBUG_OUT("Startup\n");
-	mov	a,#___str_0
-	push	acc
-	mov	a,#(___str_0 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	main.c:614: resetHubDevices(0);
-	mov	dpl,#0x00
-	lcall	_resetHubDevices
-;	main.c:615: resetHubDevices(1);
-	mov	dpl,#0x01
-	lcall	_resetHubDevices
-;	main.c:616: initUSB_Host();
-	lcall	_initUSB_Host
-;	main.c:344: m_wheel = opt_wheel_enabled;
-	mov	dptr,#_opt_wheel_enabled
-	movx	a,@dptr
-	mov	dptr,#_m_wheel
-	movx	@dptr,a
-;	main.c:757: mouse_enabled = get_mouse_power_state();
-	mov	dptr,#_mouse_enabled
-	mov	a,#0x04
-	anl	a,_P3
-	movx	@dptr,a
-;	main.c:758: mouse_start = true;
-	mov	dptr,#_mouse_start
-	mov	a,#0x01
-	movx	@dptr,a
-;	main.c:759: fatal_error = false;
-	mov	dptr,#_fatal_error
-	clr	a
-	movx	@dptr,a
-;	main.c:765: DEBUG_OUT("Ready\n");
-	mov	a,#___str_1
-	push	acc
-	mov	a,#(___str_1 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-00202$:
-;	main.c:768: if (!fatal_error) {
-	mov	dptr,#_fatal_error
-	movx	a,@dptr
-;	main.c:769: WDOG_COUNT = 0;
-	jnz	00102$
-	mov	_WDOG_COUNT,a
-00102$:
-;	main.c:772: if (!mouse_enabled) { // Мышь выключена
-	mov	dptr,#_mouse_enabled
-	movx	a,@dptr
-	jnz	00106$
-;	main.c:774: mouse_enabled = get_mouse_power_state();
-	mov	dptr,#_mouse_enabled
-	mov	a,#0x04
-	anl	a,_P3
-	movx	@dptr,a
-;	main.c:775: if (mouse_enabled) {
-	movx	a,@dptr
-	jz	00106$
-;	main.c:777: mouse_start = true;
-	mov	dptr,#_mouse_start
-	mov	a,#0x01
-	movx	@dptr,a
-;	main.c:778: allow_send_data = true;
-	mov	dptr,#_allow_send_data
-	movx	@dptr,a
-00106$:
-;	main.c:782: processUart();
-	lcall	_processUart
-;	main.c:491: checkRootHubConnections();
-	lcall	_checkRootHubConnections
-;	main.c:494: pollHIDdevice();
-	lcall	_pollHIDdevice
-;	main.c:497: while (mouse_rx_buf_count >= 4) {
-00157$:
-	mov	dptr,#_mouse_rx_buf_count
-	movx	a,@dptr
-	mov	r7,a
-	cjne	r7,#0x04,00393$
-00393$:
-	jnc	00394$
-	ljmp	00159$
-00394$:
-;	main.c:498: m_bt = mouse_read() & (m_wheel?7:3); // byte 0: 00000RML  (битовые флаги левой/правой/средней кнопки)
-	lcall	_mouse_read
-	mov	r7,dpl
-	mov	dptr,#_m_wheel
-	movx	a,@dptr
-	jz	00216$
-	mov	r5,#0x07
-	mov	r6,#0x00
-	sjmp	00217$
-00216$:
-	mov	r5,#0x03
-	mov	r6,#0x00
-00217$:
-	mov	dptr,#_main_m_bt_393216_279
-	mov	a,r5
-	anl	a,r7
-	movx	@dptr,a
-;	main.c:499: m_cx += (int8_t)mouse_read(); // byte 1: ΔX (signed)
-	lcall	_mouse_read
-	mov	a,dpl
-	mov	r7,a
+	mov	r1,a
 	rlc	a
 	subb	a,acc
 	mov	r6,a
-	mov	dptr,#_main_m_cx_393216_279
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	mov	a,r7
+	mov	r7,a
+	mov	a,r0
 	add	a,r4
-	mov	r7,a
-	mov	a,r6
-	addc	a,r5
-	mov	r6,a
-	mov	dptr,#_main_m_cx_393216_279
-	mov	a,r7
-	movx	@dptr,a
-	mov	a,r6
-	inc	dptr
-	movx	@dptr,a
-;	main.c:500: m_cy -= (int8_t)mouse_read(); // byte 2: ΔY (signed)
-	lcall	_mouse_read
-	mov	a,dpl
-	mov	r7,a
-	rlc	a
-	subb	a,acc
-	mov	r6,a
-	mov	dptr,#_main_m_cy_393216_279
-	movx	a,@dptr
 	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
+	mov	a,r1
+	addc	a,r5
 	mov	r5,a
-	mov	a,r4
+	mov	a,r6
+	addc	a,r2
+	mov	r6,a
+	mov	a,r7
+	addc	a,r3
+	mov	r7,a
+;	main.c:358: if (val < (int32_t)min) return min;
 	clr	c
-	subb	a,r7
-	mov	r7,a
+	mov	a,r4
+	subb	a,#0x81
 	mov	a,r5
+	subb	a,#0xff
+	mov	a,r6
+	subb	a,#0xff
+	mov	a,r7
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	00131$
+	mov	dptr,#_do_process___1310720013_131072_151
+	mov	a,#0x81
+	movx	@dptr,a
+	mov	a,#0xff
+	inc	dptr
+	movx	@dptr,a
+	sjmp	00134$
+00131$:
+;	main.c:359: if (val > (int32_t)max) return max;
+	clr	c
+	mov	a,#0x80
+	subb	a,r4
+	clr	a
+	subb	a,r5
+	clr	a
 	subb	a,r6
-	mov	r6,a
-	mov	dptr,#_main_m_cy_393216_279
-	mov	a,r7
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00133$
+	mov	dptr,#_do_process___1310720013_131072_151
+	mov	a,#0x80
 	movx	@dptr,a
-	mov	a,r6
+	clr	a
 	inc	dptr
 	movx	@dptr,a
-;	main.c:501: m_cz += (int8_t)mouse_read(); // byte 3: ΔWheel (signed)
-	lcall	_mouse_read
-	mov	a,dpl
-	mov	r7,a
-	rlc	a
-	subb	a,acc
-	mov	r6,a
-	mov	dptr,#_main_m_cz_393216_279
+	sjmp	00134$
+00133$:
+;	main.c:360: return (int16_t)val;
+	mov	dptr,#_do_process___1310720013_131072_151
+	mov	a,r4
+	movx	@dptr,a
+	mov	a,r5
+	inc	dptr
+	movx	@dptr,a
+;	main.c:705: m_cz = clamp16(dw + m_cz, -127, 128); dw = 0;
+00134$:
+	mov	dptr,#_do_process___1310720013_131072_151
 	movx	a,@dptr
-	mov	r4,a
+	mov	r6,a
 	inc	dptr
 	movx	a,@dptr
-	mov	r5,a
-	mov	a,r7
-	add	a,r4
 	mov	r7,a
+	mov	dptr,#_do_process_m_cz_65536_151
 	mov	a,r6
-	addc	a,r5
-	mov	r6,a
-	mov	dptr,#_main_m_cz_393216_279
-	mov	a,r7
 	movx	@dptr,a
-	mov	a,r6
+	mov	a,r7
 	inc	dptr
 	movx	@dptr,a
-	ljmp	00157$
-00159$:
-;	main.c:505: if (allow_send_data && mouse_enabled) {
+	mov	dptr,#_do_process_dw_65536_151
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:708: if (allow_send_data && mouse_enabled) {
 	mov	dptr,#_allow_send_data
 	movx	a,@dptr
-	jnz	00396$
-	ljmp	00200$
-00396$:
+	jnz	00251$
+	ret
+00251$:
 	mov	dptr,#_mouse_enabled
 	movx	a,@dptr
-	jnz	00397$
-	ljmp	00200$
-00397$:
-;	main.c:506: allow_send_data = false;
+	jnz	00252$
+	ret
+00252$:
+;	main.c:709: allow_send_data = false;
 	mov	dptr,#_allow_send_data
 	clr	a
 	movx	@dptr,a
-;	main.c:507: dr_ctr = (dr_ctr + 1) & 0x03;
-	mov	dptr,#_main_dr_ctr_393216_279
-	movx	a,@dptr
-	mov	r7,a
-	inc	r7
-	mov	a,#0x03
-	anl	a,r7
-	movx	@dptr,a
-;	main.c:510: if (mouse_start) {
+;	main.c:712: if (mouse_start) {
 	mov	dptr,#_mouse_start
 	movx	a,@dptr
-	jnz	00398$
-	ljmp	00177$
-00398$:
-;	main.c:511: mouse_start = false;
+	jnz	00253$
+	ljmp	00111$
+00253$:
+;	main.c:713: mouse_start = false;
 	mov	dptr,#_mouse_start
 	clr	a
 	movx	@dptr,a
-;	main.c:514: CRITICAL_SECTION (
+;	main.c:716: CRITICAL_SECTION (
 	mov	c,_EA
 	clr	a
 	rlc	a
 	mov	r7,a
 ;	assignBit
 	clr	_EA
-	mov	dptr,#_main_m_cx_393216_279
+	mov	dptr,#_do_process_m_cx_65536_151
 	clr	a
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-	mov	dptr,#_main_m_cy_393216_279
+	mov	dptr,#_do_process_m_cy_65536_151
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-	mov	dptr,#_main_m_cz_393216_279
+	mov	dptr,#_do_process_m_cz_65536_151
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-	mov	dptr,#_main_m_bt_393216_279
+	mov	dptr,#_do_process_m_bt_65536_151
 	movx	@dptr,a
 	mov	dptr,#_spi_tx_buf_w
 	movx	a,@dptr
@@ -4304,92 +2963,92 @@ _main:
 	movx	@dptr,a
 ;	assignBit
 	clr	_TR2
-	orl	_P1,#0x08
-	anl	_P1,#0xf7
+	orl	_P4_OUT,#0x80
+	anl	_P4_OUT,#0x7f
 ;	assignBit
 	mov	a,r7
 	add	a,#0xff
 	mov	_EA,c
-;	main.c:459: delay(20);
+;	main.c:613: delay(20);
 	mov	dptr,#0x0014
 	lcall	_delay
-;	main.c:462: if (!mouse_enabled) {
+;	main.c:616: if (!mouse_enabled) {
 	mov	dptr,#_mouse_enabled
 	movx	a,@dptr
-	jz	00177$
-;	main.c:467: spi_send(0x4D); // Сигнатура MS mouse "M"
+	jz	00111$
+;	main.c:621: spi_send(0x4D); // Сигнатура MS mouse "M"
 	mov	dpl,#0x4d
 	lcall	_spi_send
-;	main.c:468: if (m_wheel) {
+;	main.c:622: if (m_wheel) {
 	mov	dptr,#_m_wheel
 	movx	a,@dptr
-	jz	00173$
-;	main.c:469: spi_send(0x5A); // Сигнатура мыши с колёсиком "Z"
+	jz	00138$
+;	main.c:623: spi_send(0x5A); // Сигнатура мыши с колёсиком "Z"
 	mov	dpl,#0x5a
 	lcall	_spi_send
-;	main.c:470: spi_send(0x40); // Четырехбайтные пакеты
+;	main.c:624: spi_send(0x40); // Четырехбайтные пакеты
 	mov	dpl,#0x40
 	lcall	_spi_send
-;	main.c:471: spi_send(0x00); // Пустой пакет байт 2
+;	main.c:625: spi_send(0x00); // Пустой пакет байт 2
 	mov	dpl,#0x00
 	lcall	_spi_send
-;	main.c:472: spi_send(0x00); // Пустой пакет байт 3
+;	main.c:626: spi_send(0x00); // Пустой пакет байт 3
 	mov	dpl,#0x00
 	lcall	_spi_send
-;	main.c:473: spi_send(0x00); // Пустой пакет байт 4
+;	main.c:627: spi_send(0x00); // Пустой пакет байт 4
 	mov	dpl,#0x00
 	lcall	_spi_send
-	sjmp	00177$
-00173$:
-;	main.c:475: spi_send(0x33); // Сигнатура 3х кнопочной мыши "3"
+	sjmp	00111$
+00138$:
+;	main.c:629: spi_send(0x33); // Сигнатура 3х кнопочной мыши "3"
 	mov	dpl,#0x33
 	lcall	_spi_send
-;	main.c:476: spi_send(0x40); // Трёхбайтные пакеты
+;	main.c:630: spi_send(0x40); // Трёхбайтные пакеты
 	mov	dpl,#0x40
 	lcall	_spi_send
-;	main.c:477: spi_send(0x00); // Пустой пакет байт 2
+;	main.c:631: spi_send(0x00); // Пустой пакет байт 2
 	mov	dpl,#0x00
 	lcall	_spi_send
-;	main.c:478: spi_send(0x00); // Пустой пакет байт 3
+;	main.c:632: spi_send(0x00); // Пустой пакет байт 3
 	mov	dpl,#0x00
 	lcall	_spi_send
-;	main.c:524: send_mouse_id();
-00177$:
-;	main.c:528: if (m_bt != st_m_bt || m_cx || m_cy || m_cz) {
-	mov	dptr,#_main_m_bt_393216_279
+;	main.c:726: send_mouse_id();
+00111$:
+;	main.c:730: if (m_bt != st_m_bt || m_cx || m_cy || m_cz) {
+	mov	dptr,#_do_process_m_bt_65536_151
 	movx	a,@dptr
 	mov	r7,a
-	mov	dptr,#_main_st_m_bt_393216_279
+	mov	dptr,#_do_process_st_m_bt_65536_151
 	movx	a,@dptr
 	mov	r6,a
 	mov	a,r7
-	cjne	a,ar6,00196$
-	mov	dptr,#_main_m_cx_393216_279
+	cjne	a,ar6,00112$
+	mov	dptr,#_do_process_m_cx_65536_151
 	movx	a,@dptr
 	mov	b,a
 	inc	dptr
 	movx	a,@dptr
 	orl	a,b
-	jnz	00196$
-	mov	dptr,#_main_m_cy_393216_279
+	jnz	00112$
+	mov	dptr,#_do_process_m_cy_65536_151
 	movx	a,@dptr
 	mov	b,a
 	inc	dptr
 	movx	a,@dptr
 	orl	a,b
-	jnz	00196$
-	mov	dptr,#_main_m_cz_393216_279
+	jnz	00112$
+	mov	dptr,#_do_process_m_cz_65536_151
 	movx	a,@dptr
 	mov	b,a
 	inc	dptr
 	movx	a,@dptr
 	orl	a,b
-	jnz	00405$
-	ljmp	00200$
-00405$:
-00196$:
-;	main.c:529: int8_t cx = clamp(m_cx, -128, 127);
-	mov	dptr,#_main_m_cx_393216_279
+	jnz	00260$
+	ret
+00260$:
+00112$:
+;	main.c:731: int8_t cx = clamp8(m_cx, -128, 127);
+	mov	dptr,#_do_process_m_cx_65536_151
 	movx	a,@dptr
 	mov	r6,a
 	inc	dptr
@@ -4401,12 +3060,12 @@ _main:
 	mov	a,r7
 	xrl	a,#0x80
 	subb	a,#0x7f
-	jnc	00182$
-	mov	dptr,#_main___2621440005_524288_292
+	jnc	00142$
+	mov	dptr,#_do_process___2621440019_262144_157
 	mov	a,#0x80
 	movx	@dptr,a
-	sjmp	00185$
-00182$:
+	sjmp	00145$
+00142$:
 	clr	c
 	mov	a,#0x7f
 	subb	a,r6
@@ -4414,25 +3073,25 @@ _main:
 	mov	b,r7
 	xrl	b,#0x80
 	subb	a,b
-	jnc	00184$
-	mov	dptr,#_main___2621440005_524288_292
+	jnc	00144$
+	mov	dptr,#_do_process___2621440019_262144_157
 	mov	a,#0x7f
 	movx	@dptr,a
-	sjmp	00185$
-00184$:
-	mov	dptr,#_main___2621440005_524288_292
+	sjmp	00145$
+00144$:
+	mov	dptr,#_do_process___2621440019_262144_157
 	mov	a,r6
 	movx	@dptr,a
-00185$:
-	mov	dptr,#_main___2621440005_524288_292
+00145$:
+	mov	dptr,#_do_process___2621440019_262144_157
 	movx	a,@dptr
-;	main.c:530: m_cx -= cx;
+;	main.c:732: m_cx -= cx;
 	mov	r7,a
 	mov	r5,a
 	rlc	a
 	subb	a,acc
 	mov	r6,a
-	mov	dptr,#_main_m_cx_393216_279
+	mov	dptr,#_do_process_m_cx_65536_151
 	movx	a,@dptr
 	mov	r3,a
 	inc	dptr
@@ -4441,199 +3100,2305 @@ _main:
 	mov	a,r3
 	clr	c
 	subb	a,r5
-	mov	r5,a
+	mov	r3,a
 	mov	a,r4
 	subb	a,r6
-	mov	r6,a
-	mov	dptr,#_main_m_cx_393216_279
-	mov	a,r5
+	mov	r4,a
+	mov	dptr,#_do_process_m_cx_65536_151
+	mov	a,r3
 	movx	@dptr,a
-	mov	a,r6
+	mov	a,r4
 	inc	dptr
 	movx	@dptr,a
-;	main.c:531: int8_t cy = clamp(m_cy, -128, 127);
-	mov	dptr,#_main_m_cy_393216_279
+;	main.c:733: int8_t cy = clamp8(m_cy, -128, 127);
+	mov	dptr,#_do_process_m_cy_65536_151
 	movx	a,@dptr
-	mov	r5,a
+	mov	r3,a
 	inc	dptr
 	movx	a,@dptr
-	mov	r6,a
+	mov	r4,a
 	clr	c
-	mov	a,r5
+	mov	a,r3
 	subb	a,#0x80
-	mov	a,r6
+	mov	a,r4
 	xrl	a,#0x80
 	subb	a,#0x7f
-	jnc	00187$
-	mov	dptr,#_main___2621440010_589824_296
+	jnc	00147$
+	mov	dptr,#_do_process___2621440024_262144_158
 	mov	a,#0x80
 	movx	@dptr,a
-	sjmp	00190$
-00187$:
+	sjmp	00150$
+00147$:
 	clr	c
 	mov	a,#0x7f
-	subb	a,r5
+	subb	a,r3
 	mov	a,#(0x00 ^ 0x80)
-	mov	b,r6
+	mov	b,r4
 	xrl	b,#0x80
 	subb	a,b
-	jnc	00189$
-	mov	dptr,#_main___2621440010_589824_296
+	jnc	00149$
+	mov	dptr,#_do_process___2621440024_262144_158
 	mov	a,#0x7f
 	movx	@dptr,a
-	sjmp	00190$
-00189$:
-	mov	dptr,#_main___2621440010_589824_296
-	mov	a,r5
-	movx	@dptr,a
-00190$:
-	mov	dptr,#_main___2621440010_589824_296
-	movx	a,@dptr
-;	main.c:532: m_cy -= cy;
-	mov	r6,a
-	mov	r4,a
-	rlc	a
-	subb	a,acc
-	mov	r5,a
-	mov	dptr,#_main_m_cy_393216_279
-	movx	a,@dptr
-	mov	r2,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r3,a
-	mov	a,r2
-	clr	c
-	subb	a,r4
-	mov	r4,a
+	sjmp	00150$
+00149$:
+	mov	dptr,#_do_process___2621440024_262144_158
 	mov	a,r3
-	subb	a,r5
-	mov	r5,a
-	mov	dptr,#_main_m_cy_393216_279
-	mov	a,r4
 	movx	@dptr,a
-	mov	a,r5
-	inc	dptr
-	movx	@dptr,a
-;	main.c:533: int8_t cz = clamp(m_cz, -8, 7);
-	mov	dptr,#_main_m_cz_393216_279
+00150$:
+	mov	dptr,#_do_process___2621440024_262144_158
 	movx	a,@dptr
+;	main.c:734: m_cy -= cy;
 	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	clr	c
-	mov	a,r4
-	subb	a,#0xf8
-	mov	a,r5
-	xrl	a,#0x80
-	subb	a,#0x7f
-	jnc	00192$
-	mov	dptr,#_main___2621450015_655360_300
-	mov	a,#0xf8
-	movx	@dptr,a
-	sjmp	00195$
-00192$:
-	clr	c
-	mov	a,#0x07
-	subb	a,r4
-	mov	a,#(0x00 ^ 0x80)
-	mov	b,r5
-	xrl	b,#0x80
-	subb	a,b
-	jnc	00194$
-	mov	dptr,#_main___2621450015_655360_300
-	mov	a,#0x07
-	movx	@dptr,a
-	sjmp	00195$
-00194$:
-	mov	dptr,#_main___2621450015_655360_300
-	mov	a,r4
-	movx	@dptr,a
-00195$:
-	mov	dptr,#_main___2621450015_655360_300
-	movx	a,@dptr
-;	main.c:534: m_cz -= cz;
-	mov	r5,a
-	mov	r3,a
+	mov	r2,a
 	rlc	a
 	subb	a,acc
-	mov	r4,a
-	mov	dptr,#_main_m_cz_393216_279
+	mov	r3,a
+	mov	dptr,#_do_process_m_cy_65536_151
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
 	movx	a,@dptr
 	mov	r1,a
+	mov	a,r0
+	clr	c
+	subb	a,r2
+	mov	r0,a
+	mov	a,r1
+	subb	a,r3
+	mov	r1,a
+	mov	dptr,#_do_process_m_cy_65536_151
+	mov	a,r0
+	movx	@dptr,a
+	mov	a,r1
+	inc	dptr
+	movx	@dptr,a
+;	main.c:735: int8_t cz = clamp8(m_cz, -8, 7);
+	mov	dptr,#_do_process_m_cz_65536_151
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	clr	c
+	mov	a,r0
+	subb	a,#0xf8
+	mov	a,r1
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	00152$
+	mov	dptr,#_do_process___2621450029_262145_159
+	mov	a,#0xf8
+	movx	@dptr,a
+	sjmp	00155$
+00152$:
+	clr	c
+	mov	a,#0x07
+	subb	a,r0
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r1
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00154$
+	mov	dptr,#_do_process___2621450029_262145_159
+	mov	a,#0x07
+	movx	@dptr,a
+	sjmp	00155$
+00154$:
+	mov	dptr,#_do_process___2621450029_262145_159
+	mov	a,r0
+	movx	@dptr,a
+00155$:
+	mov	dptr,#_do_process___2621450029_262145_159
+	movx	a,@dptr
+;	main.c:736: m_cz -= cz;
+	mov	_do_process_sloc0_1_0,a
+	mov	_do_process_sloc1_1_0,_do_process_sloc0_1_0
+	rlc	a
+	subb	a,acc
+	mov	(_do_process_sloc1_1_0 + 1),a
+	mov	dptr,#_do_process_m_cz_65536_151
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	mov	a,r0
+	clr	c
+	subb	a,_do_process_sloc1_1_0
+	mov	r0,a
+	mov	a,r1
+	subb	a,(_do_process_sloc1_1_0 + 1)
+	mov	r1,a
+	mov	dptr,#_do_process_m_cz_65536_151
+	mov	a,r0
+	movx	@dptr,a
+	mov	a,r1
+	inc	dptr
+	movx	@dptr,a
+;	main.c:738: st_m_bt = m_bt;
+	mov	dptr,#_do_process_m_bt_65536_151
+	movx	a,@dptr
+	mov	r1,a
+	mov	dptr,#_do_process_st_m_bt_65536_151
+	movx	@dptr,a
+;	main.c:592: left_b = b & 1;
+	mov	a,#0x01
+	anl	a,r1
+	mov	_do_process_sloc1_1_0,a
+;	main.c:593: right_b = (b >> 1) & 1;
+	mov	a,r1
+	rr	a
+	anl	a,#0x01
+	mov	r0,a
+;	main.c:594: middle_b = (b >> 2) & 1;
+	mov	dptr,#_do_process_middle_b_393218_186
+	mov	a,r1
+	rr	a
+	rr	a
+	anl	a,#0x01
+	movx	@dptr,a
+;	main.c:596: spi_send((1 << 6) | (left_b << 5) | (right_b << 4) |
+	mov	a,_do_process_sloc1_1_0
+	swap	a
+	rl	a
+	anl	a,#0xe0
+	mov	r1,a
+	orl	ar1,#0x40
+	mov	a,r0
+	swap	a
+	anl	a,#0xf0
+	orl	ar1,a
+;	main.c:597: ((y & 0xC0) >> 4) | ((x & 0xC0) >> 6));
+	anl	ar2,#0xc0
+	clr	a
+	swap	a
+	xch	a,r2
+	swap	a
+	anl	a,#0x0f
+	xrl	a,r2
+	xch	a,r2
+	anl	a,#0x0f
+	xch	a,r2
+	xrl	a,r2
+	xch	a,r2
+	jnb	acc.3,00267$
+	orl	a,#0xf0
+00267$:
+	mov	a,r2
+	orl	ar1,a
+	anl	ar5,#0xc0
+	clr	a
+	mov	c,acc.7
+	xch	a,r5
+	rlc	a
+	xch	a,r5
+	rlc	a
+	mov	c,acc.7
+	xch	a,r5
+	rlc	a
+	xch	a,r5
+	rlc	a
+	xch	a,r5
+	anl	a,#0x03
+	jnb	acc.1,00268$
+	orl	a,#0xfc
+00268$:
+	mov	a,r5
+	orl	ar1,a
+	mov	dpl,r1
+	push	ar7
+	push	ar4
+	lcall	_spi_send
+	pop	ar4
+	pop	ar7
+;	main.c:598: spi_send(x & 0x3F);
+	anl	ar7,#0x3f
+	mov	dpl,r7
+	push	ar4
+	lcall	_spi_send
+	pop	ar4
+;	main.c:599: spi_send(y & 0x3F);
+	anl	ar4,#0x3f
+	mov	dpl,r4
+	lcall	_spi_send
+;	main.c:602: if (m_wheel) {
+	mov	dptr,#_m_wheel
+	movx	a,@dptr
+	jz	00157$
+;	main.c:603: spi_send((middle_b << 4) | (z & 0x0F));
+	mov	dptr,#_do_process_middle_b_393218_186
+	movx	a,@dptr
+	swap	a
+	anl	a,#0xf0
+	mov	r7,a
+	mov	r1,_do_process_sloc0_1_0
+	anl	ar1,#0x0f
+	mov	a,r7
+	orl	ar1,a
+	mov	dpl,r1
+	lcall	_spi_send
+00157$:
+;	main.c:606: flash_led();
+;	main.c:740: spi_m_send(cx, cy, cz, m_bt);
+;	main.c:743: }
+	ljmp	_flash_led
+;------------------------------------------------------------
+;Allocation info for local variables in function 'get_reset_source'
+;------------------------------------------------------------
+;	main.c:745: static inline uint8_t get_reset_source(void)
+;	-----------------------------------------
+;	 function get_reset_source
+;	-----------------------------------------
+_get_reset_source:
+;	main.c:747: return (PCON & (bRST_FLAG1 | bRST_FLAG0)) >> 4;
+	mov	a,#0x30
+	anl	a,_PCON
+	swap	a
+	anl	a,#0x0f
+;	main.c:748: }
+	mov	dpl,a
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'usb_init'
+;------------------------------------------------------------
+;	main.c:750: static inline void usb_init(void)
+;	-----------------------------------------
+;	 function usb_init
+;	-----------------------------------------
+_usb_init:
+;	main.c:752: resetHubDevices(0);
+	mov	dpl,#0x00
+	lcall	_resetHubDevices
+;	main.c:753: resetHubDevices(1);
+	mov	dpl,#0x01
+	lcall	_resetHubDevices
+;	main.c:754: initUSB_Host();
+;	main.c:755: }
+	ljmp	_initUSB_Host
+;------------------------------------------------------------
+;Allocation info for local variables in function 'init'
+;------------------------------------------------------------
+;__1310720048              Allocated with name '_init___1310720048_131072_193'
+;__1310720045              Allocated with name '_init___1310720045_131072_193'
+;__1310720043              Allocated with name '_init___1310720043_131072_193'
+;__1310720041              Allocated with name '_init___1310720041_131072_193'
+;__1310720039              Allocated with name '_init___1310720039_131072_193'
+;com_table                 Allocated with name '_init_com_table_262144_319'
+;jumpers                   Allocated with name '_init_jumpers_262144_319'
+;rate_table                Allocated with name '_init_rate_table_262144_325'
+;jumpers                   Allocated with name '_init_jumpers_262144_325'
+;__1310720046              Allocated with name '_init___1310720046_131072_326'
+;opt_com                   Allocated with name '_init_opt_com_196608_327'
+;_ea_state                 Allocated with name '_init__ea_state_327680_337'
+;__4587520051              Allocated with name '_init___4587520051_458752_343'
+;__4587520052              Allocated with name '_init___4587520052_458752_343'
+;opt_com                   Allocated with name '_init_opt_com_524288_344'
+;opt_irq                   Allocated with name '_init_opt_irq_524288_344'
+;config_data               Allocated with name '_init_config_data_589824_345'
+;------------------------------------------------------------
+;	main.c:757: static inline void init(void)
+;	-----------------------------------------
+;	 function init
+;	-----------------------------------------
+_init:
+;	main.c:759: WDOG_COUNT = 0;
+	mov	_WDOG_COUNT,#0x00
+;	main.c:762: SAFE_MOD = 0x55;
+	mov	_SAFE_MOD,#0x55
+;	main.c:763: SAFE_MOD = 0xAA;
+	mov	_SAFE_MOD,#0xaa
+;	main.c:765: PLL_CFG = (MASK_USB_4X_DIV & (6 << 5)) | (MASK_PLL_MULT & 24);
+	mov	_PLL_CFG,#0xd8
+;	main.c:766: CLOCK_CFG = bOSC_EN_INT | (MASK_SYS_CK_DIV & 6);
+	mov	_CLOCK_CFG,#0x86
+;	main.c:768: SAFE_MOD = 0xFF;
+	mov	_SAFE_MOD,#0xff
+;	main.c:771: delay(7);
+	mov	dptr,#0x0007
+	lcall	_delay
+;	main.c:783: pinMode(SPI_RESOUT_PORT, SPI_RESOUT_PIN, PIN_MODE_OUTPUT);
+	mov	_PORT_CFG,_PORT_CFG
+	orl	_P4_DIR,#0x80
+;	main.c:784: pinMode(SPI_MOSI_PORT, SPI_MOSI_PIN, PIN_MODE_OUTPUT);
+	anl	_PORT_CFG,#0xfd
+	orl	_P1_DIR,#0x20
+;	main.c:785: pinMode(SPI_SCK_PORT, SPI_SCK_PIN, PIN_MODE_OUTPUT);
+	anl	_PORT_CFG,#0xfd
+	orl	_P1_DIR,#0x80
+;	main.c:786: pinMode(TxD_PORT, TxD_PIN, PIN_MODE_OUTPUT);
+	anl	_PORT_CFG,#0xfe
+	orl	_P0_DIR,#0x08
+;	main.c:788: pinMode(RxD_PORT, RxD_PIN, PIN_MODE_INPUT);
+	anl	_PORT_CFG,#0xfe
+	anl	_P0_DIR,#0xfb
+	anl	_P0_PU,#0xfb
+;	main.c:789: pinMode(DTR_PORT, DTR_PIN, PIN_MODE_INPUT);
+	anl	_PORT_CFG,#0xf7
+	anl	_P3_DIR,#0xfb
+	anl	_P3_PU,#0xfb
+;	main.c:790: pinMode(COM_SEL1_PORT, COM_SEL1_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xfb
+	anl	_P2_DIR,#0xbf
+	orl	_P2_PU,#0x40
+;	main.c:791: pinMode(COM_SEL2_PORT, COM_SEL2_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xfb
+	anl	_P2_DIR,#0x7f
+	orl	_P2_PU,#0x80
+;	main.c:792: pinMode(RATE_SEL1_PORT, RATE_SEL1_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xfd
+	anl	_P1_DIR,#0xfb
+	orl	_P1_PU,#0x04
+;	main.c:793: pinMode(RATE_SEL2_PORT, RATE_SEL2_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xfd
+	anl	_P1_DIR,#0xef
+	orl	_P1_PU,#0x10
+;	main.c:794: pinMode(WHEEL_SEL_PORT, WHEEL_SEL_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xf7
+	anl	_P3_DIR,#0xef
+	orl	_P3_PU,#0x10
+;	main.c:795: pinMode(IRQX_SEL_PORT, IRQX_SEL_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xfb
+	anl	_P2_DIR,#0xdf
+	orl	_P2_PU,#0x20
+;	main.c:796: pinMode(RxIRQ_PORT, RxIRQ_PIN, PIN_MODE_INPUT);
+	anl	_PORT_CFG,#0xfd
+	anl	_P1_DIR,#0xbf
+	anl	_P1_PU,#0xbf
+;	main.c:797: pinMode(PRG_PORT, PRG_PIN, PIN_MODE_INPUT_PULLUP);
+	mov	_PORT_CFG,_PORT_CFG
+	anl	_P4_DIR,#0xbf
+	orl	_P4_PU,#0x40
+;	main.c:800: if (!(PORT_IN(PRG_PORT) & _BV(PRG_PIN))) {
+	mov	a,_P4_IN
+	jb	acc.6,00438$
+;	main.c:801: runBootloader();
+	mov	dpl,_runBootloader
+	mov	dph,(_runBootloader + 1)
+	lcall	__sdcc_call_dptr
+;	main.c:803: pinMode(LED_PORT, LED_PIN, PIN_MODE_OUTPUT);
+	sjmp	00448$
+00438$:
+	mov	_PORT_CFG,_PORT_CFG
+	orl	_P4_DIR,#0x40
+00448$:
+;	main.c:641: const uint8_t com_table[4] = {
+	mov	dptr,#_init_com_table_262144_319
+	mov	a,#0x03
+	movx	@dptr,a
+	mov	dptr,#(_init_com_table_262144_319 + 0x0001)
+	dec	a
+	movx	@dptr,a
+	mov	dptr,#(_init_com_table_262144_319 + 0x0002)
+	dec	a
+	movx	@dptr,a
+	mov	dptr,#(_init_com_table_262144_319 + 0x0003)
+	clr	a
+	movx	@dptr,a
+;	main.c:645: uint8_t jumpers = (((PORT_IN(COM_SEL1_PORT) & _BV(COM_SEL1_PIN))?1:0) |
+	mov	a,_P2
+	jnb	acc.6,00478$
+	mov	r6,#0x01
+	mov	r7,#0x00
+	sjmp	00479$
+00478$:
+	mov	r6,#0x00
+	mov	r7,#0x00
+00479$:
+	mov	a,_P2
+	jnb	acc.7,00480$
+	mov	r4,#0x02
+	mov	r5,#0x00
+	sjmp	00481$
+00480$:
+	mov	r4,#0x00
+	mov	r5,#0x00
+00481$:
+	mov	a,r4
+	orl	a,r6
+;	main.c:648: return com_table[jumpers];
+	add	a,#_init_com_table_262144_319
+	mov	dpl,a
+	clr	a
+	addc	a,#(_init_com_table_262144_319 >> 8)
+	mov	dph,a
+	movx	a,@dptr
+;	main.c:807: opt_com_settings = readCOMsettings();
+	mov	dptr,#_opt_com_settings
+	movx	@dptr,a
+;	main.c:653: return !(PORT_IN(WHEEL_SEL_PORT) & _BV(WHEEL_SEL_PIN));
+	mov	a,_P3
+	swap	a
+	anl	a,#0x01
+	mov	dptr,#_init___1310720041_131072_193
+	cjne	a,#0x01,00539$
+00539$:
+	clr	a
+	rlc	a
+	movx	@dptr,a
+;	main.c:808: opt_wheel_enabled = readWheelsettings();
+	mov	dptr,#_init___1310720041_131072_193
+	movx	a,@dptr
+	mov	dptr,#_opt_wheel_enabled
+	movx	@dptr,a
+;	main.c:658: const uint8_t rate_table[4] = {
+	mov	dptr,#_init_rate_table_262144_325
+	mov	a,#0x14
+	movx	@dptr,a
+	mov	dptr,#(_init_rate_table_262144_325 + 0x0001)
+	rl	a
+	movx	@dptr,a
+	mov	dptr,#(_init_rate_table_262144_325 + 0x0002)
+	rl	a
+	movx	@dptr,a
+	mov	dptr,#(_init_rate_table_262144_325 + 0x0003)
+	mov	a,#0x64
+	movx	@dptr,a
+;	main.c:662: uint8_t jumpers = (((PORT_IN(RATE_SEL1_PORT) & _BV(RATE_SEL1_PIN))?1:0) |
+	mov	a,_P1
+	jnb	acc.2,00482$
+	mov	r6,#0x01
+	mov	r7,#0x00
+	sjmp	00483$
+00482$:
+	mov	r6,#0x00
+	mov	r7,#0x00
+00483$:
+	mov	a,_P1
+	jnb	acc.4,00484$
+	mov	r4,#0x02
+	mov	r5,#0x00
+	sjmp	00485$
+00484$:
+	mov	r4,#0x00
+	mov	r5,#0x00
+00485$:
+	mov	a,r4
+	orl	a,r6
+;	main.c:665: return rate_table[jumpers];
+	add	a,#_init_rate_table_262144_325
+	mov	dpl,a
+	clr	a
+	addc	a,#(_init_rate_table_262144_325 >> 8)
+	mov	dph,a
+	movx	a,@dptr
+;	main.c:809: opt_rate_settings = readRatesettings();
+	mov	r7,a
+	mov	dptr,#_opt_rate_settings
+	movx	@dptr,a
+;	main.c:810: opt_irq_settings = checkIRQ(opt_com_settings);
+	mov	dptr,#_opt_com_settings
+	movx	a,@dptr
+	mov	r6,a
+;	main.c:670: if (!(PORT_IN(IRQX_SEL_PORT) & _BV(IRQX_SEL_PIN))) {
+	mov	a,_P2
+	jb	acc.5,00458$
+;	main.c:671: return USE_IRQX;
+	mov	dptr,#_init___1310720045_131072_193
+	mov	a,#0x01
+	movx	@dptr,a
+	sjmp	00462$
+00458$:
+;	main.c:673: if (opt_com == SELECT_COM1 || opt_com == SELECT_COM3) {
+	mov	a,r6
+	jz	00460$
+	cjne	r6,#0x02,00461$
+00460$:
+;	main.c:674: return USE_IRQ4;
+	mov	dptr,#_init___1310720045_131072_193
+	mov	a,#0x02
+	movx	@dptr,a
+	sjmp	00462$
+00461$:
+;	main.c:676: return USE_IRQ3;
+	mov	dptr,#_init___1310720045_131072_193
+	clr	a
+	movx	@dptr,a
+;	main.c:810: opt_irq_settings = checkIRQ(opt_com_settings);
+00462$:
+	mov	dptr,#_init___1310720045_131072_193
+	movx	a,@dptr
+	mov	dptr,#_opt_irq_settings
+	movx	@dptr,a
+;	main.c:813: timer0_limit = (uint8_t)((2000UL + opt_rate_settings) / (opt_rate_settings << 1U));
+	mov	ar3,r7
+	clr	a
+	mov	r4,a
+	mov	r5,a
+	mov	r6,a
+	mov	a,#0xd0
+	add	a,r3
+	mov	r3,a
+	mov	a,#0x07
+	addc	a,r4
+	mov	r4,a
+	clr	a
+	addc	a,r5
+	mov	r5,a
+	clr	a
+	addc	a,r6
+	mov	r6,a
+	mov	r2,#0x00
+	mov	a,r7
+	add	a,r7
+	mov	r7,a
+	mov	a,r2
+	rlc	a
+	mov	r2,a
+	mov	dptr,#__divulong_PARM_2
+	mov	a,r7
+	movx	@dptr,a
+	mov	a,r2
+	inc	dptr
+	movx	@dptr,a
+	clr	a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	mov	dpl,r3
+	mov	dph,r4
+	mov	b,r5
+	mov	a,r6
+	lcall	__divulong
+	mov	r4,dpl
+	mov	r5,dph
+	mov	dptr,#_timer0_limit
+	mov	a,r4
+	movx	@dptr,a
+;	main.c:820: TH0 = (uint8_t)(TIMER0_CONST >> 8);
+	mov	_TH0,#0xf0
+;	main.c:821: TL0 = (uint8_t)(TIMER0_CONST & 0xFF);
+	mov	_TL0,#0x60
+;	main.c:822: TF0 = 0;
+;	assignBit
+	clr	_TF0
+;	main.c:823: TR0 = 1;
+;	assignBit
+	setb	_TR0
+;	main.c:827: TR2 = 0;         // останов таймера
+;	assignBit
+	clr	_TR2
+;	main.c:828: T2MOD = 0x00;    // обычный режим, авто-перезагрузка 16-бит
+	mov	_T2MOD,#0x00
+;	main.c:829: RCAP2H = (uint8_t)((TIMER2_RELOAD_FAST >> 8) & 0xFF);
+	mov	_RCAP2H,#0xff
+;	main.c:830: RCAP2L = (uint8_t)(TIMER2_RELOAD_FAST & 0xFF);
+	mov	_RCAP2L,#0x9c
+;	main.c:831: TH2 = RCAP2H;
+	mov	_TH2,_RCAP2H
+;	main.c:832: TL2 = RCAP2L;
+	mov	_TL2,_RCAP2L
+;	main.c:833: TF2 = 0;
+;	assignBit
+	clr	_TF2
+;	main.c:837: T3_COUNT = 0;           // Сброс счетчика
+	clr	a
+	mov	((_T3_COUNT >> 0) & 0xFF),a
+	mov	((_T3_COUNT >> 8) & 0xFF),a
+;	main.c:838: T3_END = LED_CONST;     // Установка периода
+;	1-genFromRTrack replaced	mov	((_T3_END >> 0) & 0xFF),#0x00
+	mov	((_T3_END >> 0) & 0xFF),a
+	mov	((_T3_END >> 8) & 0xFF),#0xfa
+;	main.c:839: T3_CTRL |= bT3_CLR_ALL;     // Сброс всех регистров
+	orl	_T3_CTRL,#0x02
+;	main.c:840: T3_CTRL &= ~bT3_CLR_ALL;    // Завершение сброса
+	anl	_T3_CTRL,#0xfd
+;	main.c:841: T3_SETUP |= bT3_IE_END;     // Разрешение прерывания по достижению END
+	orl	_T3_SETUP,#0x80
+;	main.c:842: T3_CTRL &= ~bT3_MOD_CAP;    // Режим таймера (не захвата)
+	anl	_T3_CTRL,#0xfe
+;	main.c:846: IT0 = 1; // Активен по спаду сигнала
+;	assignBit
+	setb	_IT0
+;	main.c:847: IE0 = 0; // Сброс флага прерывания INT0
+;	assignBit
+	clr	_IE0
+;	main.c:850: uart_tx_r = 0; uart_tx_w = 0;
+	mov	dptr,#_uart_tx_r
+	clr	a
+	movx	@dptr,a
+	mov	dptr,#_uart_tx_w
+	movx	@dptr,a
+;	main.c:851: uart_rx_r = 0; uart_rx_w = 0;
+	mov	dptr,#_uart_rx_r
+	movx	@dptr,a
+	mov	dptr,#_uart_rx_w
+	movx	@dptr,a
+;	main.c:852: uart_rx_buf_count = 0;
+	mov	dptr,#_uart_rx_buf_count
+	movx	@dptr,a
+;	main.c:855: PIN_FUNC |= bUART0_PIN_X;
+	orl	_PIN_FUNC,#0x10
+;	main.c:858: SM0 = 0;
+;	assignBit
+	clr	_SM0
+;	main.c:859: SM1 = 1; // UART mode 1: 8 data bits, 1 stop
+;	assignBit
+	setb	_SM1
+;	main.c:860: SM2 = 0;
+;	assignBit
+	clr	_SM2
+;	main.c:861: REN = 1; // Разрешить прием
+;	assignBit
+	setb	_REN
+;	main.c:864: PCON |= SMOD;
+	orl	_PCON,#0x80
+;	main.c:867: TMOD = (TMOD & ~(bT1_GATE | bT1_CT | MASK_T1_MOD)) | bT1_M1; // Timer1: режим 2, авто-перезагрузка
+	mov	a,#0x0f
+	anl	a,_TMOD
+	orl	a,#0x20
+	mov	_TMOD,a
+;	main.c:868: T2MOD |= bTMR_CLK | bT1_CLK;                                 // Источник системная частота
+	orl	_T2MOD,#0xa0
+;	main.c:872: TH1 = (uint8_t)(256 - ((((uint32_t)FREQ_SYS / 8) / UART_BAUDRATE + 1) / 2));
+	mov	_TH1,#0xe6
+;	main.c:874: TR1 = 1; // Запуск Timer1
+;	assignBit
+	setb	_TR1
+;	main.c:877: TI = 1;
+;	assignBit
+	setb	_TI
+;	main.c:881: ET0 = 1; // Разрешить прерывания таймера 0
+;	assignBit
+	setb	_ET0
+;	main.c:882: ET2 = 1; // Разрешить прерывания таймера 2
+;	assignBit
+	setb	_ET2
+;	main.c:883: IE_TMR3 = 1; // Разрешить прерывания таймера 3
+;	assignBit
+	setb	_IE_TMR3
+;	main.c:884: EX0 = 1; // Разрешить прерывания INT0
+;	assignBit
+	setb	_EX0
+;	main.c:885: ES = 0;  // Разрешить прерывание UART
+;	assignBit
+	clr	_ES
+;	main.c:887: SAFE_MOD = 0x55;
+	mov	_SAFE_MOD,#0x55
+;	main.c:888: SAFE_MOD = 0xAA;
+	mov	_SAFE_MOD,#0xaa
+;	main.c:890: WAKE_CTRL = bWAK_BY_USB | bWAK_RXD1_LO | bWAK_P3_2E_3L | bWAK_RXD0_LO;
+	mov	_WAKE_CTRL,#0xc3
+;	main.c:897: GLOBAL_CFG |= bWDOG_EN;
+	orl	_GLOBAL_CFG,#0x01
+;	main.c:899: SAFE_MOD = 0xFF;
+	mov	_SAFE_MOD,#0xff
+;	main.c:747: return (PCON & (bRST_FLAG1 | bRST_FLAG0)) >> 4;
+	mov	a,#0x30
+	anl	a,_PCON
+	swap	a
+	anl	a,#0x0f
+;	main.c:905: switch (get_reset_source()) {
+	mov	r7,a
+	mov	r6,a
+	add	a,#0xff - 0x03
+	jc	00453$
+	mov	a,r6
+	add	a,r6
+;	main.c:906: case 0b10: // 10 - Переполнение watchdog
+	mov	dptr,#00547$
+	jmp	@a+dptr
+00547$:
+	sjmp	00452$
+	sjmp	00452$
+	sjmp	00449$
+	sjmp	00450$
+00449$:
+;	main.c:907: device_init = true;
+	mov	dptr,#_device_init
+	mov	a,#0x01
+	movx	@dptr,a
+;	main.c:908: break;
+;	main.c:909: case 0b11: // 11 - Аппаратный сброс
+	sjmp	00453$
+00450$:
+;	main.c:910: led_on(); // Сигнализируем исправность светодиода
+	anl	_P4_OUT,#0xbf
+;	main.c:911: delay(50);
+	mov	dptr,#0x0032
+	lcall	_delay
+;	main.c:914: case 0b01: // 01 - Сброс при включении питания
+00452$:
+;	main.c:915: delay(50); // Ждём окончания переходных процессов
+	mov	dptr,#0x0032
+	lcall	_delay
+;	main.c:916: led_off();
+	orl	_P4_OUT,#0x40
+;	main.c:917: device_init = false;
+	mov	dptr,#_device_init
+	clr	a
+	movx	@dptr,a
+;	main.c:919: }
+00453$:
+;	main.c:922: EA = 1;
+;	assignBit
+	setb	_EA
+;	main.c:536: CRITICAL_SECTION (
+	mov	c,_EA
+	clr	a
+	rlc	a
+	mov	r7,a
+;	assignBit
+	clr	_EA
+	mov	dptr,#_spi_tx_buf_w
+	clr	a
+	movx	@dptr,a
+	mov	dptr,#_spi_tx_buf_r
+	movx	@dptr,a
+	mov	dptr,#_spi_tx_buf_count
+	movx	@dptr,a
+	mov	dptr,#_device_init
+	movx	a,@dptr
+	jnz	00465$
+	orl	_P1,#0x20
+	mov	dptr,#0x0001
+	push	ar7
+	lcall	_delayUs
+	pop	ar7
+	anl	_P1,#0xdf
+	mov	dptr,#_opt_irq_settings
+	movx	a,@dptr
+	mov	r6,a
+	mov	dptr,#_opt_com_settings
+	movx	a,@dptr
+;	main.c:581: config_data |= (opt_com & 0x03); // Base adress
+	anl	a,#0x03
+	mov	r5,a
+;	main.c:582: config_data |= (opt_irq == USE_IRQX) ? 0x4 : 0; // Не использовать стандартное IRQ
+	cjne	r6,#0x01,00486$
+	mov	r4,#0x04
+	mov	r6,#0x00
+	sjmp	00487$
+00486$:
+	mov	r4,#0x00
+	mov	r6,#0x00
+00487$:
+	mov	a,r4
+	orl	ar5,a
+;	main.c:584: spi_send(config_data);
+	mov	dpl,r5
+	push	ar7
+	lcall	_spi_send
+	pop	ar7
+;	main.c:536: CRITICAL_SECTION (
+00465$:
+	mov	dptr,#0x0001
+	push	ar7
+	lcall	_delayUs
+	pop	ar7
+	anl	_P4_OUT,#0x7f
+;	assignBit
+	mov	a,r7
+	add	a,#0xff
+	mov	_EA,c
+;	main.c:555: while (!device_init) {
+00469$:
+	mov	dptr,#_device_init
+	movx	a,@dptr
+	jz	00469$
+;	main.c:752: resetHubDevices(0);
+	mov	dpl,#0x00
+	lcall	_resetHubDevices
+;	main.c:753: resetHubDevices(1);
+	mov	dpl,#0x01
+	lcall	_resetHubDevices
+;	main.c:754: initUSB_Host();
+	lcall	_initUSB_Host
+;	main.c:930: m_wheel = opt_wheel_enabled;
+	mov	dptr,#_opt_wheel_enabled
+	movx	a,@dptr
+	mov	dptr,#_m_wheel
+	movx	@dptr,a
+;	main.c:931: mouse_enabled = get_mouse_power_state();
+	mov	dptr,#_mouse_enabled
+	mov	a,#0x04
+	anl	a,_P3
+	movx	@dptr,a
+;	main.c:932: mouse_start = true;
+	mov	dptr,#_mouse_start
+	mov	a,#0x01
+	movx	@dptr,a
+;	main.c:933: fatal_error = false;
+	mov	dptr,#_fatal_error
+	clr	a
+	movx	@dptr,a
+;	main.c:934: }
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'main'
+;------------------------------------------------------------
+;sloc0                     Allocated with name '_main_sloc0_1_0'
+;sloc1                     Allocated with name '_main_sloc1_1_0'
+;__1310720048              Allocated with name '_main___1310720048_262144_359'
+;__1310720045              Allocated with name '_main___1310720045_262144_359'
+;__1310720043              Allocated with name '_main___1310720043_262144_359'
+;__1310720041              Allocated with name '_main___1310720041_262144_359'
+;__1310720039              Allocated with name '_main___1310720039_262144_359'
+;com_table                 Allocated with name '_main_com_table_458752_484'
+;jumpers                   Allocated with name '_main_jumpers_458752_484'
+;rate_table                Allocated with name '_main_rate_table_458752_490'
+;jumpers                   Allocated with name '_main_jumpers_458752_490'
+;__1310720046              Allocated with name '_main___1310720046_327680_491'
+;opt_com                   Allocated with name '_main_opt_com_393216_492'
+;_ea_state                 Allocated with name '_main__ea_state_524288_503'
+;__4587520051              Allocated with name '_main___4587520051_655360_505'
+;__4587520052              Allocated with name '_main___4587520052_655360_505'
+;opt_com                   Allocated with name '_main_opt_com_720896_506'
+;opt_irq                   Allocated with name '_main_opt_irq_720896_506'
+;config_data               Allocated with name '_main_config_data_786432_507'
+;__1310720013              Allocated with name '_main___1310720013_393216_517'
+;__1310720008              Allocated with name '_main___1310720008_393216_517'
+;__1310720003              Allocated with name '_main___1310720003_393216_517'
+;st_m_bt                   Allocated with name '_main_st_m_bt_393216_517'
+;m_bt                      Allocated with name '_main_m_bt_393216_517'
+;m_cx                      Allocated with name '_main_m_cx_393216_517'
+;m_cy                      Allocated with name '_main_m_cy_393216_517'
+;m_cz                      Allocated with name '_main_m_cz_393216_517'
+;buttons                   Allocated with name '_main_buttons_393216_517'
+;dx                        Allocated with name '_main_dx_393216_517'
+;dy                        Allocated with name '_main_dy_393216_517'
+;dw                        Allocated with name '_main_dw_393216_517'
+;__1310720004              Allocated with name '_main___1310720004_458752_518'
+;__1310720005              Allocated with name '_main___1310720005_458752_518'
+;__1310720006              Allocated with name '_main___1310720006_458752_518'
+;val                       Allocated with name '_main_val_524288_519'
+;min                       Allocated with name '_main_min_524288_519'
+;max                       Allocated with name '_main_max_524288_519'
+;__1310720009              Allocated with name '_main___1310720009_458752_521'
+;__1310720010              Allocated with name '_main___1310720010_458752_521'
+;__1310720011              Allocated with name '_main___1310720011_458752_521'
+;val                       Allocated with name '_main_val_524288_522'
+;min                       Allocated with name '_main_min_524288_522'
+;max                       Allocated with name '_main_max_524288_522'
+;__1310720014              Allocated with name '_main___1310720014_458752_524'
+;__1310720015              Allocated with name '_main___1310720015_458752_524'
+;__1310720016              Allocated with name '_main___1310720016_458752_524'
+;val                       Allocated with name '_main_val_524288_525'
+;min                       Allocated with name '_main_min_524288_525'
+;max                       Allocated with name '_main_max_524288_525'
+;_ea_state                 Allocated with name '_main__ea_state_589824_529'
+;__2621440019              Allocated with name '_main___2621440019_524288_538'
+;cx                        Allocated with name '_main_cx_524288_538'
+;__2621440020              Allocated with name '_main___2621440020_589824_539'
+;__2621440021              Allocated with name '_main___2621440021_589824_539'
+;__2621440022              Allocated with name '_main___2621440022_589824_539'
+;val                       Allocated with name '_main_val_655360_540'
+;min                       Allocated with name '_main_min_655360_540'
+;max                       Allocated with name '_main_max_655360_540'
+;__2621440024              Allocated with name '_main___2621440024_589824_542'
+;cy                        Allocated with name '_main_cy_589824_542'
+;__2621450025              Allocated with name '_main___2621450025_655360_543'
+;__2621450026              Allocated with name '_main___2621450026_655360_543'
+;__2621450027              Allocated with name '_main___2621450027_655360_543'
+;val                       Allocated with name '_main_val_720896_544'
+;min                       Allocated with name '_main_min_720896_544'
+;max                       Allocated with name '_main_max_720896_544'
+;__2621450029              Allocated with name '_main___2621450029_655360_546'
+;cz                        Allocated with name '_main_cz_655360_546'
+;__2621460030              Allocated with name '_main___2621460030_720896_547'
+;__2621460031              Allocated with name '_main___2621460031_720896_547'
+;__2621460032              Allocated with name '_main___2621460032_720896_547'
+;val                       Allocated with name '_main_val_786432_548'
+;min                       Allocated with name '_main_min_786432_548'
+;max                       Allocated with name '_main_max_786432_548'
+;__2621460034              Allocated with name '_main___2621460034_720896_550'
+;__2621460035              Allocated with name '_main___2621460035_720896_550'
+;__2621460036              Allocated with name '_main___2621460036_720896_550'
+;__2621460037              Allocated with name '_main___2621460037_720896_550'
+;x                         Allocated with name '_main_x_786432_551'
+;y                         Allocated with name '_main_y_786432_551'
+;z                         Allocated with name '_main_z_786432_551'
+;b                         Allocated with name '_main_b_786432_551'
+;left_b                    Allocated with name '_main_left_b_851968_552'
+;right_b                   Allocated with name '_main_right_b_851968_552'
+;middle_b                  Allocated with name '_main_middle_b_851968_552'
+;------------------------------------------------------------
+;	main.c:936: int main(void)
+;	-----------------------------------------
+;	 function main
+;	-----------------------------------------
+_main:
+;	main.c:759: WDOG_COUNT = 0;
+	mov	_WDOG_COUNT,#0x00
+;	main.c:762: SAFE_MOD = 0x55;
+	mov	_SAFE_MOD,#0x55
+;	main.c:763: SAFE_MOD = 0xAA;
+	mov	_SAFE_MOD,#0xaa
+;	main.c:765: PLL_CFG = (MASK_USB_4X_DIV & (6 << 5)) | (MASK_PLL_MULT & 24);
+	mov	_PLL_CFG,#0xd8
+;	main.c:766: CLOCK_CFG = bOSC_EN_INT | (MASK_SYS_CK_DIV & 6);
+	mov	_CLOCK_CFG,#0x86
+;	main.c:768: SAFE_MOD = 0xFF;
+	mov	_SAFE_MOD,#0xff
+;	main.c:771: delay(7);
+	mov	dptr,#0x0007
+	lcall	_delay
+;	main.c:783: pinMode(SPI_RESOUT_PORT, SPI_RESOUT_PIN, PIN_MODE_OUTPUT);
+	mov	_PORT_CFG,_PORT_CFG
+	orl	_P4_DIR,#0x80
+;	main.c:784: pinMode(SPI_MOSI_PORT, SPI_MOSI_PIN, PIN_MODE_OUTPUT);
+	anl	_PORT_CFG,#0xfd
+	orl	_P1_DIR,#0x20
+;	main.c:785: pinMode(SPI_SCK_PORT, SPI_SCK_PIN, PIN_MODE_OUTPUT);
+	anl	_PORT_CFG,#0xfd
+	orl	_P1_DIR,#0x80
+;	main.c:786: pinMode(TxD_PORT, TxD_PIN, PIN_MODE_OUTPUT);
+	anl	_PORT_CFG,#0xfe
+	orl	_P0_DIR,#0x08
+;	main.c:788: pinMode(RxD_PORT, RxD_PIN, PIN_MODE_INPUT);
+	anl	_PORT_CFG,#0xfe
+	anl	_P0_DIR,#0xfb
+	anl	_P0_PU,#0xfb
+;	main.c:789: pinMode(DTR_PORT, DTR_PIN, PIN_MODE_INPUT);
+	anl	_PORT_CFG,#0xf7
+	anl	_P3_DIR,#0xfb
+	anl	_P3_PU,#0xfb
+;	main.c:790: pinMode(COM_SEL1_PORT, COM_SEL1_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xfb
+	anl	_P2_DIR,#0xbf
+	orl	_P2_PU,#0x40
+;	main.c:791: pinMode(COM_SEL2_PORT, COM_SEL2_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xfb
+	anl	_P2_DIR,#0x7f
+	orl	_P2_PU,#0x80
+;	main.c:792: pinMode(RATE_SEL1_PORT, RATE_SEL1_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xfd
+	anl	_P1_DIR,#0xfb
+	orl	_P1_PU,#0x04
+;	main.c:793: pinMode(RATE_SEL2_PORT, RATE_SEL2_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xfd
+	anl	_P1_DIR,#0xef
+	orl	_P1_PU,#0x10
+;	main.c:794: pinMode(WHEEL_SEL_PORT, WHEEL_SEL_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xf7
+	anl	_P3_DIR,#0xef
+	orl	_P3_PU,#0x10
+;	main.c:795: pinMode(IRQX_SEL_PORT, IRQX_SEL_PIN, PIN_MODE_INPUT_PULLUP);
+	anl	_PORT_CFG,#0xfb
+	anl	_P2_DIR,#0xdf
+	orl	_P2_PU,#0x20
+;	main.c:796: pinMode(RxIRQ_PORT, RxIRQ_PIN, PIN_MODE_INPUT);
+	anl	_PORT_CFG,#0xfd
+	anl	_P1_DIR,#0xbf
+	anl	_P1_PU,#0xbf
+;	main.c:797: pinMode(PRG_PORT, PRG_PIN, PIN_MODE_INPUT_PULLUP);
+	mov	_PORT_CFG,_PORT_CFG
+	anl	_P4_DIR,#0xbf
+	orl	_P4_PU,#0x40
+;	main.c:800: if (!(PORT_IN(PRG_PORT) & _BV(PRG_PIN))) {
+	mov	a,_P4_IN
+	jb	acc.6,00451$
+;	main.c:801: runBootloader();
+	mov	dpl,_runBootloader
+	mov	dph,(_runBootloader + 1)
+	lcall	__sdcc_call_dptr
+;	main.c:803: pinMode(LED_PORT, LED_PIN, PIN_MODE_OUTPUT);
+	sjmp	00459$
+00451$:
+	mov	_PORT_CFG,_PORT_CFG
+	orl	_P4_DIR,#0x40
+00459$:
+;	main.c:641: const uint8_t com_table[4] = {
+	mov	dptr,#_main_com_table_458752_484
+	mov	a,#0x03
+	movx	@dptr,a
+	mov	dptr,#(_main_com_table_458752_484 + 0x0001)
+	dec	a
+	movx	@dptr,a
+	mov	dptr,#(_main_com_table_458752_484 + 0x0002)
+	dec	a
+	movx	@dptr,a
+	mov	dptr,#(_main_com_table_458752_484 + 0x0003)
+	clr	a
+	movx	@dptr,a
+;	main.c:645: uint8_t jumpers = (((PORT_IN(COM_SEL1_PORT) & _BV(COM_SEL1_PIN))?1:0) |
+	mov	a,_P2
+	jnb	acc.6,00552$
+	mov	r6,#0x01
+	mov	r7,#0x00
+	sjmp	00553$
+00552$:
+	mov	r6,#0x00
+	mov	r7,#0x00
+00553$:
+	mov	a,_P2
+	jnb	acc.7,00554$
+	mov	r4,#0x02
+	mov	r5,#0x00
+	sjmp	00555$
+00554$:
+	mov	r4,#0x00
+	mov	r5,#0x00
+00555$:
+	mov	a,r4
+	orl	a,r6
+;	main.c:648: return com_table[jumpers];
+	add	a,#_main_com_table_458752_484
+	mov	dpl,a
+	clr	a
+	addc	a,#(_main_com_table_458752_484 >> 8)
+	mov	dph,a
+	movx	a,@dptr
+;	main.c:807: opt_com_settings = readCOMsettings();
+	mov	dptr,#_opt_com_settings
+	movx	@dptr,a
+;	main.c:653: return !(PORT_IN(WHEEL_SEL_PORT) & _BV(WHEEL_SEL_PIN));
+	mov	a,_P3
+	swap	a
+	anl	a,#0x01
+	mov	dptr,#_main___1310720041_262144_359
+	cjne	a,#0x01,00721$
+00721$:
+	clr	a
+	rlc	a
+	movx	@dptr,a
+;	main.c:808: opt_wheel_enabled = readWheelsettings();
+	mov	dptr,#_main___1310720041_262144_359
+	movx	a,@dptr
+	mov	dptr,#_opt_wheel_enabled
+	movx	@dptr,a
+;	main.c:658: const uint8_t rate_table[4] = {
+	mov	dptr,#_main_rate_table_458752_490
+	mov	a,#0x14
+	movx	@dptr,a
+	mov	dptr,#(_main_rate_table_458752_490 + 0x0001)
+	rl	a
+	movx	@dptr,a
+	mov	dptr,#(_main_rate_table_458752_490 + 0x0002)
+	rl	a
+	movx	@dptr,a
+	mov	dptr,#(_main_rate_table_458752_490 + 0x0003)
+	mov	a,#0x64
+	movx	@dptr,a
+;	main.c:662: uint8_t jumpers = (((PORT_IN(RATE_SEL1_PORT) & _BV(RATE_SEL1_PIN))?1:0) |
+	mov	a,_P1
+	jnb	acc.2,00556$
+	mov	r6,#0x01
+	mov	r7,#0x00
+	sjmp	00557$
+00556$:
+	mov	r6,#0x00
+	mov	r7,#0x00
+00557$:
+	mov	a,_P1
+	jnb	acc.4,00558$
+	mov	r4,#0x02
+	mov	r5,#0x00
+	sjmp	00559$
+00558$:
+	mov	r4,#0x00
+	mov	r5,#0x00
+00559$:
+	mov	a,r4
+	orl	a,r6
+;	main.c:665: return rate_table[jumpers];
+	add	a,#_main_rate_table_458752_490
+	mov	dpl,a
+	clr	a
+	addc	a,#(_main_rate_table_458752_490 >> 8)
+	mov	dph,a
+	movx	a,@dptr
+;	main.c:809: opt_rate_settings = readRatesettings();
+	mov	r7,a
+	mov	dptr,#_opt_rate_settings
+	movx	@dptr,a
+;	main.c:810: opt_irq_settings = checkIRQ(opt_com_settings);
+	mov	dptr,#_opt_com_settings
+	movx	a,@dptr
+	mov	r6,a
+;	main.c:670: if (!(PORT_IN(IRQX_SEL_PORT) & _BV(IRQX_SEL_PIN))) {
+	mov	a,_P2
+	jb	acc.5,00464$
+;	main.c:671: return USE_IRQX;
+	mov	dptr,#_main___1310720045_262144_359
+	mov	a,#0x01
+	movx	@dptr,a
+	sjmp	00468$
+00464$:
+;	main.c:673: if (opt_com == SELECT_COM1 || opt_com == SELECT_COM3) {
+	mov	a,r6
+	jz	00466$
+	cjne	r6,#0x02,00467$
+00466$:
+;	main.c:674: return USE_IRQ4;
+	mov	dptr,#_main___1310720045_262144_359
+	mov	a,#0x02
+	movx	@dptr,a
+	sjmp	00468$
+00467$:
+;	main.c:676: return USE_IRQ3;
+	mov	dptr,#_main___1310720045_262144_359
+	clr	a
+	movx	@dptr,a
+;	main.c:810: opt_irq_settings = checkIRQ(opt_com_settings);
+00468$:
+	mov	dptr,#_main___1310720045_262144_359
+	movx	a,@dptr
+	mov	dptr,#_opt_irq_settings
+	movx	@dptr,a
+;	main.c:813: timer0_limit = (uint8_t)((2000UL + opt_rate_settings) / (opt_rate_settings << 1U));
+	mov	ar3,r7
+	clr	a
+	mov	r4,a
+	mov	r5,a
+	mov	r6,a
+	mov	a,#0xd0
+	add	a,r3
+	mov	r3,a
+	mov	a,#0x07
+	addc	a,r4
+	mov	r4,a
+	clr	a
+	addc	a,r5
+	mov	r5,a
+	clr	a
+	addc	a,r6
+	mov	r6,a
+	mov	r2,#0x00
+	mov	a,r7
+	add	a,r7
+	mov	r7,a
+	mov	a,r2
+	rlc	a
+	mov	r2,a
+	mov	dptr,#__divulong_PARM_2
+	mov	a,r7
+	movx	@dptr,a
+	mov	a,r2
+	inc	dptr
+	movx	@dptr,a
+	clr	a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	mov	dpl,r3
+	mov	dph,r4
+	mov	b,r5
+	mov	a,r6
+	lcall	__divulong
+	mov	r4,dpl
+	mov	r5,dph
+	mov	dptr,#_timer0_limit
+	mov	a,r4
+	movx	@dptr,a
+;	main.c:820: TH0 = (uint8_t)(TIMER0_CONST >> 8);
+	mov	_TH0,#0xf0
+;	main.c:821: TL0 = (uint8_t)(TIMER0_CONST & 0xFF);
+	mov	_TL0,#0x60
+;	main.c:822: TF0 = 0;
+;	assignBit
+	clr	_TF0
+;	main.c:823: TR0 = 1;
+;	assignBit
+	setb	_TR0
+;	main.c:827: TR2 = 0;         // останов таймера
+;	assignBit
+	clr	_TR2
+;	main.c:828: T2MOD = 0x00;    // обычный режим, авто-перезагрузка 16-бит
+	mov	_T2MOD,#0x00
+;	main.c:829: RCAP2H = (uint8_t)((TIMER2_RELOAD_FAST >> 8) & 0xFF);
+	mov	_RCAP2H,#0xff
+;	main.c:830: RCAP2L = (uint8_t)(TIMER2_RELOAD_FAST & 0xFF);
+	mov	_RCAP2L,#0x9c
+;	main.c:831: TH2 = RCAP2H;
+	mov	_TH2,_RCAP2H
+;	main.c:832: TL2 = RCAP2L;
+	mov	_TL2,_RCAP2L
+;	main.c:833: TF2 = 0;
+;	assignBit
+	clr	_TF2
+;	main.c:837: T3_COUNT = 0;           // Сброс счетчика
+	clr	a
+	mov	((_T3_COUNT >> 0) & 0xFF),a
+	mov	((_T3_COUNT >> 8) & 0xFF),a
+;	main.c:838: T3_END = LED_CONST;     // Установка периода
+;	1-genFromRTrack replaced	mov	((_T3_END >> 0) & 0xFF),#0x00
+	mov	((_T3_END >> 0) & 0xFF),a
+	mov	((_T3_END >> 8) & 0xFF),#0xfa
+;	main.c:839: T3_CTRL |= bT3_CLR_ALL;     // Сброс всех регистров
+	orl	_T3_CTRL,#0x02
+;	main.c:840: T3_CTRL &= ~bT3_CLR_ALL;    // Завершение сброса
+	anl	_T3_CTRL,#0xfd
+;	main.c:841: T3_SETUP |= bT3_IE_END;     // Разрешение прерывания по достижению END
+	orl	_T3_SETUP,#0x80
+;	main.c:842: T3_CTRL &= ~bT3_MOD_CAP;    // Режим таймера (не захвата)
+	anl	_T3_CTRL,#0xfe
+;	main.c:846: IT0 = 1; // Активен по спаду сигнала
+;	assignBit
+	setb	_IT0
+;	main.c:847: IE0 = 0; // Сброс флага прерывания INT0
+;	assignBit
+	clr	_IE0
+;	main.c:850: uart_tx_r = 0; uart_tx_w = 0;
+	mov	dptr,#_uart_tx_r
+	clr	a
+	movx	@dptr,a
+	mov	dptr,#_uart_tx_w
+	movx	@dptr,a
+;	main.c:851: uart_rx_r = 0; uart_rx_w = 0;
+	mov	dptr,#_uart_rx_r
+	movx	@dptr,a
+	mov	dptr,#_uart_rx_w
+	movx	@dptr,a
+;	main.c:852: uart_rx_buf_count = 0;
+	mov	dptr,#_uart_rx_buf_count
+	movx	@dptr,a
+;	main.c:855: PIN_FUNC |= bUART0_PIN_X;
+	orl	_PIN_FUNC,#0x10
+;	main.c:858: SM0 = 0;
+;	assignBit
+	clr	_SM0
+;	main.c:859: SM1 = 1; // UART mode 1: 8 data bits, 1 stop
+;	assignBit
+	setb	_SM1
+;	main.c:860: SM2 = 0;
+;	assignBit
+	clr	_SM2
+;	main.c:861: REN = 1; // Разрешить прием
+;	assignBit
+	setb	_REN
+;	main.c:864: PCON |= SMOD;
+	orl	_PCON,#0x80
+;	main.c:867: TMOD = (TMOD & ~(bT1_GATE | bT1_CT | MASK_T1_MOD)) | bT1_M1; // Timer1: режим 2, авто-перезагрузка
+	mov	a,#0x0f
+	anl	a,_TMOD
+	orl	a,#0x20
+	mov	_TMOD,a
+;	main.c:868: T2MOD |= bTMR_CLK | bT1_CLK;                                 // Источник системная частота
+	orl	_T2MOD,#0xa0
+;	main.c:872: TH1 = (uint8_t)(256 - ((((uint32_t)FREQ_SYS / 8) / UART_BAUDRATE + 1) / 2));
+	mov	_TH1,#0xe6
+;	main.c:874: TR1 = 1; // Запуск Timer1
+;	assignBit
+	setb	_TR1
+;	main.c:877: TI = 1;
+;	assignBit
+	setb	_TI
+;	main.c:881: ET0 = 1; // Разрешить прерывания таймера 0
+;	assignBit
+	setb	_ET0
+;	main.c:882: ET2 = 1; // Разрешить прерывания таймера 2
+;	assignBit
+	setb	_ET2
+;	main.c:883: IE_TMR3 = 1; // Разрешить прерывания таймера 3
+;	assignBit
+	setb	_IE_TMR3
+;	main.c:884: EX0 = 1; // Разрешить прерывания INT0
+;	assignBit
+	setb	_EX0
+;	main.c:885: ES = 0;  // Разрешить прерывание UART
+;	assignBit
+	clr	_ES
+;	main.c:887: SAFE_MOD = 0x55;
+	mov	_SAFE_MOD,#0x55
+;	main.c:888: SAFE_MOD = 0xAA;
+	mov	_SAFE_MOD,#0xaa
+;	main.c:890: WAKE_CTRL = bWAK_BY_USB | bWAK_RXD1_LO | bWAK_P3_2E_3L | bWAK_RXD0_LO;
+	mov	_WAKE_CTRL,#0xc3
+;	main.c:897: GLOBAL_CFG |= bWDOG_EN;
+	orl	_GLOBAL_CFG,#0x01
+;	main.c:899: SAFE_MOD = 0xFF;
+	mov	_SAFE_MOD,#0xff
+;	main.c:747: return (PCON & (bRST_FLAG1 | bRST_FLAG0)) >> 4;
+	mov	a,#0x30
+	anl	a,_PCON
+	swap	a
+	anl	a,#0x0f
+;	main.c:905: switch (get_reset_source()) {
+	mov	r7,a
+	mov	r6,a
+	add	a,#0xff - 0x03
+	jc	00474$
+	mov	a,r6
+	add	a,r6
+;	main.c:906: case 0b10: // 10 - Переполнение watchdog
+	mov	dptr,#00729$
+	jmp	@a+dptr
+00729$:
+	sjmp	00472$
+	sjmp	00472$
+	sjmp	00470$
+	sjmp	00471$
+00470$:
+;	main.c:907: device_init = true;
+	mov	dptr,#_device_init
+	mov	a,#0x01
+	movx	@dptr,a
+;	main.c:908: break;
+;	main.c:909: case 0b11: // 11 - Аппаратный сброс
+	sjmp	00474$
+00471$:
+;	main.c:910: led_on(); // Сигнализируем исправность светодиода
+	anl	_P4_OUT,#0xbf
+;	main.c:911: delay(50);
+	mov	dptr,#0x0032
+	lcall	_delay
+;	main.c:914: case 0b01: // 01 - Сброс при включении питания
+00472$:
+;	main.c:915: delay(50); // Ждём окончания переходных процессов
+	mov	dptr,#0x0032
+	lcall	_delay
+;	main.c:916: led_off();
+	orl	_P4_OUT,#0x40
+;	main.c:917: device_init = false;
+	mov	dptr,#_device_init
+	clr	a
+	movx	@dptr,a
+;	main.c:919: }
+00474$:
+;	main.c:922: EA = 1;
+;	assignBit
+	setb	_EA
+;	main.c:536: CRITICAL_SECTION (
+	mov	c,_EA
+	clr	a
+	rlc	a
+	mov	r7,a
+;	assignBit
+	clr	_EA
+	mov	dptr,#_spi_tx_buf_w
+	clr	a
+	movx	@dptr,a
+	mov	dptr,#_spi_tx_buf_r
+	movx	@dptr,a
+	mov	dptr,#_spi_tx_buf_count
+	movx	@dptr,a
+	mov	dptr,#_device_init
+	movx	a,@dptr
+	jnz	00477$
+	orl	_P1,#0x20
+	mov	dptr,#0x0001
+	push	ar7
+	lcall	_delayUs
+	pop	ar7
+	anl	_P1,#0xdf
+	mov	dptr,#_opt_irq_settings
+	movx	a,@dptr
+	mov	r6,a
+	mov	dptr,#_opt_com_settings
+	movx	a,@dptr
+;	main.c:581: config_data |= (opt_com & 0x03); // Base adress
+	anl	a,#0x03
+	mov	r5,a
+;	main.c:582: config_data |= (opt_irq == USE_IRQX) ? 0x4 : 0; // Не использовать стандартное IRQ
+	cjne	r6,#0x01,00560$
+	mov	r4,#0x04
+	mov	r6,#0x00
+	sjmp	00561$
+00560$:
+	mov	r4,#0x00
+	mov	r6,#0x00
+00561$:
+	mov	a,r4
+	orl	ar5,a
+;	main.c:584: spi_send(config_data);
+	mov	dpl,r5
+	push	ar7
+	lcall	_spi_send
+	pop	ar7
+;	main.c:536: CRITICAL_SECTION (
+00477$:
+	mov	dptr,#0x0001
+	push	ar7
+	lcall	_delayUs
+	pop	ar7
+	anl	_P4_OUT,#0x7f
+;	assignBit
+	mov	a,r7
+	add	a,#0xff
+	mov	_EA,c
+;	main.c:555: while (!device_init) {
+00481$:
+	mov	dptr,#_device_init
+	movx	a,@dptr
+	jz	00481$
+;	main.c:752: resetHubDevices(0);
+	mov	dpl,#0x00
+	lcall	_resetHubDevices
+;	main.c:753: resetHubDevices(1);
+	mov	dpl,#0x01
+	lcall	_resetHubDevices
+;	main.c:754: initUSB_Host();
+	lcall	_initUSB_Host
+;	main.c:930: m_wheel = opt_wheel_enabled;
+	mov	dptr,#_opt_wheel_enabled
+	movx	a,@dptr
+	mov	dptr,#_m_wheel
+	movx	@dptr,a
+;	main.c:931: mouse_enabled = get_mouse_power_state();
+	mov	dptr,#_mouse_enabled
+	mov	a,#0x04
+	anl	a,_P3
+	movx	@dptr,a
+;	main.c:932: mouse_start = true;
+	mov	dptr,#_mouse_start
+	mov	a,#0x01
+	movx	@dptr,a
+;	main.c:933: fatal_error = false;
+	mov	dptr,#_fatal_error
+	clr	a
+	movx	@dptr,a
+;	main.c:944: DEBUG_OUT("IRQ select: %c\n", opt_irq_settings?(opt_irq_settings==1?'X':'4'):'3');
+00548$:
+;	main.c:947: if (!fatal_error) {
+	mov	dptr,#_fatal_error
+	movx	a,@dptr
+;	main.c:948: WDOG_COUNT = 0;
+	jnz	00102$
+	mov	_WDOG_COUNT,a
+00102$:
+;	main.c:951: if (!mouse_enabled) { // Мышь выключена
+	mov	dptr,#_mouse_enabled
+	movx	a,@dptr
+	jnz	00106$
+;	main.c:953: mouse_enabled = get_mouse_power_state();
+	mov	dptr,#_mouse_enabled
+	mov	a,#0x04
+	anl	a,_P3
+	movx	@dptr,a
+;	main.c:954: if (mouse_enabled) {
+	movx	a,@dptr
+	jz	00106$
+;	main.c:956: mouse_start = true;
+	mov	dptr,#_mouse_start
+	mov	a,#0x01
+	movx	@dptr,a
+;	main.c:957: allow_send_data = true;
+	mov	dptr,#_allow_send_data
+	movx	@dptr,a
+00106$:
+;	main.c:961: processUart();
+	lcall	_processUart
+;	main.c:696: checkRootHubConnections();
+	lcall	_checkRootHubConnections
+;	main.c:699: pollHIDdevice(&buttons, &dx, &dy, &dw);
+	mov	dptr,#_pollHIDdevice_PARM_2
+	mov	a,#_main_dx_393216_517
+	movx	@dptr,a
+	mov	a,#(_main_dx_393216_517 >> 8)
+	inc	dptr
+	movx	@dptr,a
+	clr	a
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_pollHIDdevice_PARM_3
+	mov	a,#_main_dy_393216_517
+	movx	@dptr,a
+	mov	a,#(_main_dy_393216_517 >> 8)
+	inc	dptr
+	movx	@dptr,a
+	clr	a
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_pollHIDdevice_PARM_4
+	mov	a,#_main_dw_393216_517
+	movx	@dptr,a
+	mov	a,#(_main_dw_393216_517 >> 8)
+	inc	dptr
+	movx	@dptr,a
+	clr	a
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_main_buttons_393216_517
+	mov	b,#0x00
+	lcall	_pollHIDdevice
+;	main.c:702: m_bt = (uint8_t)(buttons & 0x7);
+	mov	dptr,#_main_buttons_393216_517
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	inc	dptr
+	movx	a,@dptr
+	inc	dptr
+	movx	a,@dptr
+	mov	dptr,#_main_m_bt_393216_517
+	mov	a,#0x07
+	anl	a,r4
+	movx	@dptr,a
+;	main.c:703: m_cx = clamp16(dx + m_cx, -15000, 15000); dx = 0;
+	mov	dptr,#_main_m_cx_393216_517
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_main_dx_393216_517
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
 	inc	dptr
 	movx	a,@dptr
 	mov	r2,a
-	mov	a,r1
-	clr	c
-	subb	a,r3
+	inc	dptr
+	movx	a,@dptr
 	mov	r3,a
-	mov	a,r2
-	subb	a,r4
+	mov	ar0,r6
+	mov	a,r7
+	mov	r1,a
+	rlc	a
+	subb	a,acc
+	mov	r6,a
+	mov	r7,a
+	mov	a,r0
+	add	a,r4
 	mov	r4,a
-	mov	dptr,#_main_m_cz_393216_279
+	mov	a,r1
+	addc	a,r5
+	mov	r5,a
+	mov	a,r6
+	addc	a,r2
+	mov	r6,a
+	mov	a,r7
+	addc	a,r3
+	mov	r7,a
+;	main.c:358: if (val < (int32_t)min) return min;
+	clr	c
+	mov	a,r4
+	subb	a,#0x68
+	mov	a,r5
+	subb	a,#0xc5
+	mov	a,r6
+	subb	a,#0xff
+	mov	a,r7
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	00489$
+	mov	dptr,#_main___1310720003_393216_517
+	mov	a,#0x68
+	movx	@dptr,a
+	mov	a,#0xc5
+	inc	dptr
+	movx	@dptr,a
+	sjmp	00492$
+00489$:
+;	main.c:359: if (val > (int32_t)max) return max;
+	clr	c
+	mov	a,#0x98
+	subb	a,r4
+	mov	a,#0x3a
+	subb	a,r5
+	clr	a
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00491$
+	mov	dptr,#_main___1310720003_393216_517
+	mov	a,#0x98
+	movx	@dptr,a
+	mov	a,#0x3a
+	inc	dptr
+	movx	@dptr,a
+	sjmp	00492$
+00491$:
+;	main.c:360: return (int16_t)val;
+	mov	dptr,#_main___1310720003_393216_517
+	mov	a,r4
+	movx	@dptr,a
+	mov	a,r5
+	inc	dptr
+	movx	@dptr,a
+;	main.c:703: m_cx = clamp16(dx + m_cx, -15000, 15000); dx = 0;
+00492$:
+	mov	dptr,#_main___1310720003_393216_517
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_main_m_cx_393216_517
+	mov	a,r6
+	movx	@dptr,a
+	mov	a,r7
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_main_dx_393216_517
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:704: m_cy = clamp16(dy + m_cy, -15000, 15000); dy = 0;
+	mov	dptr,#_main_m_cy_393216_517
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_main_dy_393216_517
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	mov	ar0,r6
+	mov	a,r7
+	mov	r1,a
+	rlc	a
+	subb	a,acc
+	mov	r6,a
+	mov	r7,a
+	mov	a,r0
+	add	a,r4
+	mov	r4,a
+	mov	a,r1
+	addc	a,r5
+	mov	r5,a
+	mov	a,r6
+	addc	a,r2
+	mov	r6,a
+	mov	a,r7
+	addc	a,r3
+	mov	r7,a
+;	main.c:358: if (val < (int32_t)min) return min;
+	clr	c
+	mov	a,r4
+	subb	a,#0x68
+	mov	a,r5
+	subb	a,#0xc5
+	mov	a,r6
+	subb	a,#0xff
+	mov	a,r7
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	00494$
+	mov	dptr,#_main___1310720008_393216_517
+	mov	a,#0x68
+	movx	@dptr,a
+	mov	a,#0xc5
+	inc	dptr
+	movx	@dptr,a
+	sjmp	00497$
+00494$:
+;	main.c:359: if (val > (int32_t)max) return max;
+	clr	c
+	mov	a,#0x98
+	subb	a,r4
+	mov	a,#0x3a
+	subb	a,r5
+	clr	a
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00496$
+	mov	dptr,#_main___1310720008_393216_517
+	mov	a,#0x98
+	movx	@dptr,a
+	mov	a,#0x3a
+	inc	dptr
+	movx	@dptr,a
+	sjmp	00497$
+00496$:
+;	main.c:360: return (int16_t)val;
+	mov	dptr,#_main___1310720008_393216_517
+	mov	a,r4
+	movx	@dptr,a
+	mov	a,r5
+	inc	dptr
+	movx	@dptr,a
+;	main.c:704: m_cy = clamp16(dy + m_cy, -15000, 15000); dy = 0;
+00497$:
+	mov	dptr,#_main___1310720008_393216_517
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_main_m_cy_393216_517
+	mov	a,r6
+	movx	@dptr,a
+	mov	a,r7
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_main_dy_393216_517
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:705: m_cz = clamp16(dw + m_cz, -127, 128); dw = 0;
+	mov	dptr,#_main_m_cz_393216_517
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_main_dw_393216_517
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	mov	ar0,r6
+	mov	a,r7
+	mov	r1,a
+	rlc	a
+	subb	a,acc
+	mov	r6,a
+	mov	r7,a
+	mov	a,r0
+	add	a,r4
+	mov	r4,a
+	mov	a,r1
+	addc	a,r5
+	mov	r5,a
+	mov	a,r6
+	addc	a,r2
+	mov	r6,a
+	mov	a,r7
+	addc	a,r3
+	mov	r7,a
+;	main.c:358: if (val < (int32_t)min) return min;
+	clr	c
+	mov	a,r4
+	subb	a,#0x81
+	mov	a,r5
+	subb	a,#0xff
+	mov	a,r6
+	subb	a,#0xff
+	mov	a,r7
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	00499$
+	mov	dptr,#_main___1310720013_393216_517
+	mov	a,#0x81
+	movx	@dptr,a
+	mov	a,#0xff
+	inc	dptr
+	movx	@dptr,a
+	sjmp	00502$
+00499$:
+;	main.c:359: if (val > (int32_t)max) return max;
+	clr	c
+	mov	a,#0x80
+	subb	a,r4
+	clr	a
+	subb	a,r5
+	clr	a
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00501$
+	mov	dptr,#_main___1310720013_393216_517
+	mov	a,#0x80
+	movx	@dptr,a
+	clr	a
+	inc	dptr
+	movx	@dptr,a
+	sjmp	00502$
+00501$:
+;	main.c:360: return (int16_t)val;
+	mov	dptr,#_main___1310720013_393216_517
+	mov	a,r4
+	movx	@dptr,a
+	mov	a,r5
+	inc	dptr
+	movx	@dptr,a
+;	main.c:705: m_cz = clamp16(dw + m_cz, -127, 128); dw = 0;
+00502$:
+	mov	dptr,#_main___1310720013_393216_517
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_main_m_cz_393216_517
+	mov	a,r6
+	movx	@dptr,a
+	mov	a,r7
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_main_dw_393216_517
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	main.c:708: if (allow_send_data && mouse_enabled) {
+	mov	dptr,#_allow_send_data
+	movx	a,@dptr
+	jnz	00743$
+	ljmp	00546$
+00743$:
+	mov	dptr,#_mouse_enabled
+	movx	a,@dptr
+	jnz	00744$
+	ljmp	00546$
+00744$:
+;	main.c:709: allow_send_data = false;
+	mov	dptr,#_allow_send_data
+	clr	a
+	movx	@dptr,a
+;	main.c:712: if (mouse_start) {
+	mov	dptr,#_mouse_start
+	movx	a,@dptr
+	jnz	00745$
+	ljmp	00520$
+00745$:
+;	main.c:713: mouse_start = false;
+	mov	dptr,#_mouse_start
+	clr	a
+	movx	@dptr,a
+;	main.c:716: CRITICAL_SECTION (
+	mov	c,_EA
+	clr	a
+	rlc	a
+	mov	r7,a
+;	assignBit
+	clr	_EA
+	mov	dptr,#_main_m_cx_393216_517
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_main_m_cy_393216_517
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_main_m_cz_393216_517
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	mov	dptr,#_main_m_bt_393216_517
+	movx	@dptr,a
+	mov	dptr,#_spi_tx_buf_w
+	movx	a,@dptr
+	mov	dptr,#_spi_tx_buf_r
+	movx	@dptr,a
+	mov	dptr,#_spi_tx_buf_count
+	clr	a
+	movx	@dptr,a
+;	assignBit
+	clr	_TR2
+	orl	_P4_OUT,#0x80
+	anl	_P4_OUT,#0x7f
+;	assignBit
+	mov	a,r7
+	add	a,#0xff
+	mov	_EA,c
+;	main.c:613: delay(20);
+	mov	dptr,#0x0014
+	lcall	_delay
+;	main.c:616: if (!mouse_enabled) {
+	mov	dptr,#_mouse_enabled
+	movx	a,@dptr
+	jz	00520$
+;	main.c:621: spi_send(0x4D); // Сигнатура MS mouse "M"
+	mov	dpl,#0x4d
+	lcall	_spi_send
+;	main.c:622: if (m_wheel) {
+	mov	dptr,#_m_wheel
+	movx	a,@dptr
+	jz	00516$
+;	main.c:623: spi_send(0x5A); // Сигнатура мыши с колёсиком "Z"
+	mov	dpl,#0x5a
+	lcall	_spi_send
+;	main.c:624: spi_send(0x40); // Четырехбайтные пакеты
+	mov	dpl,#0x40
+	lcall	_spi_send
+;	main.c:625: spi_send(0x00); // Пустой пакет байт 2
+	mov	dpl,#0x00
+	lcall	_spi_send
+;	main.c:626: spi_send(0x00); // Пустой пакет байт 3
+	mov	dpl,#0x00
+	lcall	_spi_send
+;	main.c:627: spi_send(0x00); // Пустой пакет байт 4
+	mov	dpl,#0x00
+	lcall	_spi_send
+	sjmp	00520$
+00516$:
+;	main.c:629: spi_send(0x33); // Сигнатура 3х кнопочной мыши "3"
+	mov	dpl,#0x33
+	lcall	_spi_send
+;	main.c:630: spi_send(0x40); // Трёхбайтные пакеты
+	mov	dpl,#0x40
+	lcall	_spi_send
+;	main.c:631: spi_send(0x00); // Пустой пакет байт 2
+	mov	dpl,#0x00
+	lcall	_spi_send
+;	main.c:632: spi_send(0x00); // Пустой пакет байт 3
+	mov	dpl,#0x00
+	lcall	_spi_send
+;	main.c:726: send_mouse_id();
+00520$:
+;	main.c:730: if (m_bt != st_m_bt || m_cx || m_cy || m_cz) {
+	mov	dptr,#_main_m_bt_393216_517
+	movx	a,@dptr
+	mov	r7,a
+	mov	dptr,#_main_st_m_bt_393216_517
+	movx	a,@dptr
+	mov	r6,a
+	mov	a,r7
+	cjne	a,ar6,00542$
+	mov	dptr,#_main_m_cx_393216_517
+	movx	a,@dptr
+	mov	b,a
+	inc	dptr
+	movx	a,@dptr
+	orl	a,b
+	jnz	00542$
+	mov	dptr,#_main_m_cy_393216_517
+	movx	a,@dptr
+	mov	b,a
+	inc	dptr
+	movx	a,@dptr
+	orl	a,b
+	jnz	00542$
+	mov	dptr,#_main_m_cz_393216_517
+	movx	a,@dptr
+	mov	b,a
+	inc	dptr
+	movx	a,@dptr
+	orl	a,b
+	jnz	00752$
+	ljmp	00546$
+00752$:
+00542$:
+;	main.c:731: int8_t cx = clamp8(m_cx, -128, 127);
+	mov	dptr,#_main_m_cx_393216_517
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	clr	c
+	mov	a,r6
+	subb	a,#0x80
+	mov	a,r7
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	00525$
+	mov	dptr,#_main___2621440019_524288_538
+	mov	a,#0x80
+	movx	@dptr,a
+	sjmp	00528$
+00525$:
+	clr	c
+	mov	a,#0x7f
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00527$
+	mov	dptr,#_main___2621440019_524288_538
+	mov	a,#0x7f
+	movx	@dptr,a
+	sjmp	00528$
+00527$:
+	mov	dptr,#_main___2621440019_524288_538
+	mov	a,r6
+	movx	@dptr,a
+00528$:
+	mov	dptr,#_main___2621440019_524288_538
+	movx	a,@dptr
+;	main.c:732: m_cx -= cx;
+	mov	r7,a
+	mov	r5,a
+	rlc	a
+	subb	a,acc
+	mov	r6,a
+	mov	dptr,#_main_m_cx_393216_517
+	movx	a,@dptr
+	mov	r3,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r4,a
+	mov	a,r3
+	clr	c
+	subb	a,r5
+	mov	r3,a
+	mov	a,r4
+	subb	a,r6
+	mov	r4,a
+	mov	dptr,#_main_m_cx_393216_517
 	mov	a,r3
 	movx	@dptr,a
 	mov	a,r4
 	inc	dptr
 	movx	@dptr,a
-;	main.c:536: st_m_bt = m_bt;
-	mov	dptr,#_main_m_bt_393216_279
+;	main.c:733: int8_t cy = clamp8(m_cy, -128, 127);
+	mov	dptr,#_main_m_cy_393216_517
+	movx	a,@dptr
+	mov	r3,a
+	inc	dptr
 	movx	a,@dptr
 	mov	r4,a
-	mov	dptr,#_main_st_m_bt_393216_279
-	movx	@dptr,a
-;	main.c:538: spi_m_send(cx, cy, cz, m_bt);
-	mov	dptr,#_spi_m_send_PARM_2
-	mov	a,r6
-	movx	@dptr,a
-	mov	dptr,#_spi_m_send_PARM_3
-	mov	a,r5
-	movx	@dptr,a
-	mov	dptr,#_spi_m_send_PARM_4
+	clr	c
+	mov	a,r3
+	subb	a,#0x80
 	mov	a,r4
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	00530$
+	mov	dptr,#_main___2621440024_589824_542
+	mov	a,#0x80
 	movx	@dptr,a
+	sjmp	00533$
+00530$:
+	clr	c
+	mov	a,#0x7f
+	subb	a,r3
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r4
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00532$
+	mov	dptr,#_main___2621440024_589824_542
+	mov	a,#0x7f
+	movx	@dptr,a
+	sjmp	00533$
+00532$:
+	mov	dptr,#_main___2621440024_589824_542
+	mov	a,r3
+	movx	@dptr,a
+00533$:
+	mov	dptr,#_main___2621440024_589824_542
+	movx	a,@dptr
+;	main.c:734: m_cy -= cy;
+	mov	r4,a
+	mov	r2,a
+	rlc	a
+	subb	a,acc
+	mov	r3,a
+	mov	dptr,#_main_m_cy_393216_517
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	mov	a,r0
+	clr	c
+	subb	a,r2
+	mov	r0,a
+	mov	a,r1
+	subb	a,r3
+	mov	r1,a
+	mov	dptr,#_main_m_cy_393216_517
+	mov	a,r0
+	movx	@dptr,a
+	mov	a,r1
+	inc	dptr
+	movx	@dptr,a
+;	main.c:735: int8_t cz = clamp8(m_cz, -8, 7);
+	mov	dptr,#_main_m_cz_393216_517
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	clr	c
+	mov	a,r0
+	subb	a,#0xf8
+	mov	a,r1
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	00535$
+	mov	dptr,#_main___2621450029_655360_546
+	mov	a,#0xf8
+	movx	@dptr,a
+	sjmp	00538$
+00535$:
+	clr	c
+	mov	a,#0x07
+	subb	a,r0
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r1
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00537$
+	mov	dptr,#_main___2621450029_655360_546
+	mov	a,#0x07
+	movx	@dptr,a
+	sjmp	00538$
+00537$:
+	mov	dptr,#_main___2621450029_655360_546
+	mov	a,r0
+	movx	@dptr,a
+00538$:
+	mov	dptr,#_main___2621450029_655360_546
+	movx	a,@dptr
+;	main.c:736: m_cz -= cz;
+	mov	_main_sloc0_1_0,a
+	mov	_main_sloc1_1_0,_main_sloc0_1_0
+	rlc	a
+	subb	a,acc
+	mov	(_main_sloc1_1_0 + 1),a
+	mov	dptr,#_main_m_cz_393216_517
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	mov	a,r0
+	clr	c
+	subb	a,_main_sloc1_1_0
+	mov	r0,a
+	mov	a,r1
+	subb	a,(_main_sloc1_1_0 + 1)
+	mov	r1,a
+	mov	dptr,#_main_m_cz_393216_517
+	mov	a,r0
+	movx	@dptr,a
+	mov	a,r1
+	inc	dptr
+	movx	@dptr,a
+;	main.c:738: st_m_bt = m_bt;
+	mov	dptr,#_main_m_bt_393216_517
+	movx	a,@dptr
+	mov	r1,a
+	mov	dptr,#_main_st_m_bt_393216_517
+	movx	@dptr,a
+;	main.c:592: left_b = b & 1;
+	mov	a,#0x01
+	anl	a,r1
+	mov	_main_sloc1_1_0,a
+;	main.c:593: right_b = (b >> 1) & 1;
+	mov	a,r1
+	rr	a
+	anl	a,#0x01
+	mov	r0,a
+;	main.c:594: middle_b = (b >> 2) & 1;
+	mov	dptr,#_main_middle_b_851968_552
+	mov	a,r1
+	rr	a
+	rr	a
+	anl	a,#0x01
+	movx	@dptr,a
+;	main.c:596: spi_send((1 << 6) | (left_b << 5) | (right_b << 4) |
+	mov	a,_main_sloc1_1_0
+	swap	a
+	rl	a
+	anl	a,#0xe0
+	mov	r1,a
+	orl	ar1,#0x40
+	mov	a,r0
+	swap	a
+	anl	a,#0xf0
+	orl	ar1,a
+;	main.c:597: ((y & 0xC0) >> 4) | ((x & 0xC0) >> 6));
+	anl	ar2,#0xc0
+	clr	a
+	xch	a,r2
+	swap	a
+	anl	a,#0x0f
+	xrl	a,r2
+	xch	a,r2
+	anl	a,#0x0f
+	xch	a,r2
+	xrl	a,r2
+	xch	a,r2
+	jnb	acc.3,00759$
+	orl	a,#0xf0
+00759$:
+	mov	a,r2
+	orl	ar1,a
+	anl	ar5,#0xc0
+	clr	a
+	mov	c,acc.7
+	xch	a,r5
+	rlc	a
+	xch	a,r5
+	rlc	a
+	mov	c,acc.7
+	xch	a,r5
+	rlc	a
+	xch	a,r5
+	rlc	a
+	xch	a,r5
+	anl	a,#0x03
+	jnb	acc.1,00760$
+	orl	a,#0xfc
+00760$:
+	mov	a,r5
+	orl	ar1,a
+	mov	dpl,r1
+	push	ar7
+	push	ar4
+	lcall	_spi_send
+	pop	ar4
+	pop	ar7
+;	main.c:598: spi_send(x & 0x3F);
+	anl	ar7,#0x3f
 	mov	dpl,r7
-	lcall	_spi_m_send
-;	main.c:784: do_process();
-00200$:
-;	main.c:786: if (fatal_error ||
+	push	ar4
+	lcall	_spi_send
+	pop	ar4
+;	main.c:599: spi_send(y & 0x3F);
+	anl	ar4,#0x3f
+	mov	dpl,r4
+	lcall	_spi_send
+;	main.c:602: if (m_wheel) {
+	mov	dptr,#_m_wheel
+	movx	a,@dptr
+	jz	00540$
+;	main.c:603: spi_send((middle_b << 4) | (z & 0x0F));
+	mov	dptr,#_main_middle_b_851968_552
+	movx	a,@dptr
+	swap	a
+	anl	a,#0xf0
+	mov	r7,a
+	mov	r1,_main_sloc0_1_0
+	anl	ar1,#0x0f
+	mov	a,r7
+	orl	ar1,a
+	mov	dpl,r1
+	lcall	_spi_send
+00540$:
+;	main.c:606: flash_led();
+	lcall	_flash_led
+;	main.c:963: do_process();
+00546$:
+;	main.c:965: if (fatal_error ||
 	mov	dptr,#_fatal_error
 	movx	a,@dptr
-	jz	00412$
-	ljmp	00202$
-00412$:
-;	main.c:787: (!allow_send_data &&
+	jz	00762$
+	ljmp	00548$
+00762$:
+;	main.c:966: (!allow_send_data &&
 	mov	dptr,#_allow_send_data
 	movx	a,@dptr
-	jz	00413$
-	ljmp	00202$
-00413$:
-;	main.c:788: !mouse_rx_buf_count &&
-	mov	dptr,#_mouse_rx_buf_count
-	movx	a,@dptr
-	jz	00414$
-	ljmp	00202$
-00414$:
-;	main.c:789: !spi_tx_buf_count)) {
+	jz	00763$
+	ljmp	00548$
+00763$:
+;	main.c:967: !spi_tx_buf_count)) {
 	mov	dptr,#_spi_tx_buf_count
 	movx	a,@dptr
-;	main.c:790: mcu_sleep();
-;	main.c:793: }
-	ljmp	00202$
+;	main.c:968: mcu_sleep();
+;	main.c:971: }
+	ljmp	00548$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
-	.area CONST   (CODE)
-___str_0:
-	.ascii "Startup"
-	.db 0x0a
-	.db 0x00
-	.area CSEG    (CODE)
-	.area CONST   (CODE)
-___str_1:
-	.ascii "Ready"
-	.db 0x0a
-	.db 0x00
-	.area CSEG    (CODE)
 	.area XINIT   (CODE)
 	.area CABS    (ABS,CODE)

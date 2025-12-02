@@ -457,8 +457,8 @@ Symbol Table
     _TXD1                                                       =  0000A7 G
     _TXD1_                                                      =  0000C4 G
     _TXD_                                                       =  000083 G
- 17 _Timer2_ISR                                                    0000A2 GR
- 17 _Timer3_ISR                                                    00009B GR
+ 18 _Timer2_ISR                                                    000131 R
+ 18 _Timer3_ISR                                                    000127 R
     _UCTS                                                       =  000084 G
     _UDCD                                                       =  000087 G
     _UDEV_CTRL                                                  =  0000E4 G
@@ -520,100 +520,121 @@ Symbol Table
     _XBUS_AUX                                                   =  0000A2 G
     _XBUS_SPEED                                                 =  0000FD G
     _XCS0                                                       =  0000B4 G
- 18 ___str_0                                                       000000 R
- 18 ___str_1                                                       000009 R
-    __divuint                                                      ****** GX
-    __divuint_PARM_2                                               ****** GX
-  E __interrupt_vect                                               000000 R
+    __divulong                                                     ****** GX
+    __divulong_PARM_2                                              ****** GX
+  F __interrupt_vect                                               000000 R
     __mcs51_genRAMCLEAR                                            ****** GX
     __mcs51_genXINIT                                               ****** GX
     __mcs51_genXRAMCLEAR                                           ****** GX
     __sdcc_call_dptr                                               ****** GX
     __sdcc_gsinit_startup                                          ****** GX
-  E __sdcc_program_startup                                         00003E GR
-  6 __start__stack                                                 000000 GR
-  B _allow_send_data                                               00011D GR
- 17 _checkIRQ                                                      0007E1 R
-  B _checkIRQ_opt_com_65536_176                                    000142 R
+  F __sdcc_program_startup                                         00003E GR
+  7 __start__stack                                                 000000 GR
+  C _allow_send_data                                               00019F R
+ 18 _checkIRQ                                                      000594 R
+  C _checkIRQ_opt_com_65536_146                                    0001C0 R
     _checkRootHubConnections                                       ****** GX
- 17 _clamp                                                         000001 R
-  B _clamp_PARM_2                                                  000120 R
+ 18 _clamp16                                                       00004F R
+  C _clamp16_PARM_2                                                0001A6 R
+  C _clamp16_PARM_3                                                0001A8 R
+  6 _clamp16_sloc0_1_0                                             000000 R
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 10.
 Hexadecimal [24-Bits]
 
 Symbol Table
 
-  B _clamp_PARM_3                                                  000121 R
-  B _clamp_val_65536_51                                            000122 R
+  C _clamp16_val_65536_49                                          0001AA R
+ 18 _clamp8                                                        000001 R
+  C _clamp8_PARM_2                                                 0001A2 R
+  C _clamp8_PARM_3                                                 0001A3 R
+  C _clamp8_val_65536_47                                           0001A4 R
     _delay                                                         ****** GX
     _delayUs                                                       ****** GX
-  B _device_init                                                   00011C GR
- 17 _do_process                                                    00046F R
-  B _do_process___2621440005_262144_150                            000137 R
-  B _do_process___2621440010_262144_151                            00013A R
-  B _do_process___2621450015_262145_152                            00013D R
-  B _do_process_dr_ctr_65536_143                                   00012F R
-  B _do_process_m_bt_65536_143                                     000130 R
-  B _do_process_m_cx_65536_143                                     000131 R
-  B _do_process_m_cy_65536_143                                     000133 R
-  B _do_process_m_cz_65536_143                                     000135 R
-  B _do_process_st_m_bt_65536_143                                  00012E R
-  B _do_process_val_327680_160                                     000138 R
-  B _do_process_val_327681_163                                     00013B R
-  B _do_process_val_327682_166                                     00013E R
-  B _fatal_error                                                   00011E GR
- 17 _flash_led                                                     0001F1 GR
- 17 _get_reset_source                                              000803 R
- 17 _init                                                          00081C R
-    _initUART0                                                     ****** GX
+  C _device_init                                                   00019E R
+ 18 _do_process                                                    0005B6 R
+  C _do_process___1310720003_131072_151                            0001C5 R
+  C _do_process___1310720008_131072_151                            0001C3 R
+  C _do_process___1310720013_131072_151                            0001C1 R
+  C _do_process___2621440019_262144_157                            0001EB R
+  C _do_process___2621440024_262144_158                            0001EE R
+  C _do_process___2621450029_262145_159                            0001F1 R
+  C _do_process_buttons_65536_151                                  0001CF R
+  C _do_process_dw_65536_151                                       0001DB R
+  C _do_process_dx_65536_151                                       0001D3 R
+  C _do_process_dy_65536_151                                       0001D7 R
+  C _do_process_m_bt_65536_151                                     0001C8 R
+  C _do_process_m_cx_65536_151                                     0001C9 R
+  C _do_process_m_cy_65536_151                                     0001CB R
+  C _do_process_m_cz_65536_151                                     0001CD R
+  C _do_process_middle_b_393218_186                                0001F5 R
+  5 _do_process_sloc0_1_0                                          000000 R
+  5 _do_process_sloc1_1_0                                          000001 R
+  C _do_process_st_m_bt_65536_151                                  0001C7 R
+  C _do_process_val_196608_161                                     0001DF R
+  C _do_process_val_196608_164                                     0001E3 R
+  C _do_process_val_196608_167                                     0001E7 R
+  C _do_process_val_327680_176                                     0001EC R
+  C _do_process_val_327681_179                                     0001EF R
+  C _do_process_val_327682_182                                     0001F2 R
+  C _do_process_x_327682_185                                       0001F4 R
+  C _fatal_error                                                   0001A0 R
+ 18 _flash_led                                                     000326 GR
+ 18 _get_reset_source                                              000A22 R
+ 18 _getchar                                                       000317 GR
+ 18 _init                                                          000A3B R
     _initUSB_Host                                                  ****** GX
-  B _init___1310720022_131072_185                                  000144 R
-  B _init___1310720026_131072_185                                  000143 R
-  B _init_opt_com_196608_201                                       000147 R
-  B _init_opt_com_524288_218                                       000148 R
-  B _init_res_262144_191                                           000145 R
-  B _init_res_262144_198                                           000146 R
- 17 _int0_isr                                                      00004F GR
-  B _m_wheel                                                       000004 GR
- 17 _main                                                          000BCA GR
-  B _main___1310720022_262144_236                                  00014A R
-  B _main___1310720026_262144_236                                  000149 R
-  B _main___2621440005_524288_292                                  000158 R
-  B _main___2621440010_589824_296                                  00015B R
-  B _main___2621450015_655360_300                                  00015E R
-  B _main_dr_ctr_393216_279                                        000150 R
-  B _main_m_bt_393216_279                                          000151 R
-  B _main_m_cx_393216_279                                          000152 R
-  B _main_m_cy_393216_279                                          000154 R
-  B _main_m_cz_393216_279                                          000156 R
-  B _main_opt_com_393216_251                                       00014D R
-  B _main_opt_com_720896_265                                       00014E R
-  B _main_res_458752_241                                           00014B R
-  B _main_res_458752_248                                           00014C R
-  B _main_st_m_bt_393216_279                                       00014F R
-  B _main_val_655360_294                                           000159 R
-  B _main_val_720896_298                                           00015C R
-  B _main_val_786432_302                                           00015F R
- 17 _mcu_sleep                                                     000000 R
-  B _mouse_enabled                                                 00011B GR
- 17 _mouse_read                                                    000256 R
-  B _mouse_read_data_65536_111                                     000126 R
+  C _init___1310720041_131072_193                                  0001F7 R
+  C _init___1310720045_131072_193                                  0001F6 R
+  C _init_com_table_262144_319                                     0001F8 R
+  C _init_opt_com_196608_327                                       000200 R
+  C _init_opt_com_524288_344                                       000201 R
+  C _init_rate_table_262144_325                                    0001FC R
+ 18 _int0_isr                                                      0000D9 R
+  C _m_wheel                                                       000004 R
+ 18 _main                                                          000D35 GR
+  C _main___1310720003_393216_517                                  000212 R
+  C _main___1310720008_393216_517                                  000210 R
+  C _main___1310720013_393216_517                                  00020E R
+  C _main___1310720041_262144_359                                  000203 R
+  C _main___1310720045_262144_359                                  000202 R
+  C _main___2621440019_524288_538                                  000238 R
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 11.
 Hexadecimal [24-Bits]
 
 Symbol Table
 
-  B _mouse_rx_buf                                                  000005 GR
-  B _mouse_rx_buf_count                                            000017 GR
-  B _mouse_rx_buf_r                                                000016 GR
-  B _mouse_rx_buf_w                                                000015 GR
-  B _mouse_start                                                   00011A GR
- 17 _mouse_write                                                   000201 GR
-  B _mouse_write_c_65536_105                                       000125 R
-  B _opt_com_settings                                              000000 GR
-  B _opt_irq_settings                                              000003 GR
-  B _opt_rate_settings                                             000002 GR
-  B _opt_wheel_enabled                                             000001 GR
+  C _main___2621440024_589824_542                                  00023B R
+  C _main___2621450029_655360_546                                  00023E R
+  C _main_buttons_393216_517                                       00021C R
+  C _main_com_table_458752_484                                     000204 R
+  C _main_dw_393216_517                                            000228 R
+  C _main_dx_393216_517                                            000220 R
+  C _main_dy_393216_517                                            000224 R
+  C _main_m_bt_393216_517                                          000215 R
+  C _main_m_cx_393216_517                                          000216 R
+  C _main_m_cy_393216_517                                          000218 R
+  C _main_m_cz_393216_517                                          00021A R
+  C _main_middle_b_851968_552                                      000242 R
+  C _main_opt_com_393216_492                                       00020C R
+  C _main_opt_com_720896_506                                       00020D R
+  C _main_rate_table_458752_490                                    000208 R
+  5 _main_sloc0_1_0                                                000003 R
+  5 _main_sloc1_1_0                                                000004 R
+  C _main_st_m_bt_393216_517                                       000214 R
+  C _main_val_524288_519                                           00022C R
+  C _main_val_524288_522                                           000230 R
+  C _main_val_524288_525                                           000234 R
+  C _main_val_655360_540                                           000239 R
+  C _main_val_720896_544                                           00023C R
+  C _main_val_786432_548                                           00023F R
+  C _main_x_786432_551                                             000241 R
+ 18 _mcu_sleep                                                     000000 R
+  C _mouse_enabled                                                 00019D R
+  C _mouse_start                                                   00019C R
+  C _opt_com_settings                                              000000 R
+  C _opt_irq_settings                                              000003 R
+  C _opt_rate_settings                                             000002 R
+  C _opt_wheel_enabled                                             000001 R
     _pLED_CK_SE                                                 =  002983 G
     _pLED_CTRL                                                  =  002981 G
     _pLED_DATA                                                  =  002982 G
@@ -633,46 +654,54 @@ Symbol Table
     _pUEP3_DMA_H                                                =  00254E G
     _pUEP3_DMA_L                                                =  00254F G
     _pUEP4_1_MOD                                                =  002546 G
-    _pinMode                                                       ****** GX
-    _pinMode_PARM_2                                                ****** GX
-    _pinMode_PARM_3                                                ****** GX
     _pollHIDdevice                                                 ****** GX
-    _printf                                                        ****** GX
-    _processUart                                                   ****** GX
- 17 _readCOMsettings                                               00070C R
-  B _readCOMsettings_res_65536_169                                 000140 R
- 17 _readRatesettings                                              00077D R
-  B _readRatesettings_res_65536_174                                000141 R
- 17 _readWheelsettings                                             00076E R
-  9 _readWheelsettings_sloc0_1_0                                   000000 R
-    _resetHubDevices                                               ****** GX
-    _runBootloader                                                 ****** GX
- 17 _send_mouse_id                                                 000420 R
- 17 _spi_init                                                      00029C R
- 17 _spi_m_send                                                    000374 R
-  B _spi_m_send_PARM_2                                             00012A R
-  B _spi_m_send_PARM_3                                             00012B R
-  B _spi_m_send_PARM_4                                             00012C R
-  B _spi_m_send_x_65536_134                                        00012D R
- 17 _spi_send                                                      0002F5 R
-  B _spi_send_c_65536_123                                          000127 R
- 17 _spi_send_config                                               000350 R
-  B _spi_send_config_PARM_2                                        000128 R
+    _pollHIDdevice_PARM_2                                          ****** GX
+    _pollHIDdevice_PARM_3                                          ****** GX
+    _pollHIDdevice_PARM_4                                          ****** GX
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 12.
 Hexadecimal [24-Bits]
 
 Symbol Table
 
-  B _spi_send_config_opt_com_65536_132                             000129 R
-  B _spi_tx_buf                                                    000018 GR
-  B _spi_tx_buf_count                                              000119 GR
-  B _spi_tx_buf_r                                                  000118 GR
-  B _spi_tx_buf_w                                                  000117 GR
- 17 _timer0_isr                                                    000064 GR
-  B _timer0_isr_cnt_65536_56                                       000124 R
-  B _timer0_limit                                                  00011F GR
- 17 _usb_init                                                      00080D R
- 17 _usb_mouse_init                                                0001F8 R
+ 18 _processUart                                                   000325 GR
+ 18 _putchar                                                       0002F8 GR
+  C _putchar_c_65536_105                                           0001AF R
+ 18 _readCOMsettings                                               000500 R
+  C _readCOMsettings_com_table_65536_141                           0001B8 R
+ 18 _readRatesettings                                              000551 R
+  C _readRatesettings_rate_table_65536_145                         0001BC R
+ 18 _readWheelsettings                                             000542 R
+  A _readWheelsettings_sloc0_1_0                                   000000 R
+    _resetHubDevices                                               ****** GX
+    _runBootloader                                                 ****** GX
+ 18 _send_mouse_id                                                 0004B1 R
+ 18 _spi_init                                                      00032D R
+ 18 _spi_m_send                                                    000405 R
+  C _spi_m_send_PARM_2                                             0001B4 R
+  C _spi_m_send_PARM_3                                             0001B5 R
+  C _spi_m_send_PARM_4                                             0001B6 R
+  C _spi_m_send_x_65536_132                                        0001B7 R
+ 18 _spi_send                                                      000386 R
+  C _spi_send_c_65536_121                                          0001B1 R
+ 18 _spi_send_config                                               0003E1 R
+  C _spi_send_config_PARM_2                                        0001B2 R
+  C _spi_send_config_opt_com_65536_130                             0001B3 R
+  C _spi_tx_buf                                                    000005 R
+  C _spi_tx_buf_count                                              000106 R
+  C _spi_tx_buf_r                                                  000105 R
+  C _spi_tx_buf_w                                                  000104 R
+ 18 _timer0_isr                                                    0000EE R
+  C _timer0_isr_cnt_65536_54                                       0001AE R
+  C _timer0_limit                                                  0001A1 R
+ 18 _uart_isr                                                      000280 R
+  C _uart_rx_buf                                                   000189 R
+  C _uart_rx_buf_count                                             00019B R
+  C _uart_rx_r                                                     000199 R
+  C _uart_rx_w                                                     00019A R
+  C _uart_tx_buf                                                   000107 R
+  C _uart_tx_r                                                     000187 R
+  C _uart_tx_w                                                     000188 R
+ 18 _usb_init                                                      000A2C R
     a                                                           =  0000E0 L
     a.0                                                         =  0000E0 L
     a.1                                                         =  0000E1 L
@@ -689,6 +718,11 @@ Symbol Table
     acc.2                                                       =  0000E2 L
     acc.3                                                       =  0000E3 L
     acc.4                                                       =  0000E4 L
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 13.
+Hexadecimal [24-Bits]
+
+Symbol Table
+
     acc.5                                                       =  0000E5 L
     acc.6                                                       =  0000E6 L
     acc.7                                                       =  0000E7 L
@@ -718,11 +752,6 @@ Symbol Table
     es                                                          =  0000AC L
     et0                                                         =  0000A9 L
     et1                                                         =  0000AB L
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 13.
-Hexadecimal [24-Bits]
-
-Symbol Table
-
     et2                                                         =  0000AD L
     ex0                                                         =  0000A8 L
     ex1                                                         =  0000AA L
@@ -749,6 +778,11 @@ Symbol Table
     ip.4                                                        =  0000BC L
     ip.5                                                        =  0000BD L
     it0                                                         =  000088 L
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 14.
+Hexadecimal [24-Bits]
+
+Symbol Table
+
     it1                                                         =  00008A L
     ov                                                          =  0000D2 L
     p                                                           =  0000D0 L
@@ -778,11 +812,6 @@ Symbol Table
     p2.4                                                        =  0000A4 L
     p2.5                                                        =  0000A5 L
     p2.6                                                        =  0000A6 L
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 14.
-Hexadecimal [24-Bits]
-
-Symbol Table
-
     p2.7                                                        =  0000A7 L
     p3                                                          =  0000B0 L
     p3.0                                                        =  0000B0 L
@@ -809,6 +838,11 @@ Symbol Table
     pt2                                                         =  0000BD L
     px0                                                         =  0000B8 L
     px1                                                         =  0000BA L
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 15.
+Hexadecimal [24-Bits]
+
+Symbol Table
+
     rb8                                                         =  00009A L
     rcap2h                                                      =  0000CB L
     rcap2l                                                      =  0000CA L
@@ -838,11 +872,6 @@ Symbol Table
     t2con.2                                                     =  0000CA L
     t2con.3                                                     =  0000CB L
     t2con.4                                                     =  0000CC L
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 15.
-Hexadecimal [24-Bits]
-
-Symbol Table
-
     t2con.5                                                     =  0000CD L
     t2con.6                                                     =  0000CE L
     t2con.7                                                     =  0000CF L
@@ -869,12 +898,16 @@ Symbol Table
     tl2                                                         =  0000CC L
     tmod                                                        =  000089 L
     tr0                                                         =  00008C L
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 16.
+Hexadecimal [24-Bits]
+
+Symbol Table
+
     tr1                                                         =  00008E L
     tr2                                                         =  0000CA L
     txd                                                         =  0000B1 L
 
-
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 16.
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 17.
 Hexadecimal [24-Bits]
 
 Area Table
@@ -884,26 +917,27 @@ Area Table
    2 RSEG0                                      size      0   flags    8
    3 RSEG1                                      size      0   flags    8
    4 REG_BANK_0                                 size      8   flags    4
-   5 DSEG                                       size      0   flags    0
-   6 SSEG                                       size      1   flags    0
-   7 ISEG                                       size      0   flags    0
-   8 IABS                                       size      0   flags    8
-   9 BSEG                                       size      1   flags   80
-   A PSEG                                       size      0   flags   50
-   B XSEG                                       size    161   flags   40
-   C XABS                                       size      0   flags   48
-   D XISEG                                      size      0   flags   40
-   E HOME                                       size     41   flags   20
-   F GSINIT0                                    size      0   flags   20
-  10 GSINIT1                                    size      0   flags   20
-  11 GSINIT2                                    size      0   flags   20
-  12 GSINIT3                                    size      0   flags   20
-  13 GSINIT4                                    size      0   flags   20
-  14 GSINIT5                                    size      0   flags   20
-  15 GSINIT                                     size     17   flags   20
-  16 GSFINAL                                    size      3   flags   20
-  17 CSEG                                       size   1277   flags   20
-  18 CONST                                      size     10   flags   20
-  19 XINIT                                      size      0   flags   20
-  1A CABS                                       size      0   flags   28
+   5 DSEG                                       size      6   flags    0
+   6 OSEG                                       size      4   flags    4
+   7 SSEG                                       size      1   flags    0
+   8 ISEG                                       size      0   flags    0
+   9 IABS                                       size      0   flags    8
+   A BSEG                                       size      1   flags   80
+   B PSEG                                       size      0   flags   50
+   C XSEG                                       size    243   flags   40
+   D XABS                                       size      0   flags   48
+   E XISEG                                      size      0   flags   40
+   F HOME                                       size     41   flags   20
+  10 GSINIT0                                    size      0   flags   20
+  11 GSINIT1                                    size      0   flags   20
+  12 GSINIT2                                    size      0   flags   20
+  13 GSINIT3                                    size      0   flags   20
+  14 GSINIT4                                    size      0   flags   20
+  15 GSINIT5                                    size      0   flags   20
+  16 GSINIT                                     size     5F   flags   20
+  17 GSFINAL                                    size      3   flags   20
+  18 CSEG                                       size   14DE   flags   20
+  19 CONST                                      size      0   flags   20
+  1A XINIT                                      size      0   flags   20
+  1B CABS                                       size      0   flags   28
 
