@@ -256,7 +256,7 @@ do {\
     TR2 = 1; \
 } while(0)
 
-#define SPI_DELAY() do { __asm__("nop");\
+#define SPI_DELAY() do { __asm__("nop"); __asm__("nop"); \
     __asm__("nop"); __asm__("nop"); } while(0)
 
 #define SPI_SEND_BIT(bit_mask, tx_data) do { \
