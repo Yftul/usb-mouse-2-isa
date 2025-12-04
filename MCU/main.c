@@ -810,7 +810,7 @@ static inline void init(void)
     opt_irq_settings = checkIRQ(opt_com_settings);
 
     // Время в мс, соответствующее периоду опроса мыши
-    timer0_limit = (uint8_t)((2000UL + opt_rate_settings) / (opt_rate_settings << 1U));
+    timer0_limit = (uint8_t)(((2000UL + opt_rate_settings) / (opt_rate_settings << 1U)) >> 1);
 
     // Timer 0
     // Частота на входе таймера 48 MHz
