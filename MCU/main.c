@@ -110,12 +110,6 @@ enum pin_mode {
 #define _PORT_OUT_P4   P4_OUT
 #define _PORT_OUT_P5   P5
 
-#define _PORT_DIR_P0   _DIR
-#define _PORT_DIR_P1   _DIR
-#define _PORT_DIR_P2   _DIR
-#define _PORT_DIR_P3   _DIR
-#define _PORT_DIR_P4   _CFG
-
 #define _PORT_OC_P0   _OC
 #define _PORT_OC_P1   _OC
 #define _PORT_OC_P2   _OC
@@ -534,6 +528,9 @@ void flash_led(void)
 static inline void spi_init(void)
 {
     CRITICAL_SECTION (
+        spi_reset_high();
+        delayUs(2);
+
         spi_tx_buf_w = 0;
         spi_tx_buf_r = 0;
         spi_tx_buf_count = 0;
@@ -544,11 +541,12 @@ static inline void spi_init(void)
             spi_mosi_high();
             delayUs(1);
             spi_mosi_low();
+            delayUs(2);
             // Инициализация порта и IRQ
             spi_send_config(opt_com_settings, opt_irq_settings);
         }
-        delayUs(1);
         spi_reset_low();
+        delayUs(2);
     );
 
     // Ждём инициализацию устройства
@@ -781,19 +779,25 @@ static inline void init(void)
     * PIN_MODE_INPUT_OUTPUT_PULLUP_2CLK
     */
     pinMode(SPI_RESOUT_PORT, SPI_RESOUT_PIN, PIN_MODE_OUTPUT);
+
     pinMode(SPI_MOSI_PORT, SPI_MOSI_PIN, PIN_MODE_OUTPUT);
     pinMode(SPI_SCK_PORT, SPI_SCK_PIN, PIN_MODE_OUTPUT);
     pinMode(TxD_PORT, TxD_PIN, PIN_MODE_OUTPUT);
 
-    pinMode(RxD_PORT, RxD_PIN, PIN_MODE_INPUT);
+    spi_mosi_low();
+    spi_reset_low();
+    spi_sck_low();
+
+    pinMode(RxIRQ_PORT, RxIRQ_PIN, PIN_MODE_INPUT);
     pinMode(DTR_PORT, DTR_PIN, PIN_MODE_INPUT);
+
+    pinMode(RxD_PORT, RxD_PIN, PIN_MODE_INPUT_PULLUP);
     pinMode(COM_SEL1_PORT, COM_SEL1_PIN, PIN_MODE_INPUT_PULLUP);
     pinMode(COM_SEL2_PORT, COM_SEL2_PIN, PIN_MODE_INPUT_PULLUP);
     pinMode(RATE_SEL1_PORT, RATE_SEL1_PIN, PIN_MODE_INPUT_PULLUP);
     pinMode(RATE_SEL2_PORT, RATE_SEL2_PIN, PIN_MODE_INPUT_PULLUP);
     pinMode(WHEEL_SEL_PORT, WHEEL_SEL_PIN, PIN_MODE_INPUT_PULLUP);
     pinMode(IRQX_SEL_PORT, IRQX_SEL_PIN, PIN_MODE_INPUT_PULLUP);
-    pinMode(RxIRQ_PORT, RxIRQ_PIN, PIN_MODE_INPUT);
     pinMode(PRG_PORT, PRG_PIN, PIN_MODE_INPUT_PULLUP);
 
     // Если замкнуты контакты, переходим в бутлоадер
