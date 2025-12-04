@@ -700,9 +700,9 @@ static inline void do_process(void)
 
     // Обновляем состояние кнопок и приращение координат
     m_bt = (uint8_t)(buttons & 0x7);
-    m_cx = clamp16(dx + m_cx, -15000, 15000); dx = 0;
-    m_cy = clamp16(dy + m_cy, -15000, 15000); dy = 0;
-    m_cz = clamp16(dw + m_cz, -127, 128); dw = 0;
+    m_cx = clamp16(m_cx + dx, -15000, 15000); dx = 0;
+    m_cy = clamp16(m_cy + dy, -15000, 15000); dy = 0;
+    m_cz = clamp16(m_cz - dw, -127, 128); dw = 0;
 
     // Мышь включена и таймер следующей посылки активен
     if (allow_send_data && mouse_enabled) {

@@ -1,5 +1,6 @@
 .vscode/*
 MCU/build/*
+*.hex
 *.bin
 *.bak
 *.elf
