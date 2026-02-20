@@ -649,6 +649,17 @@ void pollHIDdevice(uint32_t * buttons, int32_t * dx, int32_t * dy, int32_t * dwh
                             map->report_id, *buttons, *dx, *dy, *dwheel);
                 }
             }
+#if DEBUG
+        } else if (HIDdevice[hiddevice].connected) {
+            selectHubPort(HIDdevice[hiddevice].rootHub, 0);
+            res = hostTransfer(USB_PID_IN << 4 | HIDdevice[hiddevice].endPoint & 0x7F,
+                             HIDdevice[hiddevice].endPoint & 0x80 ? bUH_R_TOG | bUH_T_TOG : 0, 0);
+            if (res == ERR_SUCCESS) {
+                HIDdevice[hiddevice].endPoint ^= 0x80;
+                len = USB_RX_LEN;
+                DEBUG_OUT("Poll device N %d type %d success, got %d bytes of data\n", hiddevice, HIDdevice[hiddevice].type, len);
+            }
+#endif
         }
     }
 }
@@ -728,9 +739,11 @@ static void parseHIDDeviceReport(uint8_t __xdata *report, uint16_t length, uint8
                 if (!isUsageSet) {
                     if (data == REPORT_USAGE_MOUSE) {
                         flash_led(); // Подключена мышь.
+                        DEBUG_OUT("Mouse connected\n");
+                        map->report_id = 0;
+                        isUsageSet = 1;
                     }
                     HIDdevice[CurrentDevice].type = data;
-                    isUsageSet = 1;
                 }
                 DEBUG_OUT("Usage ");
                 switch (data) {
@@ -815,6 +828,7 @@ static void parseHIDDeviceReport(uint8_t __xdata *report, uint16_t length, uint8
             case REPORT_COLLECTION_END:
                 DEBUG_OUT("Collection end %lu\n", data);
                 level--;
+                current_bit_offset = 0;
                 break;
             case REPORT_UNIT:
                 DEBUG_OUT("Unit 0x%02lx\n", data);
@@ -822,6 +836,7 @@ static void parseHIDDeviceReport(uint8_t __xdata *report, uint16_t length, uint8
             case REPORT_INPUT:
                 DEBUG_OUT("Input: 0x%02lx\n", data);
                 used_reports = 0;
+                DEBUG_OUT("HIDdevice[CurrentDevice].type: %ld\n", (uint32_t)HIDdevice[CurrentDevice].type);
                 if (HIDdevice[CurrentDevice].type == REPORT_USAGE_MOUSE) {
                     DEBUG_OUT("Processing mouse input at bit offset: %d\n", current_bit_offset);
 

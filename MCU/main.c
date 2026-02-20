@@ -935,6 +935,8 @@ static inline void init(void)
     mouse_enabled = get_mouse_power_state();
     mouse_start = true;
     fatal_error = false;
+
+    WDOG_COUNT = 0;
 }
 
 int main(void)
