@@ -21,8 +21,8 @@ typedef enum {
     ROOT_DEVICE_SUCCESS     = 3,
 } root_dev_stat_t;
 
-void initUSB_Host();
-uint8_t checkRootHubConnections();
+void initUSB_Host(void);
+uint8_t checkRootHubConnections(void);
 void resetHubDevices(uint8_t hubindex);
 void pollHIDdevice(uint32_t * buttons, int32_t * dx, int32_t * dy, int32_t * dwheel);
 

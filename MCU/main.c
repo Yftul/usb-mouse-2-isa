@@ -477,7 +477,7 @@ int putchar(int c)
 #endif
 #if UART_fixed
 // getchar может использоваться функцией scanf
-int getchar()
+int getchar(void)
 {
     uint8_t c = 0;
     CRITICAL_SECTION(
@@ -490,7 +490,7 @@ int getchar()
     return c;
 }
 #else
-int getchar()
+int getchar(void)
 {
     while(!RI) ;
     RI = 0;
@@ -499,7 +499,7 @@ int getchar()
 #endif
 
 // Переход в режим программирования(аналог замыканию пинов)
-void processUart()
+void processUart(void)
 {
 #if UART_fixed
     while(uart_rx_buf_count > 2) {

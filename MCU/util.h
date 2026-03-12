@@ -12,7 +12,7 @@
 #define DEBUG_OUT(...) (void)0;
 #endif
 
-typedef void(* __data FunctionReference)();
+typedef void(* __data FunctionReference)(void);
 
 void delayUs(uint16_t n);
 void delay(uint16_t n);
