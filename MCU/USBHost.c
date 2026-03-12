@@ -70,7 +70,7 @@ typedef enum {
     REPORT_USAGE_PAGE_KEYBOARD = 0x07,
     REPORT_USAGE_PAGE_LEDS = 0x08,
     REPORT_USAGE_PAGE_BUTTON = 0x09,
-    REPORT_USAGE_PAGE_VENDOR = 0xff00,
+    REPORT_USAGE_PAGE_VENDOR = 0xFF00,
 } reports_t;
 
 typedef struct {
@@ -151,7 +151,7 @@ static void disableRootHubPort(uint8_t index)
         UHUB0_CTRL = 0;
 }
 
-void initUSB_Host()
+void initUSB_Host(void)
 {
     IE_USB = 0;
     USB_CTRL = bUC_HOST_MODE;
@@ -447,7 +447,7 @@ static void fillTxBuffer(PUINT8C data, uint8_t len)
     }
 }
 
-static uint8_t getDeviceDescriptor()
+static uint8_t getDeviceDescriptor(void)
 {
     uint8_t res;
     uint16_t len;
@@ -493,7 +493,7 @@ static uint8_t setUsbConfig(uint8_t cfg)
     return hostCtrlTransfer(0, 0, 0);
 }
 
-static uint8_t getDeviceString()
+static uint8_t getDeviceString(void)
 {
     fillTxBuffer(GetDeviceStringRequest, sizeof(GetDeviceStringRequest));
     return hostCtrlTransfer(receiveDataBuffer, 0, RECEIVE_BUFFER_LEN);
@@ -531,7 +531,7 @@ static void DEBUG_OUT_USB_BUFFER(uint8_t __xdata *usbBuffer)
     DEBUG_OUT("\n");
 }
 
-static uint8_t getConfigurationDescriptor()
+static uint8_t getConfigurationDescriptor(void)
 {
     __xdata uint8_t res;
     __xdata uint16_t len, total;
@@ -1119,7 +1119,7 @@ static uint8_t initializeRootHubConnection(uint8_t rootHubIndex)
     return res;
 }
 
-uint8_t checkRootHubConnections()
+uint8_t checkRootHubConnections(void)
 {
     __xdata uint8_t res = ERR_SUCCESS;
 
