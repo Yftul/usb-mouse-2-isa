@@ -30,7 +30,9 @@ At the core are a microcontroller and programmable logic that:
 Все комбинации перемычек подписаны на плате.
 
 Кроме того, можно выбрать поддержку колесика мыши, установив перемычку wheel J4 5-6. И уменьшить частоту передачи данных мыши по порту, установив перемычки Rate, где открытым(open) перемычкам соответсвует скорость передачи по умолчанию, устанавливая перемычки, замедляем скорость передачи до 4х раз.
-/
+
+--/
+
 The device is installed into an ISA slot. The mouse is connected to the USB port. When the computer is reset, powered on, or when the mouse is plugged  or unplugged, the activity LED VD1 blinks. It also blinks when the mouse driver is running and the mouse generates any activity.
 
 The COM SEL J4 jumpers allow selecting the COM port number (COM1–COM4). If a non‑standard interrupt is required, you must enable the IRQX jumper J5 and select the desired interrupt (IRQ2, 5, 6, or 7) using jumper J1. Examples:
